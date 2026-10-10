@@ -413,6 +413,21 @@ test('Back to the first entry of a shared link returns to its moment', async () 
   assert.equal(await page.locator('.play-btn').getAttribute('aria-label'), 'Play', 'it opens paused at that moment');
 });
 
+test('the four picker tabs fit a phone in every language', async () => {
+  const { page } = await h.open({ width: 390, height: 844 });
+  await pause(page);
+  const codes = await page.locator('#lang option').evaluateAll((o) => o.map((e) => (e as HTMLOptionElement).value));
+  assert.equal(codes.length, 9);
+  for (const code of codes) {
+    await page.selectOption('#lang', code);
+    await page.locator('.topbar-actions .btn-primary').click();
+    await page.locator('.tabs').waitFor();
+    const [scroll, client] = await page.locator('.tabs').evaluate((e) => [e.scrollWidth, e.clientWidth]);
+    assert.ok(scroll <= client, `${code}: the tabs are ${scroll}px wide in ${client}px`);
+    await page.keyboard.press('Escape');
+  }
+});
+
 test('a pasted USGS link opens that earthquake, and a wrong one says what is wrong', async () => {
   const { page } = await h.open();
   await page.getByRole('button', { name: 'Choose a quake' }).click();

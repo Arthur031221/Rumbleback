@@ -1103,6 +1103,17 @@ dialog.sheet::backdrop {
   color: var(--muted);
   font-weight: 600;
 }
+@media (max-width: 520px) {
+  /* Four tabs have to fit the sheet in the longest language, so none of them scrolls out of sight. */
+  .tabs {
+    gap: 2px;
+    padding-inline: 12px;
+  }
+  .tab {
+    padding: 0 8px;
+    font-size: 14px;
+  }
+}
 .tab[aria-selected='true'] {
   background: var(--text);
   color: var(--bg);
