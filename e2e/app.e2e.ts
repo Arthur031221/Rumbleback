@@ -1011,6 +1011,19 @@ test('sound turns on and off from the timeline', async () => {
   assert.deepEqual(errors, []);
 });
 
+test('a browser without Web Audio leaves the sound off and throws nothing when the sound button is pressed', async () => {
+  const { page, errors } = await h.open({
+    script: () => {
+      Object.defineProperty(window, 'AudioContext', { value: undefined });
+    },
+  });
+  const button = page.locator('.sound-btn');
+  await button.click();
+  await page.waitForTimeout(300);
+  assert.equal(await button.getAttribute('aria-pressed'), 'false');
+  assert.deepEqual(errors, []);
+});
+
 test('the check card lists a sample of the stations as a table, with the analyst pick next to the model, in the language of the page', async () => {
   const { page } = await h.open();
   await pause(page);

@@ -213,7 +213,11 @@ export async function start(): Promise<void> {
     layoutChanged: () => layoutPadding(),
     toggleSound: () => {
       if (get().sound) return set({ sound: false });
-      void audio.enable().then(() => set({ sound: true }));
+      // A browser without Web Audio, or one that refuses to start it, leaves the sound off instead of throwing.
+      void audio
+        .enable()
+        .then(() => set({ sound: true }))
+        .catch(() => {});
     },
   });
   const panel = createPanel(panelEl, {

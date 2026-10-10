@@ -26,6 +26,8 @@ Fixed
   and on a 640 pixel high screen in every zone, because the quake card spent four lines on its facts. They run on as a
   row that wraps, and the cards take a little less padding on a screen of 700 pixels or fewer, so the prompt shows at
   390 by 664, 375 by 667 and 360 by 640 in all nine languages.
+- In a browser without Web Audio, or one that refuses to start it, pressing the sound button threw an error that
+  nothing caught. The sound stays off now.
 - Opening the check card scrolled it into view with an animation even when the viewer had asked for less motion.
 - The dots for strong motion stations and felt reports built a colour string for every dot on every frame, about 0.4
   milliseconds a frame for 5,000 dots on a desktop processor and more on a phone. Each dot's colour is made once per quake.
