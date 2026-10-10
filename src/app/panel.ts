@@ -276,6 +276,11 @@ export function createPanel(host: HTMLElement, cb: PanelCallbacks) {
 
     const timing = pinTiming(s);
     pinned.hidden = !(s.pin && timing);
+    const hasPin = !!s.pin;
+    if (hasPin !== hadPin) {
+      if (hadPin !== null) followPin(hasPin);
+      hadPin = hasPin;
+    }
     if (s.pin && timing && s.quake) {
       const name =
         s.pin.city !== null ? pinLabel(s.pin, s.lang) : (nearestCityName(s.pin.lat, s.pin.lon, s.lang) ?? pinLabel(s.pin, s.lang));
@@ -335,6 +340,19 @@ export function createPanel(host: HTMLElement, cb: PanelCallbacks) {
         checkNote.textContent = t('check.sNote', { n: number(c.S?.n ?? 0) });
       }
     }
+  }
+
+  /** Null until the first update, so a pin kept from an earlier visit does not move the sheet. */
+  let hadPin: boolean | null = null;
+  /** On a phone the sheet shows the quake card first, which would hide the numbers of a pin just placed. */
+  function followPin(placed: boolean): void {
+    if (!window.matchMedia('(max-width: 820px)').matches) return;
+    if (placed && host.dataset.collapsed === 'true') toggle();
+    // The pin card has just been shown, so wait for the layout before measuring where it starts.
+    requestAnimationFrame(() => {
+      const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+      host.scrollTo({ top: placed ? Math.max(0, pinCard.offsetTop - 8) : 0, behavior });
+    });
   }
 
   const drawChart = () => {

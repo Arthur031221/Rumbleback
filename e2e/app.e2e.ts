@@ -837,6 +837,28 @@ test('layout on a phone: nothing spills out of the screen and the sheet collapse
   assert.equal(await page.locator('.pin-card').isVisible(), false);
 });
 
+test('on a phone a new pin scrolls the sheet to its numbers, and removing it scrolls back to the quake', async () => {
+  const { page } = await h.open({ width: 390, height: 844 });
+  await pause(page);
+  const inSheet = (selector: string) =>
+    page.evaluate((sel) => {
+      const sheet = document.querySelector('.panel')!.getBoundingClientRect();
+      const r = document.querySelector(sel)!.getBoundingClientRect();
+      return r.height > 0 && r.top >= sheet.top - 1 && r.bottom <= sheet.bottom + 1;
+    }, selector);
+  assert.equal(await inSheet('.quake-title'), true);
+  await page.touchscreen.tap(200, 250);
+  await page.locator('.pin-live').waitFor();
+  await page.waitForFunction(() => document.querySelector('.panel')!.scrollTop > 0);
+  await page.waitForTimeout(700);
+  for (const selector of ['.pin-card .card-title', '.stat.p', '.stat.s']) {
+    assert.equal(await inSheet(selector), true, `${selector} is inside the sheet once the pin is placed`);
+  }
+  await page.locator('.pin-card .icon-btn').first().click();
+  await page.waitForFunction(() => document.querySelector('.panel')!.scrollTop === 0);
+  assert.equal(await inSheet('.quake-title'), true);
+});
+
 test('the map credit stays reachable on a phone: a small button that opens the text', async () => {
   const { page } = await h.open({ width: 390, height: 844, tileJson: true });
   const credit = page.locator('.maplibregl-ctrl-attrib');
