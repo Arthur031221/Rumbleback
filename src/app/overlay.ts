@@ -103,6 +103,9 @@ export class Overlay {
   private gridReach = 0;
   private instrumentT = new Float32Array(0);
   private feltT = new Float32Array(0);
+  /** Each dot's fill, made once per quake: building the string takes longer than drawing the dot, and it ran per dot per frame. */
+  private instrumentFill: string[] = [];
+  private feltFill: string[] = [];
   private proj = { picks: new Float32Array(0), instruments: new Float32Array(0), felt: new Float32Array(0), dirty: true };
 
   /** The frame on screen, which says what is lit and which layers show. */
@@ -148,6 +151,8 @@ export class Overlay {
     const epi: LatLon = [quake.quake.lat, quake.quake.lon];
     this.instrumentT = Float32Array.from(quake.instruments, (i) => tt.time('S', distanceDeg(epi, [i.lat, i.lon])));
     this.feltT = Float32Array.from(quake.felt, (f) => tt.time('S', distanceDeg(epi, [f.lat, f.lon])));
+    this.instrumentFill = quake.instruments.map((i) => mmiColor(i.mmi, 0.95));
+    this.feltFill = quake.felt.map((f) => mmiColor(f.mmi, 0.8));
     this.gridImage = quake.grid ? renderGrid(quake.grid) : null;
     const g = this.gridImage;
     this.gridReach = g
@@ -382,7 +387,7 @@ export class Overlay {
       if (!this.visible(x, y)) continue;
       const mmi = list[i]!.mmi;
       this.ripple(x, y, f.t - this.instrumentT[i]!, span, 4, c.s);
-      this.dot(x, y, 3.4 + Math.max(0, mmi - 3) * 0.7, mmiColor(mmi, 0.95), c.outline);
+      this.dot(x, y, 3.4 + Math.max(0, mmi - 3) * 0.7, this.instrumentFill[i]!, c.outline);
     }
   }
 
@@ -396,7 +401,7 @@ export class Overlay {
       if (!this.visible(x, y)) continue;
       ctx.beginPath();
       ctx.arc(x, y, 2.2, 0, Math.PI * 2);
-      ctx.fillStyle = mmiColor(list[i]!.mmi, 0.8);
+      ctx.fillStyle = this.feltFill[i]!;
       ctx.fill();
     }
   }
