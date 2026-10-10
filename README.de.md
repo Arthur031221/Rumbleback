@@ -48,6 +48,9 @@ http://127.0.0.1:4173/
 - **Blinde Zone**: der Bereich, in dem die S-Welle vor einer Warnung zum gewählten Zeitpunkt ankam.
 - **Ihre Sekunden**: die Karte zur Markierung zeigt P- und S-Ankunft, die Differenz, die ShakeMap-Intensität dort und einen Regler für den Warnzeitpunkt. Das ist Rechnung am Modell, kein Protokoll einer echten Warnung.
 - **Teilen**: ein Link, eine quadratische Karte, eine Hochformat-Karte und ein Videoclip. Der Link lässt Ihre Markierung standardmäßig weg, und Karten zeigen einen Städtenamen.
+- **Jedes Beben**: Die 14 ausgewählten Beben laufen ohne Anfrage an den USGS. Die Tabs Aktuell und Suche lesen den Live-Katalog des USGS, der Tab Link öffnet die Adresse einer USGS-Ereignisseite oder eine eingefügte ID, und das Seismogramm von EarthScope wird geladen, wenn es eines gibt.
+- **Smartphone und Tastatur**: Auf dem Smartphone wird das Panel zu einem Bottom Sheet, der Seismogrammstreifen bleibt unter der Karte und Karten öffnen das System-Menü zum Teilen. Mit der Tastatur startet und pausiert die Leertaste, die Pfeiltasten gehen sekundenweise vor, Plus und Minus zoomen die Karte.
+- **Ihre Zeitzone**: Die Bebenkarte nennt die Zeit in UTC und zusätzlich in Ihrer Zeitzone.
 - **Neun Sprachen**, auch die Namen auf der Karte.
 
 ## Genauigkeit

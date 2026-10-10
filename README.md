@@ -8,6 +8,7 @@
 <p align="center">
   <a href="https://arthur031221.github.io/Rumbleback/"><img src="https://img.shields.io/badge/live_demo-open-ff7b42?style=for-the-badge&labelColor=0b1118" alt="Live demo"></a>
   <a href="https://github.com/Arthur031221/Rumbleback/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/Arthur031221/Rumbleback/ci.yml?branch=main&style=for-the-badge&labelColor=0b1118&color=4cc3ff&label=CI" alt="CI"></a>
+  <a href="https://github.com/Arthur031221/Rumbleback/releases/latest"><img src="https://img.shields.io/github/v/release/Arthur031221/Rumbleback?style=for-the-badge&labelColor=0b1118&color=4cc3ff" alt="Latest release"></a>
   <a href="LICENSE"><img src="https://img.shields.io/github/license/Arthur031221/Rumbleback?style=for-the-badge&labelColor=0b1118&color=4cc3ff" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/languages-9-4cc3ff?style=for-the-badge&labelColor=0b1118" alt="9 languages">
 </p>
@@ -21,12 +22,7 @@
 </p>
 
 > [!TIP]
-> Open the [live page](https://arthur031221.github.io/Rumbleback/). It starts on the 2024 Hualien quake and plays by itself. Tap the map to drop a pin on your home. To run your own copy:
->
-> ```sh
-> git clone https://github.com/Arthur031221/Rumbleback && cd Rumbleback
-> npm install && npm run build && npm run serve    # then open http://127.0.0.1:4173/
-> ```
+> Open the [live page](https://arthur031221.github.io/Rumbleback/). It starts on the 2024 Hualien quake and plays by itself. Tap the map to drop a pin on your home. Press "Choose a quake" for a recent one, or paste the USGS link from a news story.
 
 <p align="center">
   <img src="assets/demo.gif" alt="The 2024 Hualien M7.4 earthquake replayed: a blue P ring and an orange S ring spread across Taiwan, seismometers and strong motion stations light up as the waves reach them, a real seismogram runs under the timeline, then a pin on Taipei shows 20 seconds to the P wave and 36 to the S wave" width="100%">
@@ -69,10 +65,12 @@ The same quake, the 2024 Hualien M7.4, seen from Taipei.
 - **Seismogram.** The real vertical trace of a nearby station along the timeline, with the model's P and S arrival and the analyst's pick drawn over it (EarthScope archive).
 - **ShakeMap, strong motion and felt reports.** The USGS intensity map, instruments coloured by the instrumental intensity USGS computed from their recording, and Did You Feel It groups.
 - **Blind zone.** The area where the S wave beat an alert issued at the time you choose.
-- **Your seconds.** P and S arrival at your pin, the gap between them, the ShakeMap intensity there and an alert slider. It's arithmetic on the model, not a record of any real alert.
+- **Your seconds.** P and S arrival at your pin, the gap between them, the ShakeMap intensity there and an alert slider. It's arithmetic on the model and doesn't reflect any real alert.
 - **Sound.** An optional low thump for P, a rumble for S that grows with the intensity at your pin, and a soft chime at the alert second.
-- **Share.** A link, a square card, a story card and a recorded video clip. The link leaves your pin out unless you tick a box, and then keeps it after the `#`, which browsers never send to a server. Cards show a city name, never coordinates.
+- **Share.** A link, a square card, a story card and a recorded video clip. On a phone a card opens the system share sheet. The link leaves your pin out unless you tick a box, and then keeps it after the `#`, which browsers never send to a server. Cards show a city name, never coordinates.
 - **Any quake.** Fourteen featured events work with no call to USGS, and ten of them carry a seismogram. Recent and Search tabs read the live USGS catalog, a Link tab opens any USGS event page or id you paste, and a seismogram comes from EarthScope when one is available.
+- **Your time zone.** The quake card gives the time in UTC and again in your own time zone.
+- **Phones and keyboards.** On a phone the panel is a bottom sheet and the seismogram stays above the timeline. With a keyboard, Space plays and pauses, the arrows step the clock, and plus and minus zoom the map. The browser tests run axe over both themes, on a desktop and a phone screen, with each dialog open.
 - **Nine languages.** English, Traditional and Simplified Chinese, Japanese, Korean, Spanish, French, German and Brazilian Portuguese, including the map labels.
 
 ## Try it

@@ -48,6 +48,9 @@ http://127.0.0.1:4173/
 - **Zone aveugle** : la zone où l'onde S est arrivée avant une alerte émise au moment que vous choisissez.
 - **Vos secondes** : la carte de l'épingle donne l'arrivée de P et de S, leur écart, l'intensité ShakeMap à cet endroit et un curseur pour l'heure de l'alerte. C'est de l'arithmétique sur le modèle, pas l'enregistrement d'une alerte réelle.
 - **Partager** : un lien, une carte carrée, une carte verticale et un clip vidéo. Le lien laisse votre épingle de côté par défaut et les cartes montrent un nom de ville.
+- **N'importe quel séisme** : les 14 séismes à la une se lisent sans appeler l'USGS. Les onglets Récents et Recherche lisent le catalogue USGS en direct, l'onglet Lien ouvre l'adresse d'une page d'événement USGS ou un identifiant que vous collez, et le sismogramme d'EarthScope est chargé quand il existe.
+- **Téléphone et clavier** : sur un téléphone, le panneau devient une feuille en bas, la bande du sismogramme reste sous la carte et les cartes ouvrent le menu de partage du système. Au clavier, la barre d'espace lance et met en pause, les flèches avancent d'une seconde et plus et moins zooment la carte.
+- **Votre fuseau horaire** : la fiche du séisme donne l'heure en UTC et aussi dans votre fuseau horaire.
 - **Neuf langues**, y compris les noms sur la carte.
 
 ## Précision

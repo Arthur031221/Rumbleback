@@ -48,6 +48,9 @@ http://127.0.0.1:4173/
 - **Zona cega**: a área onde a onda S chegou antes de um alerta emitido no momento que você escolher.
 - **Seus segundos**: o cartão do marcador mostra a chegada de P e S, a diferença, a intensidade do ShakeMap ali e um controle para a hora do alerta. É aritmética sobre o modelo, não o registro de um alerta real.
 - **Compartilhar**: um link, um cartão quadrado, um cartão vertical e um vídeo gravado. O link deixa o seu marcador de fora por padrão e os cartões mostram o nome de uma cidade.
+- **Qualquer terremoto**: os 14 em destaque rodam sem consultar o USGS. As abas Recentes e Buscar leem o catálogo ao vivo do USGS, a aba Link abre o endereço de uma página de evento do USGS ou um id que você colar, e o sismograma do EarthScope é carregado quando existe.
+- **Celular e teclado**: no celular o painel vira uma folha inferior, a faixa do sismograma fica sob o mapa e os cartões abrem o menu de compartilhamento do sistema. Com teclado, a barra de espaço toca e pausa, as setas avançam um segundo e mais e menos aproximam ou afastam o mapa.
+- **Seu fuso horário**: o cartão do terremoto mostra a hora em UTC e também no seu fuso horário.
 - **Nove idiomas**, inclusive os nomes no mapa.
 
 ## Precisão
