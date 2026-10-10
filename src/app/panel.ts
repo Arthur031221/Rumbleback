@@ -1,11 +1,13 @@
 import { cityName, citiesNear, searchCities, type City } from '../core/cities.ts';
+import type { QuakeData } from '../core/quake.ts';
 import { mmiColor, mmiRoman, shaking } from '../core/intensity.ts';
+import { stationSample } from '../core/residuals.ts';
 import { gridMmiAt } from '../core/usgs.ts';
 import { blindRadiusKm } from '../core/warning.ts';
 import { checkStats, cities, loadCities, nearestCityName, pinLabel, pinTiming, quakeTitle } from './derived.ts';
 import { $, h } from './dom.ts';
 import { icon } from './icons.ts';
-import { km, language, localDate, number, seconds, t, utcDate } from './i18n.ts';
+import { km, language, localDate, number, seconds, t, tenths, utcDate } from './i18n.ts';
 import { drawResiduals } from './residual-chart.ts';
 import { isPhone, isShort } from './layout.ts';
 import { clock, get } from './state.ts';
@@ -131,11 +133,16 @@ export function createPanel(host: HTMLElement, cb: PanelCallbacks) {
   const checkNote = h('p', { class: 'fine check-s' });
   const checkCaveat = h('p', { class: 'fine' });
   const checkAxis = h('p', { class: 'fine axis' });
+  // The picks behind the summary as plain text, for a keyboard, a touch screen and a screen reader, which the hover card does not reach.
+  const stationsCaption = h('caption', { class: 'fine' });
+  const stationsHead = h('tr');
+  const stationsBody = h('tbody');
+  const stations = h('table', { class: 'stations', hidden: true }, stationsCaption, h('thead', {}, stationsHead), stationsBody);
   const check = h(
     'details',
     { class: 'card check-card' },
     checkTitle,
-    h('div', { class: 'check-body' }, checkSummary, histogram, checkAxis, checkNote, checkCaveat),
+    h('div', { class: 'check-body' }, checkSummary, histogram, checkAxis, checkNote, checkCaveat, stations),
   );
 
   host.append(handle, quakeCard, pinCard, check);
@@ -369,15 +376,48 @@ export function createPanel(host: HTMLElement, cb: PanelCallbacks) {
         checkAxis.textContent = t('check.axis');
         checkNote.textContent = t('check.sNote', { n: number(c.S?.n ?? 0) });
         checkCaveat.textContent = t('check.caveat');
+        renderStations(s.quake);
         if (check.open) drawChart();
       } else {
         checkSummary.textContent = t('check.none');
         histogram.hidden = true;
         checkAxis.textContent = '';
         checkCaveat.textContent = '';
+        stations.hidden = true;
         checkNote.textContent = t('check.sNote', { n: number(c.S?.n ?? 0) });
       }
     }
+  }
+
+  const STATION_ROWS = 10;
+  const STATION_COLUMNS = ['check.col.station', 'check.col.dist', 'check.col.picked', 'check.col.model', 'check.col.diff'] as const;
+  /** Redone only when the quake or the language changes, since the table does not move with the clock. */
+  let stationsFor = '';
+  function renderStations(data: QuakeData): void {
+    const stamp = `${language()}:${data.quake.id}:${data.picks.length}`;
+    if (stamp === stationsFor) return;
+    stationsFor = stamp;
+    const { rows, total } = stationSample(data, STATION_ROWS);
+    stations.hidden = rows.length === 0;
+    stationsCaption.textContent = t('check.table', { n: number(rows.length), m: number(total) });
+    stationsHead.replaceChildren(...STATION_COLUMNS.map((key) => h('th', { scope: 'col', text: t(key) })));
+    const signed = (n: number) => {
+      const r = Math.round(n * 10) / 10 || 0; // no "-0.0"
+      return t('unit.s', { n: `${r > 0 ? '+' : ''}${number(r, 1)}` });
+    };
+    stationsBody.replaceChildren(
+      ...rows.map((r) =>
+        h(
+          'tr',
+          {},
+          h('th', { scope: 'row', class: 'mono', text: r.sta }),
+          h('td', { class: 'mono', text: km(r.distKm) }),
+          h('td', { class: 'mono', text: tenths(r.picked) }),
+          h('td', { class: 'mono', text: tenths(r.model) }),
+          h('td', { class: 'mono', text: signed(r.picked - r.model) }),
+        ),
+      ),
+    );
   }
 
   /** Null until the first update, so a pin kept from an earlier visit does not move the sheet. */

@@ -949,6 +949,37 @@ button {
 .check-s {
   margin-top: 6px;
 }
+.stations {
+  width: 100%;
+  margin-top: 12px;
+  border-collapse: collapse;
+  color: var(--text);
+  font-size: 12px;
+}
+.stations caption {
+  padding-bottom: 6px;
+  text-align: left;
+}
+.stations th,
+.stations td {
+  padding: 4px 6px 4px 0;
+  border-top: 1px solid var(--line);
+  text-align: right;
+  white-space: nowrap;
+}
+.stations thead th {
+  border-top: 0;
+  color: var(--muted);
+  font-weight: 600;
+}
+.stations th:first-child {
+  text-align: left;
+  font-weight: 600;
+}
+.stations th:last-child,
+.stations td:last-child {
+  padding-right: 0;
+}
 .check-body .fine + .fine {
   margin-top: 6px;
 }

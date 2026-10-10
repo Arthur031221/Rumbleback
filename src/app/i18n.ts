@@ -60,6 +60,11 @@ export function seconds(n: number): string {
   return t('unit.s', { n: number(n, Math.abs(n) < 10 ? 1 : 0) });
 }
 
+/** Seconds to a tenth, for comparing an analyst's pick with the model's arrival. */
+export function tenths(n: number): string {
+  return t('unit.s', { n: number(n, 1) });
+}
+
 export function km(n: number): string {
   return t('unit.km', { n: number(n, n < 10 ? 1 : 0) });
 }

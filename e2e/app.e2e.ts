@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { after, afterEach, before, test } from 'node:test';
 import { decodeQuake } from '../src/core/codec.ts';
 import { distanceDeg } from '../src/core/geo.ts';
+import { stationSample } from '../src/core/residuals.ts';
 import { TravelTimes } from '../src/core/traveltime.ts';
 import { harness, LIVE_ID, MISSING_ID, pause, ready, seek, SLOW_ID, type Harness } from './helpers.ts';
 
@@ -843,6 +844,28 @@ test('sound turns on and off from the timeline', async () => {
   await button.click();
   assert.equal(await button.getAttribute('aria-pressed'), 'false');
   assert.deepEqual(errors, []);
+});
+
+test('the check card lists a sample of the stations as a table, with the analyst pick next to the model, in the language of the page', async () => {
+  const { page } = await h.open();
+  await pause(page);
+  await page.locator('.check-card summary').click();
+  const { rows, total } = stationSample(hualien, 10);
+  const table = page.locator('table.stations');
+  assert.equal(
+    await table.locator('caption').innerText(),
+    `10 of the ${total} stations, nearest to farthest (P arrival, seconds after the origin)`,
+  );
+  assert.deepEqual(await table.locator('thead th').allInnerTexts(), ['Station', 'Distance', 'Picked', 'Model', 'Difference']);
+  assert.equal(await table.locator('tbody tr').count(), 10);
+  const first = await table.locator('tbody tr').first().locator('th, td').allInnerTexts();
+  assert.deepEqual(first.slice(0, 1), [rows[0]!.sta]);
+  assert.equal(first[2], `${rows[0]!.picked.toFixed(1)} s`);
+  assert.equal(first[3], `${rows[0]!.model.toFixed(1)} s`);
+  const diff = rows[0]!.picked - rows[0]!.model;
+  assert.equal(first[4], `${diff > 0.05 ? '+' : ''}${diff.toFixed(1)} s`);
+  await page.locator('.select').selectOption('de');
+  assert.deepEqual(await table.locator('thead th').allInnerTexts(), ['Station', 'Entfernung', 'Gepickt', 'Modell', 'Differenz']);
 });
 
 test('model check card shows the residual summary', async () => {

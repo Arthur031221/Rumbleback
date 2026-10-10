@@ -3,7 +3,7 @@ import { mmiColor, mmiRoman, shaking } from '../core/intensity.ts';
 import type { QuakeData } from '../core/quake.ts';
 import type { TravelTimes } from '../core/traveltime.ts';
 import { h } from './dom.ts';
-import { km, language, number, t } from './i18n.ts';
+import { km, language, number, t, tenths } from './i18n.ts';
 import type { Hit } from './overlay.ts';
 
 /** The words for one dot: a title, what kind of dot it is, and the facts. `mmi` also draws the intensity chip. */
@@ -12,9 +12,6 @@ interface Description {
   lines: string[];
   mmi?: number;
 }
-
-/** A pick is compared with the model to a tenth of a second, where the panel rounds the same seconds. */
-const tenths = (n: number) => t('unit.s', { n: number(n, 1) });
 
 function describe(hit: Hit, data: QuakeData, tt: TravelTimes): Description {
   const epi = [data.quake.lat, data.quake.lon] as const;
