@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <img src="assets/demo.gif" alt="O terremoto de Hualien de 2024 (M7,4) reproduzido: um anel azul da onda P e um laranja da onda S cruzam Taiwan, sismômetros e acelerógrafos acendem quando as ondas chegam, e um marcador em Taipé mostra 20 segundos até a onda P e 36 até a onda S" width="100%">
+  <a href="https://arthur031221.github.io/Rumbleback/"><img src="assets/demo.gif" alt="O terremoto de Hualien de 2024 (M7,4) reproduzido: um anel azul da onda P e um laranja da onda S cruzam Taiwan, sismômetros e acelerógrafos acendem quando as ondas chegam, e um marcador em Taipé mostra 20 segundos até a onda P e 36 até a onda S" width="100%"></a>
 </p>
 
 **0,66 s de erro mediano contra 3.933 leituras reais da onda P de 14 terremotos.**
@@ -20,6 +20,17 @@
 - **Não é uma animação.** Cada ponto é um instrumento, uma leitura ou um relato de sensação reais do USGS. Os dois anéis vêm de um modelo da Terra publicado que comparo com o ObsPy em 600 pontos aleatórios e com leituras reais em cada terremoto.
 - **Não é uma magnitude num mapa.** Coloque um marcador na sua casa e leia os seus próprios números: quando a onda P chegou, quando a S chegou, a força do tremor e quantos segundos um alerta emitido em qualquer momento teria dado a você.
 - **Não é um servidor.** Uma página estática. Sem conta, sem análise, e o seu marcador nunca sai do navegador.
+
+## Escolha uma história
+
+Cada link abre a página ao vivo com um terremoto e um marcador já colocado em uma cidade, e a reprodução começa sozinha. Os tempos de P e S são os do modelo e o tremor vem do ShakeMap do USGS, os mesmos números do cartão do marcador.
+
+| Terremoto | Marcador | Onda P | Onda S | Tremor lá |
+|---|---|---:|---:|---|
+| [2011 Tohoku, Japão](https://arthur031221.github.io/Rumbleback/?event=official20110311054624120_30#pin=35.69,139.75), M9.1 | Tóquio, 372 km | 50 s | 90 s | MMI 6,8 |
+| [2025 Mandalay, Mianmar](https://arthur031221.github.io/Rumbleback/?event=us7000pn9s#pin=13.75,100.5), M7.7 | Banguecoque, 1.038 km | 135 s | 241 s | MMI 4,6 |
+| [2010 Maule, Chile](https://arthur031221.github.io/Rumbleback/?event=official20100227063411530_30#pin=-33.45,-70.67), M8.8 | Santiago, 360 km | 49 s | 88 s | MMI 7,5 |
+| [2024 Hualien, Taiwan](https://arthur031221.github.io/Rumbleback/?event=us7000m9g4#pin=25.03,121.56), M7.4 | Taipé, 133 km | 20 s | 36 s | MMI 5,9 |
 
 ## Experimente
 
@@ -42,12 +53,12 @@ http://127.0.0.1:4173/
 
 - **Ondas**: as primeiras frentes P e S na superfície, considerando a profundidade, então um terremoto profundo não mostra anel até a onda chegar à superfície.
 - **Sismômetros**: um ponto que acende no momento em que um analista marcou a chegada P numa estação real.
-- **Inspecionar um ponto**: pare o mouse sobre um ponto aceso. Uma estação mostra a marca ao lado do tempo do modelo, um instrumento a intensidade e os valores máximos, e um relato de sensação a quantidade.
+- **Inspecionar um ponto**: pare o mouse sobre um ponto aceso. Uma estação mostra a marca ao lado do tempo do modelo, um instrumento a intensidade e os valores máximos, e um relato de sensação a quantidade. O cartão de conferência com dados reais lista dez estações em uma tabela, acessível por teclado e tela de toque.
 - **ShakeMap**: o mapa de intensidade, revelado atrás da onda S.
 - **Sismograma real**: sobre a linha do tempo, o movimento vertical real de uma estação próxima, com a chegada modelada de P e S e a chegada de P marcada por um analista.
-- **Movimento forte e relatos de sensação**: coloridos pela intensidade medida ou relatada.
+- **Movimento forte e relatos de sensação**: coloridos pela intensidade medida ou relatada. Uma escala de cores aparece no cartão do terremoto.
 - **Zona cega**: a área onde a onda S chegou antes de um alerta emitido no momento que você escolher.
-- **Seus segundos**: o cartão do marcador mostra a chegada de P e S, a diferença, a intensidade do ShakeMap ali e um controle para a hora do alerta. É aritmética sobre o modelo, não o registro de um alerta real.
+- **Seus segundos**: o cartão do marcador mostra a chegada de P e S, a diferença, a intensidade do ShakeMap ali e um controle para a hora do alerta. É aritmética sobre o modelo, não o registro de um alerta real. Um botão reproduz as ondas de novo, um pouco antes de chegarem ao seu marcador.
 - **Compartilhar**: um link, um cartão quadrado, um cartão vertical e um vídeo gravado, salvo como MP4 quando o navegador consegue, para tocar no iPhone e nos apps sociais. O link deixa o seu marcador de fora por padrão e os cartões mostram o nome de uma cidade.
 - **Qualquer terremoto**: os 14 em destaque rodam sem consultar o USGS. As abas Recentes e Buscar leem o catálogo ao vivo do USGS, a aba Link abre o endereço de uma página de evento do USGS ou um id que você colar, e o sismograma do EarthScope é carregado quando existe.
 - **Celular e teclado**: no celular o painel vira uma folha inferior, a faixa do sismograma fica sob o mapa e os cartões abrem o menu de compartilhamento do sistema. Com teclado, a barra de espaço toca e pausa, as setas avançam um segundo e mais e menos aproximam ou afastam o mapa. Um marcador novo leva a folha até os seus números. Com o celular na horizontal o painel fica ao lado e o mapa mantém o seu espaço. Um leitor de tela é avisado quando a onda P, a onda S e o alerta chegam ao marcador.

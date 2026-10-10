@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.4.0
+
+Released 2026-10-10.
+
+New
+
+- A key in the quake card names the colours of the ShakeMap, the strong motion dots and the felt reports, from
+  intensity I (white) to X (dark red). It shows while one of those layers is on and the quake has data for it.
+- The pin card has a "Watch the waves reach this place" button. It moves the clock to five seconds before the P wave
+  reaches your pin and plays, so a pin dropped after the waves have passed is not a dead end. The seconds it skips
+  are not read out to a screen reader as if the replay had reached them.
+- The "Checked against real data" card lists up to ten stations spread from the nearest to the farthest, with the
+  analyst's P pick, the model's arrival and the difference. It is plain text, so a keyboard, a touch screen and a
+  screen reader reach the picks that the hover card shows only to a mouse. In a narrow panel it scrolls sideways.
+- The README opens with four links that each load one quake with a pin already on a city: Tokyo for Tohoku 2011,
+  Bangkok for Mandalay 2025, Santiago for Maule 2010 and Taipei for Hualien 2024. A test checks the seconds beside
+  each link against the library, in all nine READMEs.
+
+Fixed
+
+- A pin outside the area the ShakeMap covers said "No ShakeMap for this quake", although the map showed one. It now
+  says the ShakeMap has no estimate for that place, and keeps the old message for a quake that has no ShakeMap.
+
 ## 0.3.2
 
 Released 2026-10-10.

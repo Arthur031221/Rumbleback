@@ -14,7 +14,7 @@
 </p>
 
 <p align="center">
-  <a href="#try-it">Try it</a> | <a href="#before-and-after">Before and after</a> | <a href="#features">Features</a> | <a href="#how-it-works">How it works</a> | <a href="#benchmarks">Benchmarks</a> | <a href="docs/INSTALL.md">Docs</a>
+  <a href="#pick-a-story">Pick a story</a> | <a href="#try-it">Try it</a> | <a href="#before-and-after">Before and after</a> | <a href="#features">Features</a> | <a href="#how-it-works">How it works</a> | <a href="#benchmarks">Benchmarks</a> | <a href="docs/INSTALL.md">Docs</a>
 </p>
 
 <p align="center">
@@ -25,11 +25,22 @@
 > Open the [live page](https://arthur031221.github.io/Rumbleback/). The 2024 Hualien quake plays automatically. Tap the map to pin your home. Press "Choose a quake" for a recent one, or paste the USGS link from a news story.
 
 <p align="center">
-  <img src="assets/demo.gif" alt="The 2024 Hualien M7.4 earthquake replayed: a blue P ring and an orange S ring spread across Taiwan, seismometers and strong motion stations light up as the waves reach them, a real seismogram runs under the timeline, a pin on Taipei shows 20 seconds to the P wave and 36 to the S wave, and a mouse on one instrument opens a card with its readings" width="100%">
+  <a href="https://arthur031221.github.io/Rumbleback/"><img src="assets/demo.gif" alt="The 2024 Hualien M7.4 earthquake replayed: a blue P ring and an orange S ring spread across Taiwan, seismometers and strong motion stations light up as the waves reach them, a real seismogram runs under the timeline, a pin on Taipei shows 20 seconds to the P wave and 36 to the S wave, and a mouse on one instrument opens a card with its readings" width="100%"></a>
 </p>
 
 **0.66 s median error against 3,933 real P picks from 14 earthquakes.**
 <sub>Observed arrival minus the iasp91 first P arrival, stations up to 95 degrees away, picks that USGS used to locate each quake (M6.8 to M9.1). Reproduce with `npm run validate`. Details in [docs/ACCURACY.md](docs/ACCURACY.md).</sub>
+
+## Pick a story
+
+Each link opens the live page on one quake with a pin already on a city, and the replay starts by itself. The P and S times are the model's and the shaking is the USGS ShakeMap's, the same numbers the pin card shows.
+
+| Quake | Pin | P wave | S wave | Shaking there |
+|---|---|---:|---:|---|
+| [2011 Tohoku, Japan](https://arthur031221.github.io/Rumbleback/?event=official20110311054624120_30#pin=35.69,139.75), M9.1 | Tokyo, 372 km | 50 s | 90 s | MMI 6.8 |
+| [2025 Mandalay, Myanmar](https://arthur031221.github.io/Rumbleback/?event=us7000pn9s#pin=13.75,100.5), M7.7 | Bangkok, 1,038 km | 135 s | 241 s | MMI 4.6 |
+| [2010 Maule, Chile](https://arthur031221.github.io/Rumbleback/?event=official20100227063411530_30#pin=-33.45,-70.67), M8.8 | Santiago, 360 km | 49 s | 88 s | MMI 7.5 |
+| [2024 Hualien, Taiwan](https://arthur031221.github.io/Rumbleback/?event=us7000m9g4#pin=25.03,121.56), M7.4 | Taipei, 133 km | 20 s | 36 s | MMI 5.9 |
 
 ## Why
 
@@ -62,11 +73,11 @@ The same quake, the 2024 Hualien M7.4, seen from Taipei.
 
 - **Waves.** The first P and S wavefronts at the surface account for depth. For a deep quake, no ring appears until the wave reaches the surface.
 - **Seismometers.** Each dot flashes at an analyst's picked P arrival time for a real station (USGS phase data).
-- **Inspect a dot.** Hover over a lit dot. A station shows its pick beside the model's time. An instrument shows its intensity and peak readings. A felt report shows its count.
+- **Inspect a dot.** Hover over a lit dot. A station shows its pick beside the model's time. An instrument shows its intensity and peak readings. A felt report shows its count. The check card lists ten stations the same way, for a keyboard or a touch screen.
 - **Seismogram.** A nearby station's real vertical trace runs along the timeline, with the model's P and S arrivals and the analyst's pick drawn over it (EarthScope archive).
-- **ShakeMap, strong motion and felt reports.** The USGS intensity map, instruments coloured by the instrumental intensity USGS computed from their recordings, and Did You Feel It groups.
+- **ShakeMap, strong motion and felt reports.** The USGS intensity map, instruments coloured by the instrumental intensity USGS computed from their recordings, and Did You Feel It groups. A colour key sits in the quake card.
 - **Blind zone.** The area where the S wave beat an alert issued at your chosen time.
-- **Your seconds.** P and S arrivals at your pin, the gap between them, the ShakeMap intensity there and an alert slider. It's arithmetic on the model and doesn't reflect any real alert.
+- **Your seconds.** P and S arrivals at your pin, the gap between them, the ShakeMap intensity there and an alert slider. It's arithmetic on the model and doesn't reflect any real alert. A button replays the waves from just before they reach your pin.
 - **Sound.** An optional low thump for P, a rumble for S that grows with the intensity at your pin, and a soft chime at the alert second.
 - **Share.** A link, a square card, a story card and a recorded video clip. The clip saves as MP4 where the browser supports it, so it plays on an iPhone and in social apps. On a phone, a card opens the system share sheet. The link includes your pin only if you tick a box. Then it keeps the pin after the `#`, which browsers never send to a server. Cards show a city name, never coordinates.
 - **Any quake.** Fourteen featured events work without calling USGS. Ten include a seismogram. Recent and Search tabs read the live USGS catalog. The Link tab opens any USGS event page or id you paste, with an EarthScope seismogram when available.

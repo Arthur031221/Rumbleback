@@ -38,7 +38,13 @@ Rest a mouse on a dot that has lit up and a small card says what it is. For a se
 gives its distance, the time the analyst picked and the time the model gives, to a tenth of a second. For a strong motion
 instrument it gives the network, the intensity, the peak acceleration and the peak velocity USGS has for it. For a
 felt report it gives the number of responses and their intensity. A dot that has not lit yet, or whose layer is
-off, shows no card. A finger does not open it, because a tap on the map drops the pin.
+off, shows no card. A finger does not open it, because a tap on the map drops the pin. The table in the
+*Checked against real data* card (see below) gives the seismometer readings in plain text for a finger, a keyboard
+and a screen reader.
+
+A key in the quake card shows the colour scale of the ShakeMap, the strong motion dots and the felt reports
+together, from intensity I (white) to X (dark red). It is there while one of those three layers is on and the
+quake has data for it.
 
 ## The seismogram strip
 
@@ -56,7 +62,11 @@ Tap the map, search a city, or use your location. The pin card shows:
 
 - **P wave and S wave:** seconds after the quake began until each arrives where you are.
 - **S minus P:** the time between the two arrivals where you are. An early warning can reach you before P if the quake is detected near its source, which is what the slider below shows.
-- **Shaking here:** the ShakeMap intensity at the pin, with the USGS word for it.
+- **Shaking here:** the ShakeMap intensity at the pin, with the USGS word for it. A pin outside the area the
+  ShakeMap covers, or where it has no estimate, says so. A quake with no ShakeMap at all says that instead.
+- **Watch the waves reach this place:** a button that moves the clock to five seconds before the P wave reaches
+  your pin (or to the start of the replay, if that is later) and plays from there. Use it when the replay has
+  already passed your place.
 - **If an alert went out:** move the slider to the number of seconds after the quake began at which a
   warning could have been issued. The card then shows how long before the S wave you would have heard it,
   or says you were inside the blind zone. This is arithmetic on the model, not a record of any real alert.
@@ -69,15 +79,25 @@ Drag the pin to move it. The pin is kept in your browser only. A click on the ma
 (0.3 s with a mouse, 0.4 s on a touch screen), so that a double click can zoom without moving it. A double click slower
 than that wait moves the pin.
 
+## Checked against real data
+
+Open this card in the left panel for the comparison behind the accuracy claim. It gives the number of real P picks,
+the median error and the share within a given error, a histogram of observed minus modelled arrival, and a table of
+up to ten stations spread from the nearest to the farthest: the analyst's pick, the model's arrival and the difference, in
+seconds after the origin. The nearest stations often differ most, because the model is a global average and the crust
+under a quake is not. [ACCURACY.md](ACCURACY.md) has the numbers.
+
 ## Keyboard and screen readers
 
-Space plays and pauses, the arrow keys step the clock, and plus and minus zoom the map, wherever the focus is. A
-screen reader is told when the replay reaches your pin: one polite message when the P wave arrives (with the
+Space plays and pauses, the arrow keys step the clock, and plus and minus zoom the map, wherever the focus is,
+with these exceptions: a text field keeps its own keys, Space presses a button that has the focus, and the arrow
+keys scroll the station table when it has the focus. A screen reader is told when the replay reaches your pin: one polite message when the P wave arrives (with the
 seconds until the S wave), one when the S wave arrives (with the shaking there) and one at the alert time (with
 the seconds it would have given you). Nothing is read out while you scrub or jump to another moment. The hover card
-for dots is for a mouse only, so a keyboard, a touch screen or a screen reader does not reach the station picks,
-the instrument readings or the felt report counts. The pin card is plain text, with the arrival times and the
-shaking at your place.
+for dots is for a mouse only, so a keyboard, a touch screen or a screen reader does not reach the instrument
+readings or the felt report counts. The pin card is plain text, with the arrival times and the shaking at your
+place, and the *Checked against real data* card has a table of up to ten stations with the analyst's P pick next to the
+model's arrival.
 
 ## Share
 

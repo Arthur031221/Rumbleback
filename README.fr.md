@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <img src="assets/demo.gif" alt="Le séisme de Hualien de 2024 (M7,4) rejoué : un anneau bleu pour l'onde P et un anneau orange pour l'onde S traversent Taïwan, les sismomètres et les accéléromètres s'allument à leur arrivée, et une épingle sur Taipei montre 20 secondes jusqu'à l'onde P et 36 jusqu'à l'onde S" width="100%">
+  <a href="https://arthur031221.github.io/Rumbleback/"><img src="assets/demo.gif" alt="Le séisme de Hualien de 2024 (M7,4) rejoué : un anneau bleu pour l'onde P et un anneau orange pour l'onde S traversent Taïwan, les sismomètres et les accéléromètres s'allument à leur arrivée, et une épingle sur Taipei montre 20 secondes jusqu'à l'onde P et 36 jusqu'à l'onde S" width="100%"></a>
 </p>
 
 **0,66 s d'erreur médiane face à 3 933 vraies lectures de l'onde P de 14 séismes.**
@@ -20,6 +20,17 @@
 - **Pas une animation.** Chaque point est un vrai instrument, une lecture ou un témoignage de l'USGS. Les deux anneaux viennent d'un modèle de Terre publié que je compare à ObsPy sur 600 points au hasard et à de vraies lectures pour chaque séisme.
 - **Pas une magnitude sur une carte.** Posez une épingle sur votre maison et lisez vos propres chiffres : quand l'onde P est arrivée, quand l'onde S est arrivée, la force de la secousse, et combien de secondes une alerte émise à n'importe quel moment vous aurait données.
 - **Pas un serveur.** Une page statique. Aucun compte, aucune analyse, et votre épingle ne quitte jamais le navigateur.
+
+## Choisissez une histoire
+
+Chaque lien ouvre la page en ligne sur un séisme, avec une épingle déjà posée sur une ville, et la lecture démarre seule. Les temps de P et de S sont ceux du modèle, la secousse est celle de la ShakeMap de l'USGS, les mêmes chiffres que sur la carte de l'épingle.
+
+| Séisme | Épingle | Onde P | Onde S | Secousse là-bas |
+|---|---|---:|---:|---|
+| [2011 Tohoku, Japon](https://arthur031221.github.io/Rumbleback/?event=official20110311054624120_30#pin=35.69,139.75), M9.1 | Tokyo, 372 km | 50 s | 90 s | MMI 6,8 |
+| [2025 Mandalay, Birmanie](https://arthur031221.github.io/Rumbleback/?event=us7000pn9s#pin=13.75,100.5), M7.7 | Bangkok, 1 038 km | 135 s | 241 s | MMI 4,6 |
+| [2010 Maule, Chili](https://arthur031221.github.io/Rumbleback/?event=official20100227063411530_30#pin=-33.45,-70.67), M8.8 | Santiago, 360 km | 49 s | 88 s | MMI 7,5 |
+| [2024 Hualien, Taïwan](https://arthur031221.github.io/Rumbleback/?event=us7000m9g4#pin=25.03,121.56), M7.4 | Taipei, 133 km | 20 s | 36 s | MMI 5,9 |
 
 ## Essayer
 
@@ -42,12 +53,12 @@ http://127.0.0.1:4173/
 
 - **Ondes** : les premiers fronts P et S à la surface, en tenant compte de la profondeur, donc un séisme profond n'affiche pas d'anneau tant que l'onde n'est pas remontée.
 - **Sismomètres** : un point qui s'allume au moment où un analyste a pointé l'arrivée P sur une vraie station.
-- **Inspecter un point** : posez la souris sur un point allumé. Une station donne son pointé à côté du temps du modèle, un instrument son intensité et ses valeurs maximales, un témoignage son nombre.
+- **Inspecter un point** : posez la souris sur un point allumé. Une station donne son pointé à côté du temps du modèle, un instrument son intensité et ses valeurs maximales, un témoignage son nombre. La fiche de comparaison aux données réelles liste dix stations dans un tableau, accessible au clavier et à l'écran tactile.
 - **ShakeMap** : la carte d'intensité, dévoilée derrière l'onde S.
 - **Vrai sismogramme** : au-dessus de la frise, le mouvement vertical réel d'une station proche, avec l'arrivée modélisée de P et de S et l'arrivée de P pointée par un analyste.
-- **Mouvements forts et témoignages** : colorés selon l'intensité mesurée ou déclarée.
+- **Mouvements forts et témoignages** : colorés selon l'intensité mesurée ou déclarée. Une échelle de couleurs figure sur la fiche du séisme.
 - **Zone aveugle** : la zone où l'onde S est arrivée avant une alerte émise au moment que vous choisissez.
-- **Vos secondes** : la carte de l'épingle donne l'arrivée de P et de S, leur écart, l'intensité ShakeMap à cet endroit et un curseur pour l'heure de l'alerte. C'est de l'arithmétique sur le modèle, pas l'enregistrement d'une alerte réelle.
+- **Vos secondes** : la carte de l'épingle donne l'arrivée de P et de S, leur écart, l'intensité ShakeMap à cet endroit et un curseur pour l'heure de l'alerte. C'est de l'arithmétique sur le modèle, pas l'enregistrement d'une alerte réelle. Un bouton rejoue les ondes juste avant leur arrivée à l'épingle.
 - **Partager** : un lien, une carte carrée, une carte verticale et un clip vidéo, enregistré en MP4 quand le navigateur le peut, pour qu'il se lise sur un iPhone et dans les applications sociales. Le lien laisse votre épingle de côté par défaut et les cartes montrent un nom de ville.
 - **N'importe quel séisme** : les 14 séismes à la une se lisent sans appeler l'USGS. Les onglets Récents et Recherche lisent le catalogue USGS en direct, l'onglet Lien ouvre l'adresse d'une page d'événement USGS ou un identifiant que vous collez, et le sismogramme d'EarthScope est chargé quand il existe.
 - **Téléphone et clavier** : sur un téléphone, le panneau devient une feuille en bas, la bande du sismogramme reste sous la carte et les cartes ouvrent le menu de partage du système. Au clavier, la barre d'espace lance et met en pause, les flèches avancent d'une seconde et plus et moins zooment la carte. Une nouvelle épingle amène la feuille à ses chiffres. En mode paysage, le panneau reste sur le côté et la carte garde sa place. Un lecteur d'écran est prévenu quand l'onde P, l'onde S et l'alerte atteignent l'épingle.

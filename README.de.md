@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <img src="assets/demo.gif" alt="Das Hualien-Erdbeben von 2024 (M7,4) im Replay: ein blauer P-Ring und ein oranger S-Ring laufen über Taiwan, Seismometer und Starkbebeninstrumente leuchten bei Eintreffen der Wellen auf, und eine Markierung auf Taipeh zeigt 20 Sekunden bis zur P-Welle und 36 bis zur S-Welle" width="100%">
+  <a href="https://arthur031221.github.io/Rumbleback/"><img src="assets/demo.gif" alt="Das Hualien-Erdbeben von 2024 (M7,4) im Replay: ein blauer P-Ring und ein oranger S-Ring laufen über Taiwan, Seismometer und Starkbebeninstrumente leuchten bei Eintreffen der Wellen auf, und eine Markierung auf Taipeh zeigt 20 Sekunden bis zur P-Welle und 36 bis zur S-Welle" width="100%"></a>
 </p>
 
 **0,66 s mittlerer Fehler gegenüber 3.933 echten P-Einsätzen aus 14 Erdbeben.**
@@ -20,6 +20,17 @@
 - **Keine Animation.** Jeder Punkt ist ein echtes Instrument, ein Einsatz oder ein Wahrnehmungsbericht der USGS. Die beiden Ringe stammen aus einem veröffentlichten Erdmodell, das ich an 600 Zufallspunkten mit ObsPy und bei jedem Beben mit echten Einsätzen vergleiche.
 - **Keine Magnitude auf einer Karte.** Setzen Sie eine Markierung auf Ihr Zuhause und lesen Sie Ihre eigenen Zahlen: wann die P-Welle ankam, wann die S-Welle, wie stark es war und wie viele Sekunden eine Warnung zu einem beliebigen Zeitpunkt Ihnen gegeben hätte.
 - **Kein Server.** Eine statische Seite. Kein Konto, keine Analyse, und Ihre Markierung verlässt den Browser nie.
+
+## Eine Geschichte auswählen
+
+Jeder Link öffnet die Live-Seite mit einem Beben und einer Markierung, die schon auf einer Stadt sitzt, und die Wiedergabe startet von selbst. Die Zeiten von P und S stammen vom Modell, die Erschütterung von der ShakeMap des USGS, es sind dieselben Zahlen wie auf der Markierungskarte.
+
+| Beben | Markierung | P-Welle | S-Welle | Erschütterung dort |
+|---|---|---:|---:|---|
+| [2011 Tohoku, Japan](https://arthur031221.github.io/Rumbleback/?event=official20110311054624120_30#pin=35.69,139.75), M9.1 | Tokio, 372 km | 50 s | 90 s | MMI 6,8 |
+| [2025 Mandalay, Myanmar](https://arthur031221.github.io/Rumbleback/?event=us7000pn9s#pin=13.75,100.5), M7.7 | Bangkok, 1.038 km | 135 s | 241 s | MMI 4,6 |
+| [2010 Maule, Chile](https://arthur031221.github.io/Rumbleback/?event=official20100227063411530_30#pin=-33.45,-70.67), M8.8 | Santiago de Chile, 360 km | 49 s | 88 s | MMI 7,5 |
+| [2024 Hualien, Taiwan](https://arthur031221.github.io/Rumbleback/?event=us7000m9g4#pin=25.03,121.56), M7.4 | Taipeh, 133 km | 20 s | 36 s | MMI 5,9 |
 
 ## Ausprobieren
 
@@ -42,12 +53,12 @@ http://127.0.0.1:4173/
 
 - **Wellen**: die ersten P- und S-Fronten an der Oberfläche, mit Herdtiefe, sodass ein tiefes Beben erst einen Ring zeigt, wenn die Welle an die Oberfläche kommt.
 - **Seismometer**: ein Punkt, der aufleuchtet, wenn ein Analyst an einer echten Station den P-Einsatz gesetzt hat.
-- **Punkt untersuchen**: Halten Sie die Maus auf einen aufgeleuchteten Punkt. Eine Station zeigt ihren Einsatz neben der Modellzeit, ein Instrument seine Intensität und Spitzenwerte, ein Wahrnehmungsbericht seine Anzahl.
+- **Punkt untersuchen**: Halten Sie die Maus auf einen aufgeleuchteten Punkt. Eine Station zeigt ihren Einsatz neben der Modellzeit, ein Instrument seine Intensität und Spitzenwerte, ein Wahrnehmungsbericht seine Anzahl. Die Prüfkarte mit echten Daten listet zehn Stationen in einer Tabelle auf, die Tastatur und Touchscreen erreichen.
 - **ShakeMap**: die Intensitätskarte, die hinter der S-Welle sichtbar wird.
 - **Echtes Seismogramm**: über der Zeitleiste die echte Vertikalbewegung einer nahen Station, mit dem modellierten P- und S-Einsatz und dem von einem Analysten gesetzten P-Einsatz.
-- **Starkbeben und Wahrnehmung**: eingefärbt nach gemessener oder gemeldeter Intensität.
+- **Starkbeben und Wahrnehmung**: eingefärbt nach gemessener oder gemeldeter Intensität. Eine Farbskala steht auf der Bebenkarte.
 - **Blinde Zone**: der Bereich, in dem die S-Welle vor einer Warnung zum gewählten Zeitpunkt ankam.
-- **Ihre Sekunden**: die Karte zur Markierung zeigt P- und S-Ankunft, die Differenz, die ShakeMap-Intensität dort und einen Regler für den Warnzeitpunkt. Das ist Rechnung am Modell, kein Protokoll einer echten Warnung.
+- **Ihre Sekunden**: die Karte zur Markierung zeigt P- und S-Ankunft, die Differenz, die ShakeMap-Intensität dort und einen Regler für den Warnzeitpunkt. Das ist Rechnung am Modell, kein Protokoll einer echten Warnung. Eine Schaltfläche spielt die Wellen kurz vor ihrer Ankunft an Ihrer Markierung erneut ab.
 - **Teilen**: ein Link, eine quadratische Karte, eine Hochformat-Karte und ein Videoclip, wenn der Browser es kann als MP4, damit er auf dem iPhone und in sozialen Apps läuft. Der Link lässt Ihre Markierung standardmäßig weg, und Karten zeigen einen Städtenamen.
 - **Jedes Beben**: Die 14 ausgewählten Beben laufen ohne Anfrage an den USGS. Die Tabs Aktuell und Suche lesen den Live-Katalog des USGS, der Tab Link öffnet die Adresse einer USGS-Ereignisseite oder eine eingefügte ID, und das Seismogramm von EarthScope wird geladen, wenn es eines gibt.
 - **Smartphone und Tastatur**: Auf dem Smartphone wird das Panel zu einem Bottom Sheet, der Seismogrammstreifen bleibt unter der Karte und Karten öffnen das System-Menü zum Teilen. Mit der Tastatur startet und pausiert die Leertaste, die Pfeiltasten gehen sekundenweise vor, Plus und Minus zoomen die Karte. Eine neue Markierung scrollt das Sheet zu ihren Zahlen. Im Querformat bleibt das Panel an der Seite und die Karte behält ihren Platz. Ein Screenreader erfährt, wann P-Welle, S-Welle und Warnung die Markierung erreichen.

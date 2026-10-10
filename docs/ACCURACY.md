@@ -9,7 +9,8 @@ everything that shakes the ground.
 
 For every quake the *Checked against real data* card compares the model with the arrival times that analysts
 picked at real stations and that USGS used to locate the event. Run `npm run validate` to print the same
-table for the fourteen featured quakes.
+table for the fourteen featured quakes. The card also lists ten of the stations, from the nearest to the farthest,
+with the analyst's pick beside the model's arrival, so a single comparison can be read and not only the summary.
 
 Observed minus modelled first P arrival, stations up to 95 degrees from the epicenter:
 

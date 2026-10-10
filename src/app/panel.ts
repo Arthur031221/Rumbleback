@@ -134,15 +134,21 @@ export function createPanel(host: HTMLElement, cb: PanelCallbacks) {
   const checkCaveat = h('p', { class: 'fine' });
   const checkAxis = h('p', { class: 'fine axis' });
   // The picks behind the summary as plain text, for a keyboard, a touch screen and a screen reader, which the hover card does not reach.
-  const stationsCaption = h('caption', { class: 'fine' });
+  const stationsCaption = h('caption', { id: 'stations-caption', class: 'fine' });
   const stationsHead = h('tr');
   const stationsBody = h('tbody');
-  const stations = h('table', { class: 'stations', hidden: true }, stationsCaption, h('thead', {}, stationsHead), stationsBody);
+  const stations = h('table', { class: 'stations' }, stationsCaption, h('thead', {}, stationsHead), stationsBody);
+  // A narrow panel (a small phone, or a phone held sideways) is narrower than the table, so the table scrolls sideways, and a keyboard can too.
+  const stationsWrap = h(
+    'div',
+    { class: 'stations-wrap', tabindex: 0, role: 'region', 'aria-labelledby': 'stations-caption', hidden: true },
+    stations,
+  );
   const check = h(
     'details',
     { class: 'card check-card' },
     checkTitle,
-    h('div', { class: 'check-body' }, checkSummary, histogram, checkAxis, checkNote, checkCaveat, stations),
+    h('div', { class: 'check-body' }, checkSummary, histogram, checkAxis, checkNote, checkCaveat, stationsWrap),
   );
 
   host.append(handle, quakeCard, pinCard, check);
@@ -376,29 +382,29 @@ export function createPanel(host: HTMLElement, cb: PanelCallbacks) {
         checkAxis.textContent = t('check.axis');
         checkNote.textContent = t('check.sNote', { n: number(c.S?.n ?? 0) });
         checkCaveat.textContent = t('check.caveat');
-        renderStations(s.quake);
         if (check.open) drawChart();
       } else {
         checkSummary.textContent = t('check.none');
         histogram.hidden = true;
         checkAxis.textContent = '';
         checkCaveat.textContent = '';
-        stations.hidden = true;
         checkNote.textContent = t('check.sNote', { n: number(c.S?.n ?? 0) });
       }
     }
+    renderStations(s.quake);
   }
 
   const STATION_ROWS = 10;
   const STATION_COLUMNS = ['check.col.station', 'check.col.dist', 'check.col.picked', 'check.col.model', 'check.col.diff'] as const;
-  /** Redone only when the quake or the language changes, since the table does not move with the clock. */
-  let stationsFor = '';
-  function renderStations(data: QuakeData): void {
-    const stamp = `${language()}:${data.quake.id}:${data.picks.length}`;
-    if (stamp === stationsFor) return;
-    stationsFor = stamp;
-    const { rows, total } = stationSample(data, STATION_ROWS);
-    stations.hidden = rows.length === 0;
+  /** Redone only when the picks or the language change, since the table does not move with the clock. */
+  let shownPicks: QuakeData['picks'] | null = null;
+  let shownLang = '';
+  function renderStations(data: QuakeData | null): void {
+    if ((data?.picks ?? null) === shownPicks && language() === shownLang) return;
+    shownPicks = data?.picks ?? null;
+    shownLang = language();
+    const { rows, total } = data ? stationSample(data, STATION_ROWS) : { rows: [], total: 0 };
+    stationsWrap.hidden = rows.length === 0;
     stationsCaption.textContent = t('check.table', { n: number(rows.length), m: number(total) });
     stationsHead.replaceChildren(...STATION_COLUMNS.map((key) => h('th', { scope: 'col', text: t(key) })));
     const signed = (n: number) => {

@@ -235,6 +235,8 @@ export async function start(): Promise<void> {
     watchPin: () => {
       const timing = pinTiming(get());
       if (!timing) return;
+      // Stopped for the jump, so the cues do not read the seconds it skips as the replay reaching them.
+      set({ playing: false });
       seek(Math.max(START, timing.pSec - 5));
       set({ playing: true });
       dirty = true;
@@ -565,6 +567,7 @@ export async function start(): Promise<void> {
       e.altKey ||
       (/^(INPUT|SELECT|TEXTAREA)$/.test(target.tagName) && !target.classList.contains('scrub')) ||
       (e.key === ' ' && /^(BUTTON|SUMMARY|A)$/.test(target.tagName)) ||
+      (target.classList.contains('stations-wrap') && e.key.startsWith('Arrow')) ||
       document.querySelector('dialog[open]')
     )
       return;

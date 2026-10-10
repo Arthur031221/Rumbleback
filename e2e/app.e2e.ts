@@ -868,6 +868,62 @@ test('the check card lists a sample of the stations as a table, with the analyst
   assert.deepEqual(await table.locator('thead th').allInnerTexts(), ['Station', 'Entfernung', 'Gepickt', 'Modell', 'Differenz']);
 });
 
+test('the station table follows the quake: a new quake brings its own stations, and none are left while it loads', async () => {
+  const { page } = await h.open();
+  await pause(page);
+  await page.locator('.check-card summary').click();
+  const caption = page.locator('table.stations caption');
+  const tohoku = decodeQuake(readFileSync(new URL('../public/events/official20110311054624120_30.json', import.meta.url), 'utf8'));
+  const [first, second] = [stationSample(hualien, 10), stationSample(tohoku, 10)];
+  assert.notEqual(first.total, second.total);
+  assert.match(await caption.innerText(), new RegExp(`^10 of the ${first.total} stations`));
+  await page.getByRole('button', { name: 'Choose a quake' }).click();
+  await page.locator('.quake-row', { hasText: '2011 Tohoku, Japan' }).click();
+  await page.locator('.quake-title', { hasText: '2011 Tohoku, Japan' }).waitFor();
+  await page.locator('.stations-wrap').waitFor({ state: 'visible' });
+  assert.match(await caption.innerText(), new RegExp(`^10 of the ${second.total} stations`));
+  assert.equal(await page.locator('table.stations tbody th').first().innerText(), second.rows[0]!.sta);
+});
+
+test('on a small phone the station table scrolls sideways inside the card, and the arrow keys scroll it instead of stepping the clock', async () => {
+  const { page } = await h.open({ width: 320, height: 640 });
+  await pause(page);
+  await page.locator('.check-card summary').click();
+  const wrap = page.locator('.stations-wrap');
+  await wrap.scrollIntoViewIfNeeded();
+  const sizes = await wrap.evaluate((el) => ({
+    scroll: el.scrollWidth,
+    client: el.clientWidth,
+    page: document.documentElement.scrollWidth,
+  }));
+  assert.ok(sizes.scroll > sizes.client, `the table needs ${sizes.scroll} px in a card ${sizes.client} px wide`);
+  assert.ok(sizes.page <= 320, `the page is ${sizes.page} px wide`);
+  assert.equal(await wrap.getAttribute('role'), 'region');
+  assert.match((await page.locator('#stations-caption').innerText()) ?? '', /^10 of the \d+ stations/);
+  await wrap.focus();
+  const before = await page.locator('.time-now').innerText();
+  await page.keyboard.press('ArrowRight');
+  // The browser scrolls with a short animation.
+  await page.waitForFunction(() => document.querySelector('.stations-wrap')!.scrollLeft > 0);
+  assert.equal(await page.locator('.time-now').innerText(), before);
+});
+
+test('watching the waves reach the pin does not read out the seconds it skips', async () => {
+  const { page } = await h.open();
+  await pause(page);
+  await page.locator('.chip', { hasText: /^Taipei$/ }).click();
+  // The jump from just before 10 s to 15 s passes the alert at 14 s, which a viewer who skipped there has not waited for.
+  await page.locator('#alert-range').fill('14');
+  await seek(page, 9);
+  await page.locator('.play-btn').click();
+  await page.locator('.pin-watch').click();
+  await page.waitForTimeout(400);
+  assert.equal(await page.locator('#announcer').innerText(), '');
+  assert.equal(await page.locator('.play-btn').getAttribute('aria-label'), 'Pause');
+  // From there the replay runs on, and the P wave is read out when it arrives.
+  await page.waitForFunction(() => document.querySelector('#announcer')!.textContent!.startsWith('P wave at your place.'));
+});
+
 test('model check card shows the residual summary', async () => {
   const { page } = await h.open();
   await page.locator('.check-card summary').click();

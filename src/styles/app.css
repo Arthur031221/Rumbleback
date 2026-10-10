@@ -530,9 +530,6 @@ button {
   color: var(--muted);
   font-size: 12px;
 }
-.mmi-key[hidden] {
-  display: none;
-}
 .mmi-key-title {
   display: block;
   margin-bottom: 6px;
@@ -949,9 +946,12 @@ button {
 .check-s {
   margin-top: 6px;
 }
+.stations-wrap {
+  overflow-x: auto;
+  margin-top: 12px;
+}
 .stations {
   width: 100%;
-  margin-top: 12px;
   border-collapse: collapse;
   color: var(--text);
   font-size: 12px;
