@@ -1,0 +1,55 @@
+{
+ "type": "Feature",
+ "properties": {
+  "mag": 7.4,
+  "place": "15 km S of Hualien City, Taiwan",
+  "time": 1712102292173,
+  "updated": 1790552464477,
+  "tz": null,
+  "felt": 635,
+  "cdi": 9.1,
+  "mmi": 7.99,
+  "alert": "yellow",
+  "status": "reviewed",
+  "tsunami": 1,
+  "sig": 1420,
+  "net": "us",
+  "code": "7000m9g4",
+  "ids": ",pt24094000,us7000m9g4,pt24094050,at00sbcakx,pt24093050,usauto7000m9g4,",
+  "magType": "mww",
+  "type": "earthquake",
+  "title": "M 7.4 - 15 km S of Hualien City, Taiwan",
+  "products": {
+   "phase-data": [
+    {
+     "contents": {
+      "quakeml.xml": {
+       "url": "https://earthquake.usgs.gov/product/phase-data/us7000m9g4/us/1718229111040/quakeml.xml"
+      }
+     }
+    }
+   ],
+   "shakemap": [
+    {
+     "contents": {
+      "download/coverage_mmi_low_res.covjson": {
+       "url": "https://earthquake.usgs.gov/product/shakemap/us7000m9g4/us/1751319184963/download/coverage_mmi_low_res.covjson"
+      },
+      "download/stationlist.json": {
+       "url": "https://earthquake.usgs.gov/product/shakemap/us7000m9g4/us/1751319184963/download/stationlist.json"
+      }
+     }
+    }
+   ]
+  }
+ },
+ "geometry": {
+  "type": "Point",
+  "coordinates": [
+   121.5976,
+   23.8356,
+   40
+  ]
+ },
+ "id": "us7000m9g4"
+}

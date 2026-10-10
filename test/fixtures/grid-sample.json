@@ -1,0 +1,1 @@
+{"type": "Coverage", "domain": {"type": "Domain", "domainType": "Grid", "axes": {"x": {"start": 121.0, "stop": 122.0, "num": 3}, "y": {"start": 23.0, "stop": 24.0, "num": 3}}}, "ranges": {"MMI": {"type": "NdArray", "dataType": "float", "axisNames": ["y", "x"], "shape": [3, 3], "values": [4.0, 5.0, 6.0, 5.0, 6.0, 7.0, 6.0, 7.0, 8.0]}}}

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Rumbleback">
+  <defs><clipPath id="c"><rect width="64" height="64" rx="15"/></clipPath></defs>
+  <g clip-path="url(#c)">
+    <rect width="64" height="64" fill="#0b1118"/>
+    <circle cx="20" cy="44" r="38" fill="none" stroke="#ff7b42" stroke-width="5" opacity=".95"/>
+    <circle cx="20" cy="44" r="24" fill="none" stroke="#4cc3ff" stroke-width="5"/>
+    <circle cx="20" cy="44" r="7" fill="#f1f6fb"/>
+  </g>
+</svg>

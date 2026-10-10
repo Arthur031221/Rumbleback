@@ -1,0 +1,71 @@
+{
+  "name": "rumbleback",
+  "version": "0.1.0",
+  "description": "Replay any past earthquake in the browser: P and S wavefronts roll across the map, real seismometers light up as they arrive, and a pin on your home shows how many seconds you had.",
+  "type": "module",
+  "private": true,
+  "license": "MIT",
+  "author": "Arthur031221",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Arthur031221/Rumbleback.git"
+  },
+  "engines": {
+    "node": ">=22.18"
+  },
+  "dependencies": {
+    "fast-xml-parser": "^5.11.2",
+    "maplibre-gl": "^6.13.0"
+  },
+  "devDependencies": {
+    "@fontsource-variable/bricolage-grotesque": "^5.3.0",
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
+    "@phosphor-icons/core": "^2.1.1",
+    "@types/node": "^26.6.5",
+    "@types/topojson-client": "^3.1.5",
+    "esbuild": "^0.28.2",
+    "playwright": "^1.63.0",
+    "prettier": "^3.9.9",
+    "topojson-client": "^3.1.0",
+    "topojson-simplify": "^3.0.3",
+    "typescript": "^7.0.2",
+    "world-atlas": "^2.0.2"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "serve": "node scripts/serve.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test test/*.test.ts",
+    "test:e2e": "node --test --test-concurrency=1 --test-timeout=120000 e2e/*.e2e.ts",
+    "events": "node scripts/fetch-events.ts",
+    "validate": "node scripts/validate.ts",
+    "tables": "python3 scripts/build_tables.py",
+    "data": "node scripts/make-data.mjs",
+    "format": "prettier --write \"src/**/*.ts\" \"test/*.ts\" \"e2e/*.ts\" \"scripts/*.ts\" \"scripts/*.mjs\" \"scripts/lib/*.mjs\" \"src/styles/*.css\" index.html",
+    "format:check": "prettier --check \"src/**/*.ts\" \"test/*.ts\" \"e2e/*.ts\" \"scripts/*.ts\" \"scripts/*.mjs\" \"scripts/lib/*.mjs\" \"src/styles/*.css\" index.html"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/rumbleback.js"
+    }
+  },
+  "types": "./dist/types/index.d.ts",
+  "main": "./dist/rumbleback.js",
+  "keywords": [
+    "earthquake",
+    "seismology",
+    "p-wave",
+    "s-wave",
+    "travel-time",
+    "iasp91",
+    "usgs",
+    "shakemap",
+    "maplibre",
+    "visualization"
+  ],
+  "homepage": "https://arthur031221.github.io/Rumbleback/",
+  "bugs": {
+    "url": "https://github.com/Arthur031221/Rumbleback/issues"
+  }
+}

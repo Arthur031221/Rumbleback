@@ -1,0 +1,41 @@
+name: Release
+
+# Pushing a tag such as v0.1.0 builds the site, runs the unit tests and publishes a release with the
+# site as a zip and the library as one file. The tag has to match the version in package.json, and the
+# notes are that version's section of CHANGELOG.md.
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: The tag matches package.json
+        run: test "v$(node -p "require('./package.json').version")" = "$GITHUB_REF_NAME"
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+      - name: Package
+        run: |
+          (cd dist && zip -qr ../rumbleback-site.zip . -x rumbleback.js)
+          cp dist/rumbleback.js rumbleback.js
+      - name: Notes from the changelog
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          awk -v v="$version" '$0 == "## " v {on=1; next} /^## / {on=0} on' CHANGELOG.md > notes.md
+          test -s notes.md
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" rumbleback-site.zip rumbleback.js --title "Rumbleback $GITHUB_REF_NAME" --notes-file notes.md

@@ -1,0 +1,62 @@
+{
+ "type": "FeatureCollection",
+ "features": [
+  {
+   "type": "Feature",
+   "id": "DYFI.UTM:(50R 0609 2707 1000)",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     118.0806,
+     24.4773
+    ]
+   },
+   "properties": {
+    "code": "UTM:(50R 0609 2707 1000)",
+    "name": null,
+    "network": "DYFI",
+    "station_type": "macroseismic",
+    "intensity": 3.2,
+    "pga": "null",
+    "pgv": "null",
+    "nresp": 5
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "TW.A124",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     121.553,
+     24.864
+    ]
+   },
+   "properties": {
+    "code": "A124",
+    "name": "Wulai",
+    "network": "TW",
+    "station_type": "seismic",
+    "intensity": 5.4,
+    "pga": 5.2837,
+    "pgv": 8.4281,
+    "nresp": "null"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "bad",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     121,
+     24
+    ]
+   },
+   "properties": {
+    "station_type": "seismic",
+    "intensity": null
+   }
+  }
+ ]
+}

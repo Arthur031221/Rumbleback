@@ -1,0 +1,74 @@
+# Using Rumbleback
+
+## The screen
+
+- **Map.** Coastlines, borders and place names in your language. Drag and zoom as usual.
+- **Left panel.** The quake, your pin, and a card that checks the model against real picks.
+- **Chips over the map.** Turn layers on and off.
+- **Timeline at the bottom.** Play, scrub, and change the playback speed.
+
+## Replay a quake
+
+1. Press "Choose a quake". The *Featured* tab has fourteen well known events and works without
+   calling USGS. *Recent* lists the last 30 days at magnitude 5 and up. *Search* takes a minimum
+   magnitude, a region and a date range.
+2. The replay starts by itself, at a speed chosen so the whole thing takes about half a minute.
+   Space plays and pauses. Left and right step one second, with Shift ten seconds.
+3. Drag the timeline to any moment. `T+12.4 s` is seconds since the earthquake began.
+
+## What you are looking at
+
+| On the map | Meaning | Real or modelled |
+|---|---|---|
+| Blue ring, letter P | Where the first P wave has reached the surface | Modelled (iasp91) |
+| Orange ring, letter S | Where the first S wave has reached the surface | Modelled (iasp91) |
+| Small blue dots that flash | Seismometers whose operator picked a P arrival, at the picked time | Real (USGS phase data) |
+| Coloured dots with a white edge | Strong motion instruments, coloured by the instrumental intensity USGS computed from their recording, appearing when the S wave reaches them | Recorded value, modelled timing |
+| Tiny coloured dots | Did You Feel It reports, one colour per intensity | Reported value, modelled timing |
+| Green to red wash inside the S ring | The USGS ShakeMap, revealed behind the S wave | Estimated by USGS |
+| Ring with a station name | The station whose seismogram is in the strip above the timeline | Real (EarthScope) |
+| Dashed ring | The blind zone for the alert time you chose | Modelled |
+
+The first P and S fronts are drawn at the surface. Because the waves start underground, a deep quake shows
+no ring for the first seconds: the wave has not reached the surface yet.
+
+## The seismogram strip
+
+When a station near the quake has data in the EarthScope archive, a strip above the timeline draws its vertical
+ground motion. The trace fills in as the replay reaches it. Dashed lines mark the model's P and S arrival at that
+station, and the triangle marks the P arrival an analyst picked. The model line and the analyst's triangle usually
+fall within a second or two of each other, with the first motion of the real trace coming in close to both.
+The size is relative and not corrected for the instrument, so read it for
+timing and shape, not for how many centimetres per second. It is hidden on phones and for quakes with no usable station.
+
+## Your seconds
+
+Tap the map, search a city, or use your location. The pin card shows:
+
+- **P wave and S wave:** seconds after the quake began until each arrives where you are.
+- **S minus P:** the time between the two arrivals where you are. An early warning can reach you before P if the quake is detected near its source, which is what the slider below shows.
+- **Shaking here:** the ShakeMap intensity at the pin, with the USGS word for it.
+- **If an alert went out:** move the slider to the number of seconds after the quake began at which a
+  warning could have been issued. The card then shows how long before the S wave you would have heard it,
+  or says you were inside the blind zone. This is arithmetic on the model, not a record of any real alert.
+
+Drag the pin to move it. The pin is kept in your browser only.
+
+## Share
+
+*Share this replay* offers a link, a square card, a story card (9:16) and a video clip of the replay.
+The link leaves your pin out unless you tick the box, and then rounds it to about a kilometre. Cards show a
+city name or "My place", never coordinates. Cards show the moment the timeline is on, so scrub to the
+frame you like first.
+
+## Deep links
+
+`?event=us7000m9g4&t=20&alert=10&lang=ja#pin=25.03,121.56`
+
+| Parameter | Meaning |
+|---|---|
+| `event` | A USGS event id, for example `us7000m9g4` |
+| `#pin` | Latitude and longitude of the pin. It sits in the part after `#`, which a browser never sends to a server |
+| `t` | Clock in seconds after the origin. When present the replay opens paused |
+| `alert` | Alert issue time in seconds after the origin, 0 to 60 |
+| `lang` | `en`, `zh-TW`, `zh-CN`, `ja`, `ko`, `es`, `fr`, `de` or `pt-BR` |

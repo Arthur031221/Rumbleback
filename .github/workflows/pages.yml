@@ -1,0 +1,49 @@
+name: Publish demo page
+
+# Hosts the page so a shared link opens in one tap. It runs after CI passes on main. Until Pages is
+# switched on (Settings, Pages, Source: GitHub Actions) the configure step fails, the other steps are
+# skipped and the run stays green, so a fork is not marked as broken. Once Pages is on, a failed build,
+# upload or deploy fails the run.
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+      - id: pages
+        uses: actions/configure-pages@v5
+        continue-on-error: true
+      - if: steps.pages.outcome == 'success'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - if: steps.pages.outcome == 'success'
+        run: npm ci
+      - if: steps.pages.outcome == 'success'
+        run: npm run build
+      - if: steps.pages.outcome == 'success'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+      - id: deployment
+        if: steps.pages.outcome == 'success'
+        uses: actions/deploy-pages@v4

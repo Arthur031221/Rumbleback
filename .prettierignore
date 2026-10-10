@@ -1,0 +1,8 @@
+dist/
+node_modules/
+public/
+package-lock.json
+*.md
+test/fixtures/
+src/data/traveltime.json
+src/app/locales/

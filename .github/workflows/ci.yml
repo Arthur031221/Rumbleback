@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        node-version: [22, 24]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run format:check
+      - run: npm test
+      - run: npm run build
+      - name: The library bundle loads in plain Node
+        run: |
+          node --input-type=module -e "
+          import { TravelTimes, timingAt } from './dist/rumbleback.js';
+          const t = timingAt(new TravelTimes(40), 1.1, 10);
+          if (!(t.pSec > 15 && t.pSec < 25 && t.sSec > t.pSec)) throw new Error(JSON.stringify(t));
+          console.log(t);
+          "
+
+  browser:
+    runs-on: ubuntu-latest
+    # Software WebGL is slow, and a stuck run should fail instead of hanging.
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+      - name: Browser tests
+        run: |
+          npm run test:e2e || {
+            echo "Trying the browser tests once more"
+            npm run test:e2e
+          }
