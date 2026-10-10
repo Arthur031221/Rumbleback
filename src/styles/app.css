@@ -562,8 +562,14 @@ button {
 }
 .pin-watch {
   margin: 6px 0 0 -8px;
-  height: 34px;
+  /* The label is long in some languages, and a narrow panel has to wrap it instead of running over the card. */
+  height: auto;
+  min-height: 34px;
+  padding-block: 6px;
   color: var(--text);
+  line-height: 1.25;
+  text-align: left;
+  white-space: normal;
 }
 .quake-loading {
   display: flex;

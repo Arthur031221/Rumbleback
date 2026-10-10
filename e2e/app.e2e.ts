@@ -313,6 +313,21 @@ test('the colour key sits in the quake card on a desktop and after the pin card 
   await page.locator('.pin-card + .mmi-key.card').waitFor();
 });
 
+test('the watch button stays inside the pin card in every language, on a small phone and in a panel held sideways', async () => {
+  for (const [width, height] of [
+    [320, 568],
+    [740, 360],
+  ] as const) {
+    for (const lang of ['en', 'zh-TW', 'zh-CN', 'ja', 'ko', 'es', 'fr', 'de', 'pt-BR']) {
+      await h.closeContexts();
+      const { page } = await h.open({ width, height, query: `?event=us7000m9g4&t=36&lang=${lang}#pin=25.03,121.56` });
+      const right = (selector: string) => page.locator(selector).evaluate((el) => el.getBoundingClientRect().right);
+      const [card, button] = [await right('.pin-card'), await right('.pin-watch')];
+      assert.ok(button <= card, `${lang} at ${width}x${height}: the button ends at ${button}, the card at ${card}`);
+    }
+  }
+});
+
 test('the pin card runs the replay again from five seconds before the P wave reaches the pin', async () => {
   const { page } = await h.open();
   await pause(page);
