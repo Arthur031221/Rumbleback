@@ -71,3 +71,5 @@ http://127.0.0.1:4173/
 ## 라이선스
 
 [MIT](LICENSE)
+
+Assisted by Claude/Codex.

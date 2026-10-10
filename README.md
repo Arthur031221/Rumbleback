@@ -177,3 +177,5 @@ Earthquake data, phase picks, ShakeMap and Did You Feel It come from the [USGS E
 ## License
 
 [MIT](LICENSE)
+
+Assisted by Claude/Codex.

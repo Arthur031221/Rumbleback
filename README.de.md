@@ -71,3 +71,5 @@ Erdbebendaten, Einsätze, ShakeMap und Wahrnehmungsberichte von der [USGS](https
 ## Lizenz
 
 [MIT](LICENSE)
+
+Assisted by Claude/Codex.

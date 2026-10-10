@@ -71,3 +71,5 @@ Dados de terremotos, leituras, ShakeMap e relatos de sensação do [USGS](https:
 ## Licença
 
 [MIT](LICENSE)
+
+Assisted by Claude/Codex.
