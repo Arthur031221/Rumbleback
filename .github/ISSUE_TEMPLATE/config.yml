@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: How the numbers are checked
+    url: https://github.com/Arthur031221/Rumbleback/blob/main/docs/ACCURACY.md
+    about: The model, what is compared with real picks, and what is not checked.

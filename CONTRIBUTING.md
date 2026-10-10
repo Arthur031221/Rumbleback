@@ -27,6 +27,9 @@ npm run test:e2e     # drives the built site in Chromium
 The unit tests import the TypeScript sources directly through Node's type stripping, so there is no
 compile step to forget. The end-to-end tests run against `dist/`, so run `npm run build` first.
 
+The unit tests also read the story table in every README and check its seconds, distance and shaking against the
+library. If a change moves a number the model gives, update the table in all nine README files.
+
 ## Where things live
 
 - `src/core` is the library: travel times, geometry, USGS parsers. It has no DOM code and no

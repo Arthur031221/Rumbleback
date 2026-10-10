@@ -1,0 +1,29 @@
+name: Something does not work
+description: The page fails, looks wrong or behaves oddly
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected and what you got. A screenshot helps.
+    validations:
+      required: true
+  - type: input
+    id: link
+    attributes:
+      label: Link that shows it
+      description: The address from the browser, or the USGS event id (for example us7000m9g4). A shared link carries the quake, the moment and the language.
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and device
+      description: For example Safari 18 on an iPhone 15, or Firefox 140 on Linux.
+    validations:
+      required: true
+  - type: textarea
+    id: console
+    attributes:
+      label: Console errors
+      description: Optional. Open the browser developer tools, look at the Console tab and paste what is red.
+      render: text

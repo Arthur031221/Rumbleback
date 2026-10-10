@@ -1,0 +1,23 @@
+name: A number looks wrong
+description: A wave arrival, a distance, a shaking level or a pick that disagrees with what you know
+labels: [bug]
+body:
+  - type: input
+    id: event
+    attributes:
+      label: Event id or link
+      description: The USGS event id (for example us7000m9g4) or the address of the page.
+    validations:
+      required: true
+  - type: input
+    id: place
+    attributes:
+      label: Place you pinned
+      description: A city name is enough. Please do not post your home address.
+  - type: textarea
+    id: expected
+    attributes:
+      label: What the page says and what you expected
+      description: Give both numbers. If the expectation comes from a seismogram or an official bulletin, say which one and link it.
+    validations:
+      required: true
