@@ -47,7 +47,8 @@ ground motion. The trace fills in as the replay reaches it. Dashed lines mark th
 station, and the triangle marks the P arrival an analyst picked. The model line and the analyst's triangle usually
 fall within a second or two of each other, with the first motion of the real trace coming in close to both.
 The size is relative and not corrected for the instrument, so read it for
-timing and shape, not for how many centimetres per second. It is a little shorter on a phone, and hidden for quakes with no usable station.
+timing and shape, not for how many centimetres per second. It is a little shorter on a phone, hidden for quakes with no usable station,
+and hidden on a short screen such as a phone held sideways.
 
 ## Your seconds
 
@@ -61,6 +62,8 @@ Tap the map, search a city, or use your location. The pin card shows:
   or says you were inside the blind zone. This is arithmetic on the model, not a record of any real alert.
 
 On a phone the panel is a sheet, and a new pin scrolls it to these numbers. Removing the pin scrolls it back to the quake.
+Held sideways, the panel stays at the left as on a desktop, the timeline shrinks to one row and the map keeps the rest
+of the screen.
 
 Drag the pin to move it. The pin is kept in your browser only. A click on the map drops the pin after a short wait
 (0.3 s with a mouse, 0.4 s on a touch screen), so that a double click can zoom without moving it. A double click slower

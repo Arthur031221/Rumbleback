@@ -14,6 +14,8 @@ New
   is read out while you scrub or jump to another moment.
 - The video clip is saved as MP4 where the browser can record it, so it plays on an iPhone, in WhatsApp and in social
   apps. A browser that records only WebM still gets WebM.
+- A phone held sideways keeps the map. The panel stays at the side, the timeline is one row without the seismogram strip
+  and the share dialog drops its preview, where before the panel and a tall timeline covered nearly the whole screen.
 - A link to a quake USGS does not have says so and offers no retry. A quake that fails to load no longer says
   "Loading real station data" and no longer shows an empty magnitude box.
 
