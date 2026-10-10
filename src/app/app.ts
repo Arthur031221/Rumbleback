@@ -143,11 +143,17 @@ export async function start(): Promise<void> {
   };
 
   let announceTimer: number | undefined;
+  let queued: string[] = [];
   const announce = (text: string) => {
-    // Emptying the region first makes a screen reader read the same sentence again on the next replay.
+    // Emptying the region first makes a screen reader read the same sentence again on the next replay. Messages that
+    // come within the pause are read together, since a second one would otherwise cut off the first.
+    queued.push(text);
     announcer.textContent = '';
     clearTimeout(announceTimer);
-    announceTimer = window.setTimeout(() => (announcer.textContent = text), 60);
+    announceTimer = window.setTimeout(() => {
+      announcer.textContent = queued.join(' ');
+      queued = [];
+    }, 60);
   };
 
   // Map and overlay

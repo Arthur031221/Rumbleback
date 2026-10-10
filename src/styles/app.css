@@ -1546,7 +1546,7 @@ dialog.sheet::backdrop {
   .panel[data-collapsed='true'] > :not(.sheet-handle):not(.quake-card) {
     display: none;
   }
-  .panel[data-collapsed='true'] .quake-card > :not(.quake-head) {
+  .panel[data-collapsed='true'] .quake-card > :not(.quake-head):not(.quake-error) {
     display: none;
   }
   .quake-head {

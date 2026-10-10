@@ -603,6 +603,16 @@ test('a link to a quake USGS does not have says so with no retry, and a failed l
   assert.match(await page.locator('.quake-title').innerText(), /Hualien/);
 });
 
+test('the failure message stays in view when the phone sheet is collapsed', async () => {
+  const { page } = await h.open({ width: 390, height: 844 });
+  await page.goto(`${h.url}?event=${MISSING_ID}`);
+  await page.locator('.quake-error').waitFor();
+  await page.locator('.sheet-handle').click();
+  assert.equal(await page.locator('.panel').getAttribute('data-collapsed'), 'true');
+  assert.equal(await page.locator('.quake-error').isVisible(), true);
+  assert.match(await page.locator('.quake-error').innerText(), /USGS has no earthquake with that id\./);
+});
+
 test('a deep link restores the quake, the pin, the clock, the alert and the language', async () => {
   const { page } = await h.open({ query: '?event=us7000i90q&t=15&alert=7&lang=es#pin=25.03,121.56' });
   assert.equal(await page.locator('.quake-title').innerText(), '2022 Chishang, Taiwán');

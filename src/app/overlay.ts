@@ -157,7 +157,8 @@ export class Overlay {
    */
   hit(x: number, y: number): Hit | null {
     const f = this.shown;
-    if (!f) return null;
+    // New data may have arrived since the last frame: the dots are the new ones, and the frame still says the old.
+    if (!f || f.quake !== this.quake) return null;
     if (this.proj.dirty) this.reproject();
     if (f.layers.picks) {
       const i = nearestPoint(this.proj.picks, x, y, 8, (n) => f.quake.picks[n]!.t <= f.t);
