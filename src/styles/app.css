@@ -530,6 +530,9 @@ button {
   color: var(--muted);
   font-size: 12px;
 }
+.mmi-key.card {
+  margin: 0;
+}
 .mmi-key-title {
   display: block;
   margin-bottom: 6px;

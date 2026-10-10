@@ -294,6 +294,25 @@ test('a key names the colours of the shaking layers, in the language of the page
   assert.equal(await key.locator('.mmi-key-title').innerText(), 'Erschütterung auf der Karte (MMI)');
 });
 
+test('the colour key sits in the quake card on a desktop and after the pin card on a phone, so the pin prompt stays in view, and it follows the window', async () => {
+  const { page } = await h.open({ width: 390, height: 664 });
+  assert.equal(await page.locator('.pin-card + .mmi-key.card').count(), 1);
+  const promptShown = () =>
+    page.evaluate(() => {
+      const prompt = document.querySelector('.pin-prompt')!.getBoundingClientRect();
+      const panel = document.querySelector('.panel')!.getBoundingClientRect();
+      return prompt.top >= panel.top && prompt.bottom <= panel.bottom;
+    });
+  assert.equal(await promptShown(), true, 'the prompt to drop a pin is below the fold of the sheet');
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.locator('.quake-card > .mmi-key:not(.card)').waitFor();
+  await page.setViewportSize({ width: 390, height: 664 });
+  await page.locator('.pin-card + .mmi-key.card').waitFor();
+  // Held sideways, the panel is at the side of the map and the key follows the pin card there as well.
+  await page.setViewportSize({ width: 740, height: 360 });
+  await page.locator('.pin-card + .mmi-key.card').waitFor();
+});
+
 test('the pin card runs the replay again from five seconds before the P wave reaches the pin', async () => {
   const { page } = await h.open();
   await pause(page);

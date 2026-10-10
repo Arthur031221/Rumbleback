@@ -9,7 +9,7 @@ import { $, h } from './dom.ts';
 import { icon } from './icons.ts';
 import { km, language, localDate, number, seconds, t, tenths, utcDate } from './i18n.ts';
 import { drawResiduals } from './residual-chart.ts';
-import { isPhone, isShort } from './layout.ts';
+import { isPhone, isShort, PHONE, SHORT } from './layout.ts';
 import { clock, get } from './state.ts';
 
 /** The intensities the colour key spans (1 is white, 10 dark red), and the ones it names. */
@@ -152,6 +152,21 @@ export function createPanel(host: HTMLElement, cb: PanelCallbacks) {
   );
 
   host.append(handle, quakeCard, pinCard, check);
+
+  /**
+   * The key sits in the quake card, where a desktop panel has room. A phone's sheet is short, and a key above the
+   * "Your place" prompt would push the prompt out of sight, so there the key is a card of its own after the pin card.
+   */
+  function placeKey(): void {
+    const apart = isPhone() || isShort();
+    if (apart !== mmiKey.classList.contains('card') || !mmiKey.parentElement) {
+      if (apart) pinCard.after(mmiKey);
+      else facts.after(mmiKey);
+      mmiKey.classList.toggle('card', apart);
+    }
+  }
+  placeKey();
+  for (const query of [PHONE, SHORT]) window.matchMedia(query).addEventListener('change', placeKey);
 
   const toggle = () => {
     const collapsed = host.dataset.collapsed !== 'true';
