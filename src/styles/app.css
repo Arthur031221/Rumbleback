@@ -1709,6 +1709,22 @@ dialog.sheet::backdrop {
   .layers-strip .chip {
     flex: none;
   }
+  /* A screen 350 pixels wide or less: the play button, the clock, the sound button and the speeds need 331 pixels at the
+     sizes above, so the speeds ran past the edge of a 320 pixel screen. Tighter gaps and buttons bring them back in. */
+  @media (max-width: 350px) {
+    .dock {
+      gap: 6px 6px;
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+    .sound-btn {
+      width: 30px;
+    }
+    .speed {
+      min-width: 26px;
+      padding: 0 2px;
+    }
+  }
   /* A phone whose browser bars leave 700 pixels or fewer: the cards give up a little padding so the pin prompt still shows. */
   @media (max-height: 700px) {
     .card {

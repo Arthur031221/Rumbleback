@@ -348,6 +348,26 @@ test('the watch button stays inside the pin card in every language, on a small p
   }
 });
 
+test('the timeline controls stay inside the dock on a phone from 320 pixels wide, with a long clock reading', async () => {
+  for (const width of [320, 330, 340, 350, 360, 375]) {
+    await h.closeContexts();
+    const { page } = await h.open({ width, height: 640, query: '?event=official20110311054624120_30#pin=-33.45,-70.67' });
+    await pause(page);
+    await seek(page, 1650);
+    const out = await page.evaluate(() => {
+      const dock = document.querySelector('.dock')!.getBoundingClientRect();
+      const spill: string[] = [];
+      if (dock.right > innerWidth + 0.5) spill.push(`dock ends at ${dock.right}`);
+      for (const sel of ['.play-btn', '.time', '.sound-btn', '.speeds', '.scrub-wrap', '.strip']) {
+        const r = document.querySelector(sel)!.getBoundingClientRect();
+        if (r.width > 0 && (r.left < dock.left - 0.5 || r.right > dock.right + 0.5)) spill.push(`${sel} ${r.left}..${r.right}`);
+      }
+      return { spill, clock: document.querySelector('.time-now')!.textContent };
+    });
+    assert.deepEqual(out.spill, [], `${width} px wide, clock ${out.clock}`);
+  }
+});
+
 test('the share buttons stay inside the dialog on a phone in every language', async () => {
   for (const [width, height] of [
     [320, 568],

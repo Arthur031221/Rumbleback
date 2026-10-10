@@ -28,6 +28,9 @@ Fixed
   390 by 664, 375 by 667 and 360 by 640 in all nine languages.
 - In a browser without Web Audio, or one that refuses to start it, pressing the sound button threw an error that
   nothing caught. The sound stays off now.
+- On a screen 350 pixels wide or less (an iPhone SE of the first generation, a 320 pixel window), the speed buttons ran
+  past the right edge of the screen, by 26 pixels once the clock read four digits. The play button, the clock, the
+  sound button and the speeds take less room there now, and a browser test checks the timeline from 320 to 375 pixels.
 - Opening the check card scrolled it into view with an animation even when the viewer had asked for less motion.
 - The dots for strong motion stations and felt reports built a colour string for every dot on every frame, about 0.4
   milliseconds a frame for 5,000 dots on a desktop processor and more on a phone. Each dot's colour is made once per quake.
