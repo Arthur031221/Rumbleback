@@ -23,6 +23,8 @@
   "pin.prompt": "Tap the map to drop a pin on your home",
   "pin.search": "Search a city",
   "pin.searchHint": "Taipei, Tokyo, Istanbul",
+  "pin.noResults": "No city matches.",
+  "pin.resultsHint": "Results are listed. Use the up and down arrow keys and Enter to choose.",
   "pin.locate": "Use my location",
   "pin.locateFailed": "Could not get your location",
   "pin.remove": "Remove pin",

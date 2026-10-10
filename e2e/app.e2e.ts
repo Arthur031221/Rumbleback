@@ -104,6 +104,44 @@ test('the alert slider moves the result from a warning to the blind zone', async
   assert.ok(await page.locator('.alert-result.is-blind').isVisible());
 });
 
+test('the city search works from the keyboard and tells a screen reader what it offers', async () => {
+  const { page } = await h.open();
+  await pause(page);
+  const field = page.locator('#city-search');
+  await field.fill('tok');
+  await page.locator('.result').first().waitFor();
+  assert.equal(await field.getAttribute('aria-expanded'), 'true');
+  assert.match(await page.locator('.pin-setup [role=status]').innerText(), /arrow keys/);
+  const options = page.locator('[role=option]');
+  assert.ok((await options.count()) >= 1);
+  // The list drops over the cards below it, so every row has to be the thing under its own middle.
+  const covered = await options.evaluateAll(
+    (rows) =>
+      rows.filter((row) => {
+        const r = row.getBoundingClientRect();
+        return !row.contains(document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2));
+      }).length,
+  );
+  assert.equal(covered, 0);
+  await page.keyboard.press('ArrowDown');
+  const first = await options.first().getAttribute('id');
+  assert.equal(await field.getAttribute('aria-activedescendant'), first);
+  assert.equal(await options.first().getAttribute('aria-selected'), 'true');
+  if ((await options.count()) > 1) {
+    await page.keyboard.press('ArrowDown');
+    assert.notEqual(await field.getAttribute('aria-activedescendant'), first);
+    await page.keyboard.press('ArrowUp');
+    assert.equal(await field.getAttribute('aria-activedescendant'), first);
+  }
+  const name = await options.first().innerText();
+  await page.keyboard.press('Enter');
+  await page.locator('.pin-live').waitFor({ state: 'visible' });
+  assert.ok(name.length > 0);
+  await page.locator('.pin-card .icon-btn').first().click();
+  await field.fill('zzzzzz');
+  await page.locator('.result.none', { hasText: 'No city matches.' }).waitFor();
+});
+
 test('removing the pin brings back the search', async () => {
   const { page } = await h.open();
   await page.locator('.chip', { hasText: 'Taichung' }).click();

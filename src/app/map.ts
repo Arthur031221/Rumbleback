@@ -118,7 +118,7 @@ export function createMap(container: HTMLElement, o: MapOptions): MapView {
         [b.west, b.south],
         [b.east, b.north],
       ];
-      map.fitBounds(bounds, { duration: animate ? 1100 : 0, maxZoom: 10, essential: true });
+      map.fitBounds(bounds, { duration: animate ? 1100 : 0, maxZoom: 10 });
     },
     setPin(lat, lon) {
       if (!marker) {

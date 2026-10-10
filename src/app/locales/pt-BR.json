@@ -23,6 +23,8 @@
   "pin.prompt": "Toque no mapa para colocar um marcador na sua casa",
   "pin.search": "Buscar uma cidade",
   "pin.searchHint": "Taipé, Tóquio, Istambul",
+  "pin.noResults": "Nenhuma cidade corresponde.",
+  "pin.resultsHint": "Há resultados. Use as setas para cima e para baixo e Enter para escolher.",
   "pin.locate": "Usar minha localização",
   "pin.locateFailed": "Não foi possível obter sua localização",
   "pin.remove": "Remover marcador",

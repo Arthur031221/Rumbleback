@@ -23,6 +23,8 @@
   "pin.prompt": "点一下地图，在你家放个图钉",
   "pin.search": "搜索城市",
   "pin.searchHint": "台北、东京、伊斯坦布尔",
+  "pin.noResults": "没有符合的城市。",
+  "pin.resultsHint": "已列出结果。用上下方向键选择，按 Enter 确认。",
   "pin.locate": "使用我的位置",
   "pin.locateFailed": "无法获取你的位置",
   "pin.remove": "移除图钉",

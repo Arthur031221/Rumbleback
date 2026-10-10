@@ -23,6 +23,8 @@
   "pin.prompt": "Touchez la carte pour poser une épingle sur votre maison",
   "pin.search": "Chercher une ville",
   "pin.searchHint": "Taipei, Tokyo, Istanbul",
+  "pin.noResults": "Aucune ville ne correspond.",
+  "pin.resultsHint": "Des résultats sont affichés. Utilisez les flèches haut et bas puis Entrée pour choisir.",
   "pin.locate": "Utiliser ma position",
   "pin.locateFailed": "Impossible d'obtenir votre position",
   "pin.remove": "Retirer l'épingle",

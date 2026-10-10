@@ -23,6 +23,8 @@
   "pin.prompt": "지도를 눌러 집에 핀을 꽂으세요",
   "pin.search": "도시 검색",
   "pin.searchHint": "타이베이, 도쿄, 이스탄불",
+  "pin.noResults": "일치하는 도시가 없습니다.",
+  "pin.resultsHint": "결과가 표시되었습니다. 위아래 화살표 키로 고르고 Enter를 누르세요.",
   "pin.locate": "내 위치 사용",
   "pin.locateFailed": "위치를 가져오지 못했습니다",
   "pin.remove": "핀 제거",

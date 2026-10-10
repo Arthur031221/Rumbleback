@@ -23,6 +23,8 @@
   "pin.prompt": "地図をタップして自宅にピンを立てます",
   "pin.search": "都市を検索",
   "pin.searchHint": "台北、東京、イスタンブール",
+  "pin.noResults": "一致する都市はありません。",
+  "pin.resultsHint": "候補が表示されています。上下の矢印キーで選び、Enter で決定します。",
   "pin.locate": "現在地を使う",
   "pin.locateFailed": "現在地を取得できませんでした",
   "pin.remove": "ピンを外す",

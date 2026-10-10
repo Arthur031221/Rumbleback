@@ -23,6 +23,8 @@
   "pin.prompt": "點一下地圖，在你家放個圖釘",
   "pin.search": "搜尋城市",
   "pin.searchHint": "臺北、東京、伊斯坦堡",
+  "pin.noResults": "沒有符合的城市。",
+  "pin.resultsHint": "已列出結果。用上下方向鍵選擇，按 Enter 確認。",
   "pin.locate": "使用我的位置",
   "pin.locateFailed": "無法取得你的位置",
   "pin.remove": "移除圖釘",

@@ -23,6 +23,8 @@
   "pin.prompt": "Toca el mapa para poner un marcador en tu casa",
   "pin.search": "Buscar una ciudad",
   "pin.searchHint": "Taipéi, Tokio, Estambul",
+  "pin.noResults": "Ninguna ciudad coincide.",
+  "pin.resultsHint": "Hay resultados. Use las flechas arriba y abajo e Intro para elegir.",
   "pin.locate": "Usar mi ubicación",
   "pin.locateFailed": "No se pudo obtener tu ubicación",
   "pin.remove": "Quitar marcador",

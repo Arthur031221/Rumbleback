@@ -23,6 +23,8 @@
   "pin.prompt": "Tippen Sie auf die Karte, um eine Markierung auf Ihr Zuhause zu setzen",
   "pin.search": "Stadt suchen",
   "pin.searchHint": "Taipeh, Tokio, Istanbul",
+  "pin.noResults": "Keine Stadt passt.",
+  "pin.resultsHint": "Ergebnisse sind aufgelistet. Mit den Pfeiltasten nach oben und unten und der Eingabetaste auswählen.",
   "pin.locate": "Meinen Standort verwenden",
   "pin.locateFailed": "Ihr Standort konnte nicht ermittelt werden",
   "pin.remove": "Markierung entfernen",

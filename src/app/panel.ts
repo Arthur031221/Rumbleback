@@ -55,8 +55,11 @@ export function createPanel(host: HTMLElement, cb: PanelCallbacks) {
     role: 'combobox',
     'aria-expanded': 'false',
     'aria-controls': 'city-results',
+    'aria-autocomplete': 'list',
   });
   const results = h('ul', { id: 'city-results', class: 'results', role: 'listbox', hidden: true });
+  // Read out when the list appears, since a screen reader user does not see it.
+  const resultsHint = h('p', { class: 'sr-only', role: 'status' });
   const locateBtn = h('button', { class: 'btn', type: 'button', onclick: () => cb.locate() }, icon('locate'), h('span'));
   const chips = h('div', { class: 'chips' });
   const setup = h(
@@ -65,6 +68,7 @@ export function createPanel(host: HTMLElement, cb: PanelCallbacks) {
     prompt,
     searchLabel,
     h('div', { class: 'search-wrap' }, icon('search'), search, results),
+    resultsHint,
     locateBtn,
     chips,
   );
@@ -116,20 +120,49 @@ export function createPanel(host: HTMLElement, cb: PanelCallbacks) {
 
   // Search
   let current: City[] = [];
+  let active = -1;
+  const setActive = (index: number) => {
+    active = index;
+    const options = [...results.querySelectorAll<HTMLElement>('[role="option"]')];
+    options.forEach((o, i) => {
+      o.classList.toggle('active', i === index);
+      o.setAttribute('aria-selected', String(i === index));
+    });
+    if (options[index]) {
+      search.setAttribute('aria-activedescendant', options[index]!.id);
+      options[index]!.scrollIntoView({ block: 'nearest' });
+    } else search.removeAttribute('aria-activedescendant');
+  };
   const renderResults = () => {
     results.replaceChildren();
+    resultsHint.textContent = '';
+    active = -1;
+    search.removeAttribute('aria-activedescendant');
     const list = cities();
     if (!list) return;
-    results.hidden = current.length === 0;
+    const asked = search.value.trim() !== '';
+    results.hidden = current.length === 0 && !asked;
     search.setAttribute('aria-expanded', String(current.length > 0));
-    for (const c of current) {
-      const li = h(
-        'li',
-        { role: 'option' },
-        h('button', { type: 'button', class: 'result', onclick: () => choose(c) }, cityName(c, list.order, language())),
-      );
-      results.append(li);
+    if (current.length === 0 && asked) {
+      results.append(h('li', { class: 'result none', text: t('pin.noResults') }));
+      resultsHint.textContent = t('pin.noResults');
+      return;
     }
+    current.forEach((c, i) =>
+      results.append(
+        h('li', {
+          role: 'option',
+          id: `city-option-${i}`,
+          class: 'result',
+          'aria-selected': 'false',
+          text: cityName(c, list.order, language()),
+          // A press, not a click, so the field keeps its focus and the list does not close first.
+          onmousedown: (e) => e.preventDefault(),
+          onclick: () => choose(c),
+        }),
+      ),
+    );
+    if (current.length) resultsHint.textContent = t('pin.resultsHint');
   };
   const choose = (c: City) => {
     const list = cities();
@@ -148,10 +181,15 @@ export function createPanel(host: HTMLElement, cb: PanelCallbacks) {
       .catch(() => {});
   });
   search.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && current[0]) {
+    const key = (e as KeyboardEvent).key;
+    if (key === 'ArrowDown' || key === 'ArrowUp') {
+      if (!current.length) return;
       e.preventDefault();
-      choose(current[0]);
-    } else if (e.key === 'Escape') {
+      setActive(key === 'ArrowDown' ? (active + 1) % current.length : (active - 1 + current.length) % current.length);
+    } else if (key === 'Enter' && current.length) {
+      e.preventDefault();
+      choose(current[Math.max(active, 0)]!);
+    } else if (key === 'Escape') {
       search.value = '';
       current = [];
       renderResults();

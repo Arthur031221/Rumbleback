@@ -413,6 +413,11 @@ button {
     transform: translateY(10px);
   }
 }
+.pin-card {
+  /* The city list drops over the card below. Each card is its own layer, so this one has to sit above it. */
+  position: relative;
+  z-index: 2;
+}
 .card-head {
   display: flex;
   align-items: center;
@@ -580,16 +585,30 @@ button {
   box-shadow: var(--shadow);
 }
 .result {
-  width: 100%;
   padding: 9px 10px;
-  text-align: left;
-  background: transparent;
-  border: 0;
   border-radius: 7px;
+  cursor: pointer;
 }
 .result:hover,
-.result:focus-visible {
+.result.active {
   background: var(--raised);
+}
+.result.none {
+  color: var(--muted);
+  cursor: default;
+}
+.result.none:hover {
+  background: transparent;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 .pin-setup .btn {
   margin-top: 10px;
