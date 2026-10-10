@@ -349,6 +349,28 @@ test('the share buttons stay inside the dialog on a phone in every language', as
   }
 });
 
+test('the timeline slider keeps a usable width at every window size from a tablet to a wide desktop', async () => {
+  for (const [width, height] of [
+    [834, 1194],
+    [900, 700],
+    [1024, 768],
+    [1100, 800],
+    [1240, 800],
+    [1280, 720],
+    [1440, 900],
+  ] as const) {
+    await h.closeContexts();
+    const { page } = await h.open({ width, height });
+    const box = await page.locator('.scrub').boundingBox();
+    assert.ok(box && box.width >= 240, `at ${width}x${height} the slider is ${box?.width} px wide`);
+    // The panel stops above the timeline, so a wider timeline does not run over it.
+    const overlap = await page.evaluate(
+      () => document.querySelector('.panel')!.getBoundingClientRect().bottom > document.querySelector('.dock')!.getBoundingClientRect().top,
+    );
+    assert.equal(overlap, false, `at ${width}x${height} the panel runs into the timeline`);
+  }
+});
+
 test('the pin card runs the replay again from five seconds before the P wave reaches the pin', async () => {
   const { page } = await h.open();
   await pause(page);

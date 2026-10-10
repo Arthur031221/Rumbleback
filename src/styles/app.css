@@ -1513,6 +1513,14 @@ dialog.sheet::backdrop {
   }
 }
 
+/* Between a phone and a wide window the timeline beside the panel is too narrow for its controls and the slider shrinks
+   to nothing. The panel stops above the timeline, so the timeline can take the whole width. */
+@media (min-width: 821px) and (max-width: 1240px) and (min-height: 481px) {
+  .dock {
+    left: calc(12px + var(--sal));
+  }
+}
+
 @media (max-width: 430px) {
   .brand-name {
     display: none;

@@ -22,6 +22,9 @@ Fixed
 
 - A pin outside the area the ShakeMap covers said "No ShakeMap for this quake", although the map showed one. It now
   says the ShakeMap has no estimate for that place, and keeps the old message for a quake that has no ShakeMap.
+- In a window between 820 and 1240 pixels wide (an iPad Air or Pro held upright, a small laptop window) the timeline
+  beside the panel had no room for its slider, which shrank to 0 pixels at 834 wide. The timeline takes the whole
+  width there now, which the panel leaves free.
 - In the share dialog on a phone 390 pixels wide, "Save square card" and "Record a video clip" ran past the edge of
   the dialog, and the longer languages did worse. The labels wrap now, at 320 pixels as well, in all nine languages.
 
