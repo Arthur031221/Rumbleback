@@ -9,7 +9,7 @@ const base = (path: string) => new URL(path, document.baseURI).href;
 
 setWorkerUrl(base('assets/maplibre-gl-worker.mjs'));
 
-/** How long a click on the map waits before it drops the pin, to tell it from a double click. A finger is slower than a mouse. */
+/** How long a click on the map waits before it drops the pin, to tell it from a double click. A finger is slower than a mouse. A double click slower than this still moves the pin. */
 const tapDelay = (): number => (window.matchMedia('(pointer: coarse)').matches ? 400 : 300);
 /** Two clicks closer than this, in pixels, are one double click. Farther apart they are two choices, and the later one wins. */
 const SAME_SPOT = 24;

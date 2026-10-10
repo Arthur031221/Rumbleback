@@ -54,7 +54,9 @@ Tap the map, search a city, or use your location. The pin card shows:
   warning could have been issued. The card then shows how long before the S wave you would have heard it,
   or says you were inside the blind zone. This is arithmetic on the model, not a record of any real alert.
 
-Drag the pin to move it. The pin is kept in your browser only.
+Drag the pin to move it. The pin is kept in your browser only. A click on the map drops the pin after a short wait
+(0.3 s with a mouse, 0.4 s on a touch screen), so that a double click can zoom without moving it. A double click slower
+than that wait moves the pin.
 
 ## Share
 
