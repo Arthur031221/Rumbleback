@@ -70,7 +70,7 @@ export function createStrip(canvas: HTMLCanvasElement) {
     ctx.clearRect(0, 0, width, height);
     const dark = document.documentElement.dataset.theme !== 'light';
     const ink = dark ? '233,240,247' : '15,26,37';
-    const [pc, sc] = dark ? ['76,195,255', '255,123,66'] : ['10,111,189', '210,67,15'];
+    const [pc, sc] = dark ? ['76,195,255', '255,123,66'] : ['10,111,189', '191,58,9'];
     const x = (sec: number) => {
       const pct = (sec - START) / (s.length - START);
       return pct * width + (0.5 - pct) * THUMB;

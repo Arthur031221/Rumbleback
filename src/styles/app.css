@@ -43,7 +43,7 @@
   --muted: #425466;
   --faint: #66788a;
   --p: #0a6fbd;
-  --s: #d2430f;
+  --s: #bf3a09;
   --on-s: #ffffff;
   --focus: #0a6fbd;
   --shadow: 0 16px 40px rgba(30, 50, 70, 0.18);
@@ -52,6 +52,10 @@
 
 * {
   box-sizing: border-box;
+}
+
+.stage {
+  display: contents;
 }
 
 /* What index.html shows while the app downloads: the P ring runs ahead of the S ring, as the waves do. */
@@ -466,7 +470,6 @@ button {
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.04em;
-  opacity: 0.8;
 }
 .quake-meta {
   min-width: 0;

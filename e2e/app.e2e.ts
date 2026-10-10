@@ -15,6 +15,7 @@ const hualien = decodeQuake(readFileSync(new URL('../public/events/us7000m9g4.js
 const cities = JSON.parse(readFileSync(new URL('../public/data/cities.json', import.meta.url), 'utf8')) as {
   cities: [number, number, number, string][];
 };
+const axeSource = readFileSync(new URL('../node_modules/axe-core/axe.min.js', import.meta.url), 'utf8');
 const seconds = (n: number) => `${n.toFixed(Math.abs(n) < 10 ? 1 : 0)} s`;
 
 test('before the app script arrives the page already has its theme and a placeholder, and the placeholder goes', async () => {
@@ -697,3 +698,51 @@ test('the map credit stays reachable on a phone: a small button that opens the t
   await button.click();
   assert.match(await credit.locator('.maplibregl-ctrl-attrib-inner').innerText(), /OpenStreetMap/);
 });
+
+test(
+  'axe finds no accessibility violations: both themes, desktop and phone, with a pin and in every dialog',
+  { timeout: 240000 },
+  async () => {
+    type Axe = {
+      run(
+        root: Document,
+        options: object,
+      ): Promise<{ violations: { id: string; nodes: { target: string[]; failureSummary?: string }[] }[] }>;
+    };
+    for (const colorScheme of ['dark', 'light'] as const) {
+      for (const [width, height] of [
+        [1440, 900],
+        [390, 844],
+      ] as const) {
+        await h.closeContexts();
+        const { page } = await h.open({ width, height, colorScheme, tileJson: true });
+        await pause(page);
+        const scan = async (what: string) => {
+          // Dialogs and cards fade in, and a scan in the middle of that measures colours that are not final.
+          await page.waitForTimeout(900);
+          await page.evaluate(axeSource);
+          const found = await page.evaluate(async () => {
+            const r = await (window as unknown as { axe: Axe }).axe.run(document, { resultTypes: ['violations'] });
+            return r.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(' ')).join(' | ')}`);
+          });
+          assert.deepEqual(found, [], `${colorScheme} ${width}x${height} ${what}`);
+        };
+        await page.locator('.chip', { hasText: 'Taichung' }).click();
+        await page.locator('.pin-live').waitFor({ state: 'visible' });
+        await page.locator('.check-card summary').click();
+        await scan('with a pin');
+        await page.getByRole('button', { name: 'Choose a quake' }).click();
+        for (const tab of ['Featured', 'Recent', 'Search', 'Link']) {
+          await page.getByRole('tab', { name: tab, exact: true }).click();
+          await scan(`picker, ${tab}`);
+        }
+        await page.keyboard.press('Escape');
+        await page.getByRole('button', { name: 'Share this replay' }).click();
+        await scan('share');
+        await page.keyboard.press('Escape');
+        await page.getByRole('button', { name: 'How it works' }).click();
+        await scan('how it works');
+      }
+    }
+  },
+);

@@ -29,7 +29,7 @@ export interface Frame {
 
 const COLORS = {
   dark: { p: '76,195,255', s: '255,123,66', outline: 'rgba(7,11,16,0.85)', text: '#06101a', muted: 'rgba(214,226,238,0.8)' },
-  light: { p: '10,116,196', s: '210,67,15', outline: 'rgba(255,255,255,0.95)', text: '#ffffff', muted: 'rgba(37,50,63,0.8)' },
+  light: { p: '10,116,196', s: '191,58,9', outline: 'rgba(255,255,255,0.95)', text: '#ffffff', muted: 'rgba(37,50,63,0.8)' },
 } as const;
 
 const BAND_SECONDS = { P: 2.2, S: 3.4 } as const;

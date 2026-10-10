@@ -113,7 +113,7 @@ export async function start(): Promise<void> {
   );
   const brand = h(
     'a',
-    { class: 'brand', href: './' },
+    { class: 'brand', href: './', 'aria-label': 'Rumbleback' },
     h('span', { class: 'brand-mark', 'aria-hidden': 'true' }),
     h('span', { class: 'brand-name', text: 'Rumbleback' }),
   );
@@ -124,7 +124,8 @@ export async function start(): Promise<void> {
     h('div', { class: 'topbar-actions' }, chooseBtn, learnBtn, shareBtn, langBox, themeBtn, gh),
   );
   const overlayCanvas = h('canvas', { class: 'overlay', 'aria-hidden': 'true' });
-  document.body.append(mapEl, topbar, layersEl, panelEl, dockEl, toast);
+  // The map and its layer chips are the main landmark, so no content sits outside a landmark.
+  document.body.append(h('main', { class: 'stage' }, mapEl, layersEl), topbar, panelEl, dockEl, toast);
 
   let toastTimer: number | undefined;
   const showToast = (text: string) => {

@@ -8,7 +8,8 @@ export function createLearn() {
   const dialog = h('dialog', { class: 'sheet learn', 'aria-labelledby': 'learn-title' });
   const title = h('h2', { id: 'learn-title', class: 'sheet-title' });
   const closeBtn = h('button', { class: 'icon-btn', type: 'button', onclick: () => dialog.close() }, icon('close'));
-  const body = h('div', { class: 'learn-body' });
+  // Scrollable, so a keyboard user has to be able to reach it.
+  const body = h('div', { class: 'learn-body', tabindex: 0, role: 'region', 'aria-labelledby': 'learn-title' });
   dialog.append(h('div', { class: 'sheet-head' }, title, closeBtn), body);
   dialog.addEventListener('click', (e) => e.target === dialog && dialog.close());
 
