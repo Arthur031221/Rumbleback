@@ -1,4 +1,5 @@
 import type { Pick, QuakeSummary, Seismogram } from './quake.ts';
+import { timeoutSignal, within } from './signal.ts';
 import { TravelTimes } from './traveltime.ts';
 
 export const DATASELECT = 'https://service.earthscope.org/fdsnws/dataselect/1/query';
@@ -104,7 +105,7 @@ export async function loadSeismogram(
 ): Promise<Seismogram | null> {
   const tt = new TravelTimes(quake.depthKm);
   // All the tries together get under a minute, so a slow archive cannot hold the layer up for long.
-  const deadline = AbortSignal.timeout(45000);
+  const deadline = timeoutSignal(45000);
   for (const p of candidates(picks)) {
     if (deadline.aborted) break;
     const [net, sta] = p.sta.split('.');
@@ -119,7 +120,7 @@ export async function loadSeismogram(
       format: 'geocsv',
     });
     try {
-      const each = AbortSignal.any([deadline, AbortSignal.timeout(20000), ...(signal ? [signal] : [])]);
+      const each = within(20000, deadline, signal);
       const res = await f(`${DATASELECT}?${q}`, { signal: each });
       if (!res.ok) continue;
       // The trace has to show the P wave coming in and the shaking after the S wave, or it tells little.

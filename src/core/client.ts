@@ -1,5 +1,6 @@
 import { distanceDeg } from './geo.ts';
 import type { ProductUrls, QuakeData, QuakeSummary } from './quake.ts';
+import { within } from './signal.ts';
 import { parseGrid, parsePhaseData, parseProducts, parseStations, parseSummary } from './usgs.ts';
 import { loadSeismogram } from './waveform.ts';
 
@@ -37,7 +38,7 @@ export function isUnknownEvent(e: unknown): boolean {
 
 async function json<T>(url: string, f: Fetch, signal?: AbortSignal): Promise<T> {
   // A request that stalls for half a minute fails, so a list or a replay cannot stay loading for ever.
-  const res = await f(url, { signal: signal ? AbortSignal.any([signal, AbortSignal.timeout(30000)]) : AbortSignal.timeout(30000) });
+  const res = await f(url, { signal: within(30000, signal) });
   if (!res.ok) throw new HttpError(res.status, url);
   return (await res.json()) as T;
 }
@@ -105,7 +106,7 @@ export async function loadQuake(
   const data: QuakeData = { quake, picks: [], instruments: [], felt: [], grid: null, seismogram: null };
   onProgress(data);
   // A layer that takes more than half a minute is left out instead of holding the rest up.
-  const limited = () => (signal ? AbortSignal.any([signal, AbortSignal.timeout(30000)]) : AbortSignal.timeout(30000));
+  const limited = () => within(30000, signal);
   const optional = async (url: string | undefined, apply: (res: Response) => Promise<void>) => {
     if (!url) return;
     try {
