@@ -1393,12 +1393,19 @@ dialog.sheet::backdrop {
 }
 .share-actions {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  /* minmax(0, ...) lets a column be narrower than its button's label, which wraps instead of running past the dialog. */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
   margin-top: 14px;
 }
 .share-actions .btn {
   justify-content: center;
+  height: auto;
+  min-height: 40px;
+  padding-block: 8px;
+  line-height: 1.25;
+  text-align: center;
+  white-space: normal;
 }
 .share-status {
   min-height: 1.4em;

@@ -22,6 +22,8 @@ Fixed
 
 - A pin outside the area the ShakeMap covers said "No ShakeMap for this quake", although the map showed one. It now
   says the ShakeMap has no estimate for that place, and keeps the old message for a quake that has no ShakeMap.
+- In the share dialog on a phone 390 pixels wide, "Save square card" and "Record a video clip" ran past the edge of
+  the dialog, and the longer languages did worse. The labels wrap now, at 320 pixels as well, in all nine languages.
 
 ## 0.3.2
 

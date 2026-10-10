@@ -328,6 +328,27 @@ test('the watch button stays inside the pin card in every language, on a small p
   }
 });
 
+test('the share buttons stay inside the dialog on a phone in every language', async () => {
+  for (const [width, height] of [
+    [320, 568],
+    [390, 844],
+  ] as const) {
+    for (const lang of ['en', 'zh-TW', 'zh-CN', 'ja', 'ko', 'es', 'fr', 'de', 'pt-BR']) {
+      await h.closeContexts();
+      const { page } = await h.open({ width, height, query: `?lang=${lang}` });
+      await page.locator('.topbar-actions button').nth(2).click();
+      await page.locator('.share-actions .btn').first().waitFor();
+      const outside = await page.evaluate(() => {
+        const dialog = document.querySelector('dialog[open]')!.getBoundingClientRect();
+        return [...document.querySelectorAll('.share-actions .btn')]
+          .filter((b) => b.getBoundingClientRect().right > dialog.right - 8 || b.getBoundingClientRect().left < dialog.left + 8)
+          .map((b) => b.textContent!.trim());
+      });
+      assert.deepEqual(outside, [], `${lang} at ${width}x${height}`);
+    }
+  }
+});
+
 test('the pin card runs the replay again from five seconds before the P wave reaches the pin', async () => {
   const { page } = await h.open();
   await pause(page);
