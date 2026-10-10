@@ -760,17 +760,17 @@ test('the map credit stays reachable on a phone: a small button that opens the t
   assert.match(await credit.locator('.maplibregl-ctrl-attrib-inner').innerText(), /OpenStreetMap/);
 });
 
-test(
-  'axe finds no accessibility violations: both themes, desktop and phone, with a pin and in every dialog',
-  { timeout: 240000 },
-  async () => {
-    type Axe = {
-      run(
-        root: Document,
-        options: object,
-      ): Promise<{ violations: { id: string; nodes: { target: string[]; failureSummary?: string }[] }[] }>;
-    };
-    for (const colorScheme of ['dark', 'light'] as const) {
+for (const colorScheme of ['dark', 'light'] as const)
+  test(
+    `axe finds no accessibility violations in the ${colorScheme} theme: desktop and phone, with a pin and in every dialog`,
+    { timeout: 300000 },
+    async () => {
+      type Axe = {
+        run(
+          root: Document,
+          options: object,
+        ): Promise<{ violations: { id: string; nodes: { target: string[]; failureSummary?: string }[] }[] }>;
+      };
       for (const [width, height] of [
         [1440, 900],
         [390, 844],
@@ -780,7 +780,17 @@ test(
         await pause(page);
         const scan = async (what: string) => {
           // Dialogs and cards fade in, and a scan in the middle of that measures colours that are not final.
-          await page.waitForTimeout(900);
+          // A slow machine takes longer over it, so wait for the animations and transitions themselves.
+          await page.waitForTimeout(200);
+          await page.evaluate(() =>
+            Promise.all(
+              document
+                .getAnimations()
+                .filter((a) => Number.isFinite(a.effect?.getComputedTiming().endTime))
+                .map((a) => a.finished.catch(() => {})),
+            ),
+          );
+          await page.waitForTimeout(100);
           await page.evaluate(axeSource);
           const found = await page.evaluate(async () => {
             const r = await (window as unknown as { axe: Axe }).axe.run(document, { resultTypes: ['violations'] });
@@ -804,6 +814,5 @@ test(
         await page.getByRole('button', { name: 'How it works' }).click();
         await scan('how it works');
       }
-    }
-  },
-);
+    },
+  );
