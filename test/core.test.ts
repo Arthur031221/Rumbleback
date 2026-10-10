@@ -5,6 +5,7 @@ import { decodeQuake } from '../src/core/codec.ts';
 import { citiesNear, parseCities, searchCities, type CityFile } from '../src/core/cities.ts';
 import { mmiColor, mmiRoman, shaking } from '../src/core/intensity.ts';
 import { buildLink, eventIdFrom, parseLink } from '../src/core/link.ts';
+import { REGIONS } from '../src/core/regions.ts';
 import { defaultSpeed, feltRadiusKm, openingBounds, replayLength } from '../src/core/replay.ts';
 import { TravelTimes } from '../src/core/traveltime.ts';
 
@@ -148,4 +149,18 @@ test('text that is not an event id is refused', () => {
     'us7000m9g4 and more',
   ])
     assert.equal(eventIdFrom(text), null, JSON.stringify(text));
+});
+
+test('every search region is a real rectangle with a unique id, and its name is a country code or a locale key', () => {
+  assert.equal(REGIONS[0]!.id, 'world');
+  assert.equal(REGIONS[0]!.box, null);
+  assert.equal(new Set(REGIONS.map((r) => r.id)).size, REGIONS.length);
+  const en = JSON.parse(readFileSync(new URL('../src/app/locales/en.json', import.meta.url), 'utf8')) as Record<string, string>;
+  for (const r of REGIONS.slice(1)) {
+    const b = r.box!;
+    assert.ok(b.minLat < b.maxLat && b.minLon < b.maxLon, r.id);
+    assert.ok(b.minLat >= -90 && b.maxLat <= 90 && b.minLon >= -180 && b.maxLon <= 180, r.id);
+    if ('iso' in r.label) assert.match(r.label.iso, /^[A-Z]{2}$/);
+    else assert.ok(r.label.key in en, r.label.key);
+  }
 });

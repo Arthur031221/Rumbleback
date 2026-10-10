@@ -1,38 +1,12 @@
 import { HttpError, RECENT_DAYS, RECENT_LIMIT, quakeDetail, recentQuakes, searchQuakes } from '../core/client.ts';
 import { eventIdFrom } from '../core/link.ts';
+import { REGIONS, type Region } from '../core/regions.ts';
 import type { QuakeSummary } from '../core/quake.ts';
 import { FEATURED } from '../data/featured.ts';
 import { quakeTitle } from './derived.ts';
 import { h } from './dom.ts';
 import { icon } from './icons.ts';
 import { language, number, t } from './i18n.ts';
-
-interface Region {
-  id: string;
-  /** ISO 3166 country code for a localized name, or a locale key for areas that are not countries. */
-  label: { iso: string } | { key: string };
-  box: { minLat: number; maxLat: number; minLon: number; maxLon: number } | null;
-}
-
-const REGIONS: Region[] = [
-  { id: 'world', label: { key: 'picker.anywhere' }, box: null },
-  { id: 'tw', label: { iso: 'TW' }, box: { minLat: 21.5, maxLat: 25.6, minLon: 119.2, maxLon: 122.5 } },
-  { id: 'jp', label: { iso: 'JP' }, box: { minLat: 24, maxLat: 46, minLon: 122, maxLon: 147 } },
-  { id: 'cn', label: { iso: 'CN' }, box: { minLat: 18, maxLat: 54, minLon: 73, maxLon: 135 } },
-  { id: 'tr', label: { iso: 'TR' }, box: { minLat: 35.5, maxLat: 42.5, minLon: 25.5, maxLon: 45 } },
-  { id: 'ir', label: { iso: 'IR' }, box: { minLat: 25, maxLat: 40, minLon: 44, maxLon: 63.5 } },
-  { id: 'in', label: { iso: 'IN' }, box: { minLat: 6, maxLat: 36, minLon: 68, maxLon: 97.5 } },
-  { id: 'id', label: { iso: 'ID' }, box: { minLat: -11, maxLat: 6, minLon: 95, maxLon: 141 } },
-  { id: 'ph', label: { iso: 'PH' }, box: { minLat: 4.5, maxLat: 21.5, minLon: 116, maxLon: 127 } },
-  { id: 'mx', label: { iso: 'MX' }, box: { minLat: 14, maxLat: 33, minLon: -118, maxLon: -86 } },
-  { id: 'cl', label: { iso: 'CL' }, box: { minLat: -56, maxLat: -17, minLon: -76, maxLon: -66 } },
-  { id: 'pe', label: { iso: 'PE' }, box: { minLat: -19, maxLat: 0, minLon: -82, maxLon: -68 } },
-  { id: 'nz', label: { iso: 'NZ' }, box: { minLat: -48, maxLat: -33, minLon: 165, maxLon: 179 } },
-  { id: 'it', label: { iso: 'IT' }, box: { minLat: 36, maxLat: 47.5, minLon: 6, maxLon: 19 } },
-  { id: 'gr', label: { iso: 'GR' }, box: { minLat: 34, maxLat: 42, minLon: 19, maxLon: 30 } },
-  { id: 'ca', label: { key: 'region.california' }, box: { minLat: 32, maxLat: 42, minLon: -125, maxLon: -114 } },
-  { id: 'ak', label: { key: 'region.alaska' }, box: { minLat: 51, maxLat: 72, minLon: -170, maxLon: -130 } },
-];
 
 const MAGNITUDES = [5, 5.5, 6, 6.5, 7, 7.5, 8];
 /** The minimum magnitudes the recent list offers. Below 4.5 USGS lists too many to be of use. */
@@ -343,7 +317,14 @@ export function createPicker(onChoose: (id: string) => void) {
     labels[3]!.textContent = t('picker.to');
     go.textContent = t('picker.go');
     const chosen = region.value || 'world';
-    region.replaceChildren(...REGIONS.map((r) => h('option', { value: r.id, selected: r.id === chosen }, regionLabel(r))));
+    // Anywhere first, then the places in the order of the viewer's language.
+    const named = REGIONS.slice(1).map((r) => [r, regionLabel(r)] as const);
+    named.sort((a, b) => a[1].localeCompare(b[1], language()));
+    region.replaceChildren(
+      ...[[REGIONS[0]!, regionLabel(REGIONS[0]!)] as const, ...named].map(([r, label]) =>
+        h('option', { value: r.id, selected: r.id === chosen }, label),
+      ),
+    );
     const mag = recentMag.value;
     recentMag.replaceChildren(
       ...RECENT_MAGNITUDES.map((m) => h('option', { value: String(m), selected: String(m) === (mag || '5') }, `M ${number(m, 1)}+`)),

@@ -26,7 +26,7 @@ Pure functions and small classes. No DOM, so it runs under Node for the tests an
 | `residuals.ts` | Observed minus modelled arrival for every pick |
 | `waveform.ts` | Picks a station, fetches its GeoCSV from EarthScope, keeps a min and max per time bin (a quarter second or two samples) |
 | `replay.ts` | Opening view, replay length, default speed |
-| `intensity.ts`, `cities.ts`, `link.ts` | MMI colours and words, city search, deep links |
+| `intensity.ts`, `cities.ts`, `link.ts`, `regions.ts` | MMI colours and words, city search, deep links and the event id in a pasted USGS address, the search regions |
 
 ### The travel-time table
 
@@ -48,14 +48,18 @@ is why a deep quake has no ring for its first seconds.
 
 | File | Job |
 |---|---|
-| `app.ts` | Wires everything. Owns loading, the playback loop and the pin |
+| `app.ts` | Wires everything. Owns loading, the playback loop, the pin and the address bar: a quake the viewer chooses is a history entry, so Back returns to the one before |
 | `state.ts` | A small store. The replay clock is kept apart so a frame does not wake every subscriber |
-| `map.ts`, `style.ts` | MapLibre with a bundled coastline layer under OpenFreeMap vector tiles. Labels follow the language |
+| `map.ts`, `style.ts` | MapLibre with a bundled coastline layer under OpenFreeMap vector tiles. Labels follow the language. A click waits a moment before it drops the pin, so a double click zooms without moving it |
 | `overlay.ts` | A 2D canvas above the map. Draws the ShakeMap wash clipped to the S front, the two fronts, instruments, picks, felt reports and the blind zone. Screen positions are cached and recomputed when the map moves |
 | `panel.ts`, `dock.ts`, `layers.ts` | The left panel, the timeline and the layer chips |
-| `strip.ts` | The seismogram strip above the timeline, lined up with the scrubber |
+| `strip.ts` | The seismogram strip above the timeline, lined up with the scrubber. A caption row, a row for the P and S letters, then the trace. Shorter on a phone |
 | `picker.ts`, `learn.ts`, `share.ts` | The three dialogs. `share.ts` also composes the cards and records the clip from the map and overlay canvases |
 | `i18n.ts`, `locales/*.json` | Messages, number and date formatting |
+
+`index.html` carries a small placeholder (two rings, the P one running ahead of the S one) and a script that sets the theme
+before the first paint, so the page is not blank while the 480 KB script downloads. The app removes the placeholder once its
+own screen is up.
 
 Drawing the waves on a separate canvas, instead of as map layers, means a frame costs a few hundred projected
 points and no map re-render, and the same canvas is what the share card and the clip copy from.

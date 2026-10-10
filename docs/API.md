@@ -47,7 +47,10 @@ summarize(pickResiduals(quake, 95).P);                          // { n, median, 
 `loadQuake(id, onProgress?, fetch?, signal?)` fetches the summary first and each layer on its own. A layer that is
 missing or fails leaves that part of the result empty. The parsers are exported on their own as `parseSummary`,
 `parseProducts`, `parsePhaseData`, `parseGrid`, `parseStations` and `gridMmiAt`, and `searchQuakes` and `recentQuakes`
-query the catalog. `encodeQuake` and `decodeQuake` convert a loaded event to and from the compact JSON the
+query the catalog (`recentQuakes(fetch, signal, now, minMag)` takes the minimum magnitude, 5 unless given, and returns at
+most `RECENT_LIMIT` quakes from the last `RECENT_DAYS`). `eventIdFrom(text)` finds the USGS event id in an id, an event page
+address or a catalog query, and returns null for anything else. A response that is not a success throws an `HttpError` with its
+`status`. `encodeQuake` and `decodeQuake` convert a loaded event to and from the compact JSON the
 featured shelf uses.
 
 ## Seismogram

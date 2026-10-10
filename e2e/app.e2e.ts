@@ -305,6 +305,14 @@ test('recent and search tabs read the USGS catalog', async () => {
   await page.getByRole('tab', { name: 'Recent' }).click();
   await page.locator('.quake-row', { hasText: 'Hualien City' }).waitFor();
   await page.getByRole('tab', { name: 'Search' }).click();
+  const places = await page.locator('#search-region option').allInnerTexts();
+  assert.equal(places[0], 'Anywhere');
+  assert.ok(places.includes('Afghanistan') && places.includes('Taiwan') && places.includes('California'));
+  assert.deepEqual(
+    places.slice(1),
+    [...places.slice(1)].sort((a, b) => a.localeCompare(b, 'en')),
+    'sorted by name',
+  );
   await page.selectOption('#search-region', 'tw');
   await page.getByRole('button', { name: 'Search', exact: true }).click();
   await page.locator('.quake-row', { hasText: 'Hualien City' }).waitFor();

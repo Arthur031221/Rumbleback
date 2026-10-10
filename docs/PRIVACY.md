@@ -18,7 +18,7 @@ Opening the page makes requests to these hosts, and your browser sends its norma
 |---|---|---|
 | GitHub Pages (`arthur031221.github.io`, or the host serving your copy) | Always | The page and its scripts, fonts and styles, the coastline and city files, the featured quake list and the featured quake you open |
 | `tiles.openfreemap.org` | Always, and again as you pan and zoom | The style, map tiles and fonts. Tile coordinates tell the tile server which area of the map is on screen |
-| `earthquake.usgs.gov` | Only for quakes that are not featured, and for the Recent and Search tabs | The catalog query or the event id, then the event's phase picks, ShakeMap and station list. The product addresses come from the USGS answer |
+| `earthquake.usgs.gov` | Only for quakes that are not featured, and for the Recent, Search and Link tabs | The catalog query or the event id, then the event's phase picks, ShakeMap and station list. The product addresses come from the USGS answer. The Link tab reads the event id out of what you paste and sends only that id |
 | `service.earthscope.org` | Only for quakes that are not featured | A few minutes of one station's vertical seismogram, up to eight tries. The station is chosen from the earthquake, not from your pin |
 
 Your pin is never part of any request. The map does not move to it either, because tiles around your home
