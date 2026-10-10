@@ -443,14 +443,15 @@ export function createPanel(host: HTMLElement, cb: PanelCallbacks) {
 
   /** Null until the first update, so a pin kept from an earlier visit does not move the sheet. */
   let hadPin: boolean | null = null;
+  /** The panel scrolls itself to the pin card and to the check card; a viewer who asked for less motion gets a jump. */
+  const scrollBehavior = (): ScrollBehavior => (window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth');
   /** On a phone the sheet shows the quake card first, which would hide the numbers of a pin just placed. */
   function followPin(placed: boolean): void {
     if (!isPhone() && !isShort()) return;
     if (placed && host.dataset.collapsed === 'true') toggle();
     // The pin card has just been shown, so wait for the layout before measuring where it starts.
     requestAnimationFrame(() => {
-      const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
-      host.scrollTo({ top: placed ? Math.max(0, pinCard.offsetTop - 8) : 0, behavior });
+      host.scrollTo({ top: placed ? Math.max(0, pinCard.offsetTop - 8) : 0, behavior: scrollBehavior() });
     });
   }
 
@@ -464,7 +465,7 @@ export function createPanel(host: HTMLElement, cb: PanelCallbacks) {
   check.addEventListener('toggle', () => {
     if (!check.open) return;
     requestAnimationFrame(drawChart);
-    check.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    check.scrollIntoView({ block: 'nearest', behavior: scrollBehavior() });
   });
 
   /** Called every frame while the clock moves: the live countdown under the pin numbers. */

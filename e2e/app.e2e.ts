@@ -1051,6 +1051,28 @@ test('watching the waves reach the pin does not read out the seconds it skips', 
   await page.waitForFunction(() => document.querySelector('#announcer')!.textContent!.startsWith('P wave at your place.'));
 });
 
+test('opening the check card scrolls it into view with a jump for a viewer who asked for less motion, and smoothly for the rest', async () => {
+  const script = () => {
+    const real = Element.prototype.scrollIntoView;
+    const seen: unknown[] = ((window as unknown as { scrolled: unknown[] }).scrolled = []);
+    Element.prototype.scrollIntoView = function (this: Element, arg?: boolean | ScrollIntoViewOptions) {
+      seen.push(typeof arg === 'object' ? arg.behavior : null);
+      return real.call(this, arg as ScrollIntoViewOptions);
+    };
+  };
+  for (const [reducedMotion, expected] of [
+    ['reduce', 'auto'],
+    ['no-preference', 'smooth'],
+  ] as const) {
+    await h.closeContexts();
+    const { page } = await h.open({ reducedMotion, script });
+    await page.locator('.check-card > summary').click();
+    await page.waitForFunction(() => (window as unknown as { scrolled: unknown[] }).scrolled.length > 0);
+    const seen = await page.evaluate(() => (window as unknown as { scrolled: unknown[] }).scrolled);
+    assert.deepEqual(seen, [expected], reducedMotion);
+  }
+});
+
 test('model check card shows the residual summary', async () => {
   const { page } = await h.open();
   await page.locator('.check-card summary').click();
