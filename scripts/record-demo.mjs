@@ -3,7 +3,7 @@
 //   node scripts/record-demo.mjs
 import { spawnSync } from 'node:child_process';
 import { mkdirSync, rmSync } from 'node:fs';
-import { open, pinCity, seek, setAlert } from './lib/browser.mjs';
+import { findDot, open, pinCity, seek, setAlert } from './lib/browser.mjs';
 
 const tmp = process.env.FRAMES_DIR ?? '/tmp/rumbleback-frames';
 const out = new URL('../assets/demo.gif', import.meta.url).pathname;
@@ -14,7 +14,8 @@ const { page, close } = await open({ width: 1280, height: 720 });
 let n = 0;
 const shot = async () => page.screenshot({ path: `${tmp}/f${String(n++).padStart(4, '0')}.png` });
 
-// The replay opens on the waves already moving, then a pin goes down, then the alert slider is dragged.
+// The replay opens on the waves already moving, then a pin goes down, a mouse rests on an instrument, and the alert slider is dragged.
+let hovered = false;
 await seek(page, 6.5);
 for (let t = 6.5; t <= 20; t += 0.45) {
   await seek(page, t);
@@ -25,6 +26,19 @@ await page.waitForTimeout(500);
 for (let t = 20; t <= 52; t += 0.45) {
   await seek(page, t);
   await shot();
+  // Once the S wave has crossed the island, a mouse rests on a strong motion instrument and its card shows.
+  if (t > 36.5 && !hovered) {
+    hovered = true;
+    const spot = await findDot(page, /Strong motion/, 6);
+    if (spot) {
+      await page.mouse.move(spot[0] - 3, spot[1] - 3);
+      await page.mouse.move(spot[0], spot[1]);
+      await page.waitForTimeout(250);
+      for (let i = 0; i < 16; i++) await shot();
+      await page.mouse.move(5, 700);
+      await page.waitForTimeout(150);
+    }
+  }
 }
 for (let a = 8; a <= 34; a += 1.4) {
   await setAlert(page, Math.round(a));

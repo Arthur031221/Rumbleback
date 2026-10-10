@@ -44,3 +44,28 @@ export async function pinCity(page, name) {
 export async function setAlert(page, seconds) {
   await page.locator('#alert-range').fill(String(seconds));
 }
+
+/**
+ * Where on the map a mouse opens the card of a dot whose text matches `pattern` and whose intensity (MMI) is at
+ * least `minMmi`, or null. It moves a synthetic mouse over a grid in the page, so no real pointer is needed.
+ */
+export async function findDot(page, pattern, minMmi = 0, region = { x: [400, 1240], y: [100, 560] }) {
+  return page.evaluate(
+    ({ source, minMmi, region }) => {
+      const map = document.querySelector('#map');
+      const box = document.querySelector('.inspector');
+      let found = null;
+      for (let y = region.y[0]; y < region.y[1] && !found; y += 4) {
+        for (let x = region.x[0]; x < region.x[1] && !found; x += 4) {
+          map.dispatchEvent(new PointerEvent('pointermove', { bubbles: true, clientX: x, clientY: y, pointerType: 'mouse' }));
+          if (!box || box.hidden || !new RegExp(source).test(box.innerText)) continue;
+          const mmi = /MMI (\d+(\.\d)?)/.exec(box.innerText);
+          if (!minMmi || (mmi && Number(mmi[1]) >= minMmi)) found = [x, y];
+        }
+      }
+      map.dispatchEvent(new PointerEvent('pointerleave'));
+      return found;
+    },
+    { source: pattern.source, minMmi, region },
+  );
+}
