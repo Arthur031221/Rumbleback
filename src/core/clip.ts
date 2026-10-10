@@ -3,7 +3,8 @@
  * and in every social app, while WebM does not on an iPhone, so a browser that records both gets MP4.
  */
 const CLIP_FORMATS = [
-  { mime: 'video/mp4;codecs=avc1.42E01E', ext: 'mp4' },
+  // No profile or level in the string: a low level (a baseline one at 3.0, say) is too small for a 720p frame, and the
+  // encoder is better placed to choose.
   { mime: 'video/mp4;codecs=avc1', ext: 'mp4' },
   { mime: 'video/mp4', ext: 'mp4' },
   { mime: 'video/webm;codecs=vp9', ext: 'webm' },

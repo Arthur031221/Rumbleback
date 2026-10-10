@@ -182,10 +182,7 @@ test('a clip is recorded as MP4 when the browser can, so it plays on an iPhone a
       mimes.includes(mime);
   // Chrome 126 and later, and Safari: both containers, MP4 wins.
   assert.deepEqual(pickClipFormat(only('video/mp4', 'video/webm', 'video/webm;codecs=vp9')), { mime: 'video/mp4', ext: 'mp4' });
-  assert.deepEqual(pickClipFormat(only('video/mp4;codecs=avc1.42E01E', 'video/mp4', 'video/webm')), {
-    mime: 'video/mp4;codecs=avc1.42E01E',
-    ext: 'mp4',
-  });
+  assert.deepEqual(pickClipFormat(only('video/mp4;codecs=avc1', 'video/mp4', 'video/webm')), { mime: 'video/mp4;codecs=avc1', ext: 'mp4' });
   // Firefox and older Chrome: WebM only, the best codec first.
   assert.deepEqual(pickClipFormat(only('video/webm', 'video/webm;codecs=vp8')), { mime: 'video/webm;codecs=vp8', ext: 'webm' });
   assert.deepEqual(pickClipFormat(only('video/webm;codecs=vp9', 'video/webm')), { mime: 'video/webm;codecs=vp9', ext: 'webm' });
