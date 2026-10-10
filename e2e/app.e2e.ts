@@ -1030,9 +1030,15 @@ test('a phone held sideways keeps the map: the panel stays at the side, the time
     assert.equal(await page.locator('.dock canvas').isVisible(), false, `no seismogram strip ${where}`);
     assert.ok(dock.x + dock.width <= width && panel.x + panel.width <= width, `nothing leaves the screen ${where}`);
     assert.ok(panel.x + panel.width <= dock.x || panel.y + panel.height <= dock.y, `the panel and the timeline do not overlap ${where}`);
-    // What is left for the map: to the right of the panel and above the timeline.
-    const [free, high] = [width - (panel.x + panel.width), dock.y - 54];
-    assert.ok(free >= 330 && high >= 200, `the map keeps ${free} by ${high} pixels ${where}`);
+    // The chips are one row, which scrolls, so they do not cover a third of the map.
+    const tops = await page
+      .locator('.layers-strip .chip')
+      .evaluateAll((chips) => chips.map((c) => Math.round(c.getBoundingClientRect().top)));
+    assert.equal(new Set(tops).size, 1, `one row of chips ${where}: ${tops}`);
+    const chipsBottom = (await rect('.layers-strip'))!.y + (await rect('.layers-strip'))!.height;
+    // What is left for the map: to the right of the panel, below the chips and above the timeline.
+    const [free, high] = [width - (panel.x + panel.width), dock.y - chipsBottom];
+    assert.ok(free >= 330 && high >= 190, `the map keeps ${free} by ${high} pixels ${where}`);
     // A pin scrolls the panel to its numbers, as it does on an upright phone.
     await page.mouse.click(panel.x + panel.width + free / 2, 150);
     await page.locator('.pin-live').waitFor();
@@ -1078,6 +1084,8 @@ test('the controls keep clear of a notch and a home indicator', async () => {
     const where = `at ${width} px wide`;
     assert.ok(topbar!.y >= insets.top, `the top bar starts under the notch ${where}: ${topbar!.y}`);
     assert.ok(topbar!.x >= insets.left, `the logo starts under the notch edge ${where}: ${topbar!.x}`);
+    const chips = (await box('.layers-strip'))!;
+    assert.ok(chips.y >= insets.top && chips.x >= insets.left, `the chips start under the notch ${where}: ${chips.x},${chips.y}`);
     assert.ok(dock!.y + dock!.height <= height - insets.bottom, `the timeline sits on the home indicator ${where}`);
     assert.ok(dock!.x + dock!.width <= width - insets.right, `the timeline reaches under the notch edge ${where}`);
     assert.ok(panel!.x >= insets.left, `the panel starts under the notch edge ${where}: ${panel!.x}`);

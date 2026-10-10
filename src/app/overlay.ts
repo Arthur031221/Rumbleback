@@ -107,6 +107,10 @@ export class Overlay {
 
   /** The frame on screen, which says what is lit and which layers show. */
   private shown: Frame | null = null;
+  /** How far from the top and from the bottom of the map a wavefront's letter may sit and still be seen. */
+  private clear = { top: 62, bottom: 130 };
+  /** Whether the seismogram strip, and so the station it comes from, is on screen. */
+  private station = true;
 
   private readonly map: Map;
   readonly canvas: HTMLCanvasElement;
@@ -118,6 +122,14 @@ export class Overlay {
     map.on('move', () => (this.proj.dirty = true));
     map.on('resize', () => this.resize());
     this.resize();
+  }
+
+  setClear(clear: { top: number; bottom: number }): void {
+    this.clear = clear;
+  }
+
+  setStation(show: boolean): void {
+    this.station = show;
   }
 
   resize(): void {
@@ -238,7 +250,7 @@ export class Overlay {
     if (f.layers.instruments) this.drawInstruments(f, ripple, c);
     if (f.layers.picks) {
       this.drawPicks(f, ripple, c);
-      this.drawStation(f, center, c);
+      if (this.station) this.drawStation(f, center, c);
     }
     if (f.layers.waves) {
       for (const wave of ['S', 'P'] as const) this.drawWave(f, wave, epi, c);
@@ -305,7 +317,7 @@ export class Overlay {
     // The letter sits on the highest part of the ring that is on screen, below the top bar.
     let top: [number, number] | null = null;
     for (const p of outer) {
-      if (p[1] < 62 || p[1] > this.height - 130 || p[0] < 16 || p[0] > this.width - 16) continue;
+      if (p[1] < this.clear.top || p[1] > this.height - this.clear.bottom || p[0] < 16 || p[0] > this.width - 16) continue;
       if (!top || p[1] < top[1]) top = p;
     }
     if (!top) return;

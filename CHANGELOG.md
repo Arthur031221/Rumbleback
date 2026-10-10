@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.3.2
+
+Released 2026-10-10.
+
+Fixed
+
+- Sideways, the six layer chips were two or three rows that covered a third of the map. They are one row that scrolls.
+- The map's opening view and the P and S letters on the wavefronts followed fixed numbers, so a notch or a home
+  indicator put the epicenter or a letter behind the chips, the sheet or the timeline. They follow where those really
+  are now, and the letters keep out of the strip of map they cover.
+- Sideways, the ring and name of the station behind the seismogram were still drawn, with no strip for them to point at.
+- A window of 815 by 479 pixels matched neither the upright phone layout nor the sideways one. The two now meet at
+  the same aspect ratio instead of leaving a gap.
+- The clip asks for MP4 without a codec level. A low level pinned in the request is too small for a 720p frame.
+- The usage guide said the pin card gives the same facts as the hover cards on dots. It does not: station picks,
+  instrument readings and felt counts are for a mouse only, and the guide says so.
+- The Spanish text of the felt report card reads naturally.
+- The zoom key test pressed minus while the map was still zooming in, and failed on a slow machine.
+
 ## 0.3.1
 
 Released 2026-10-10.

@@ -1502,7 +1502,7 @@ dialog.sheet::backdrop {
 }
 
 /* A phone held upright: the panel is a sheet above the timeline, which carries the seismogram strip. */
-@media (max-width: 820px) and (max-aspect-ratio: 169/100), (max-width: 820px) and (min-height: 481px) {
+@media (max-width: 820px) and (max-aspect-ratio: 17/10), (max-width: 820px) and (min-height: 481px) {
   :root {
     --dock-h: 98px;
   }
@@ -1623,8 +1623,19 @@ dialog.sheet::backdrop {
   .topbar-actions {
     height: 40px;
   }
+  /* One row that scrolls, as on an upright phone: the six chips are wider than what the panel leaves, and a second or a
+     third row would cover a third of the map. */
   .layers-strip {
     top: calc(54px + var(--sat));
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+    pointer-events: auto;
+  }
+  .layers-strip .chip {
+    flex: none;
   }
   .panel {
     top: calc(54px + var(--sat));

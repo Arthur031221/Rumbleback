@@ -22,7 +22,7 @@ import { createLayers } from './layers.ts';
 import { createPanel } from './panel.ts';
 import { createPicker } from './picker.ts';
 import { createShare } from './share.ts';
-import { isPhone, isShort } from './layout.ts';
+import { layoutKind, letterBand, mapPadding } from './layout.ts';
 import { clock, get, seek, set, START, subscribe, type LayerKey, type Pin, type ThemeChoice } from './state.ts';
 import type { Theme } from './style.ts';
 
@@ -441,6 +441,8 @@ export async function start(): Promise<void> {
     if (s.pin !== prev.pin) syncPin();
     if (s.quake?.seismogram !== prev.quake?.seismogram) layoutPadding();
     if (s.theme !== prev.theme || s.lang !== prev.lang) applyLook();
+    // The chips change length with the language, and a longer row can wrap onto another line.
+    if (s.lang !== prev.lang) layoutPadding();
     dirty = true;
   });
 
@@ -575,15 +577,17 @@ export async function start(): Promise<void> {
 
   // Layout: the map centres the epicenter in the space the panels leave free.
   function layoutPadding(): void {
-    const dockH = dockEl.getBoundingClientRect().height;
-    const aside = panelEl.getBoundingClientRect().right + 24;
-    view.setPadding(
-      isPhone()
-        ? { left: 12, right: 12, top: 64, bottom: Math.min(window.innerHeight * 0.42, 330) + dockH }
-        : isShort()
-          ? { left: aside - 8, right: 16, top: 56, bottom: dockH + 24 }
-          : { left: aside, right: 24, top: 76, bottom: dockH + 36 },
-    );
+    const kind = layoutKind();
+    const padding = mapPadding(kind, {
+      width: window.innerWidth,
+      height: window.innerHeight,
+      panelRight: panelEl.getBoundingClientRect().right,
+      chipsBottom: layersEl.getBoundingClientRect().bottom,
+      dockTop: dockEl.getBoundingClientRect().top,
+    });
+    view.setPadding(padding);
+    overlay.setClear(letterBand(kind, padding));
+    overlay.setStation(kind !== 'short');
   }
   window.addEventListener('resize', () => {
     overlay.resize();

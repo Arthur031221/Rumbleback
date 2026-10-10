@@ -54,7 +54,7 @@
   "inspect.instrument": "Instrumento de movimiento fuerte, red {network}",
   "inspect.pga": "Aceleración máxima {v} %g",
   "inspect.pgv": "Velocidad máxima {v} cm/s",
-  "inspect.felt": "Sensación reportada aquí: {n}",
+  "inspect.felt": "Reportes de sensación aquí: {n}",
   "layer.waves": "Ondas",
   "layer.picks": "Sismómetros",
   "layer.shaking": "ShakeMap",

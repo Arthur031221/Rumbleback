@@ -75,7 +75,9 @@ Space plays and pauses, the arrow keys step the clock, and plus and minus zoom t
 screen reader is told when the replay reaches your pin: one polite message when the P wave arrives (with the
 seconds until the S wave), one when the S wave arrives (with the shaking there) and one at the alert time (with
 the seconds it would have given you). Nothing is read out while you scrub or jump to another moment. The hover card
-for dots is for a mouse, and the numbers on the pin card give the same facts as text.
+for dots is for a mouse only, so a keyboard, a touch screen or a screen reader does not reach the station picks,
+the instrument readings or the felt report counts. The pin card is plain text, with the arrival times and the
+shaking at your place.
 
 ## Share
 
