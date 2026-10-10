@@ -1502,7 +1502,7 @@ dialog.sheet::backdrop {
 }
 
 /* A phone held upright: the panel is a sheet above the timeline, which carries the seismogram strip. */
-@media (max-width: 820px) and (min-height: 481px) {
+@media (max-width: 820px) and (max-aspect-ratio: 169/100), (max-width: 820px) and (min-height: 481px) {
   :root {
     --dock-h: 98px;
   }
@@ -1611,7 +1611,7 @@ dialog.sheet::backdrop {
 
 /* A short screen, such as a phone held sideways: the panel stays at the side, as on a desktop, and the timeline is one row
    without the seismogram strip, so the map keeps the rest of the screen. */
-@media (max-height: 480px) {
+@media (max-height: 480px) and (min-aspect-ratio: 17/10) {
   :root {
     --panel-w: min(300px, 38vw);
     --dock-h: 56px;
@@ -1670,7 +1670,7 @@ dialog.sheet::backdrop {
 }
 
 /* Too narrow for the panel and the whole timeline side by side: the timeline spans the screen under the panel. */
-@media (max-height: 480px) and (max-width: 820px) {
+@media (max-height: 480px) and (min-aspect-ratio: 17/10) and (max-width: 820px) {
   .dock {
     left: calc(8px + var(--sal));
     right: calc(8px + var(--sar));

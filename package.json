@@ -1,6 +1,6 @@
 {
   "name": "rumbleback",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Replay any past earthquake in the browser: P and S wavefronts roll across the map, real seismometers light up as they arrive, and a pin on your home shows how many seconds you had.",
   "type": "module",
   "private": true,

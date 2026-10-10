@@ -1029,6 +1029,19 @@ test('a phone held sideways keeps the map: the panel stays at the side, the time
   }
 });
 
+test('a phone held upright keeps its layout when a keyboard shrinks the screen, and a sideways one does not get it', async () => {
+  const upright = await h.open({ width: 390, height: 330 });
+  await pause(upright.page);
+  assert.equal(await upright.page.locator('.sheet-handle').isVisible(), true, 'still a sheet');
+  const dock = (await upright.page.locator('.dock').boundingBox())!;
+  assert.ok(dock.x < 12 && dock.width > 360, `the timeline still spans the screen: ${dock.x} ${dock.width}`);
+  const sideways = await h.open({ width: 740, height: 360 });
+  await pause(sideways.page);
+  assert.equal(await sideways.page.locator('.sheet-handle').isVisible(), false, 'no sheet');
+  const side = (await sideways.page.locator('.panel').boundingBox())!;
+  assert.ok(side.x + side.width < 330, `the panel stays at the side: ${side.width}`);
+});
+
 test('the controls keep clear of a notch and a home indicator', async () => {
   const insets = { top: 47, right: 44, bottom: 34, left: 44 };
   for (const [width, height] of [

@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.3.1
+
+Released 2026-10-10.
+
+Fixed
+
+- The sideways layout needs a screen that is both short and wide. On a browser that shrinks a phone held upright
+  when the keyboard opens (390 by 330 pixels, say), typing a city name no longer switches the page to it.
+- The browser test for reduced motion looked for the map's flight too briefly on a slow machine, and the one for a
+  closed picker depended on a lookup that finished too fast. Both wait longer now.
+
 ## 0.3.0
 
 Released 2026-10-10.
