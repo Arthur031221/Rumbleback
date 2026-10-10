@@ -384,19 +384,22 @@ export async function start(): Promise<void> {
     if (!timing) return;
     const crossed = (x: number) => from < x && to >= x;
     const play = (cue: 'P' | 'S' | 'alert', intensity?: number) => s.sound && audio.play(cue, intensity);
+    // Moments that fall in the same frame are read out together, since a second message would cut off the first.
+    const said: string[] = [];
     if (crossed(timing.pSec)) {
       play('P');
-      announce(t('announce.p', { s: seconds(timing.gapSec) }));
+      said.push(t('announce.p', { s: seconds(timing.gapSec) }));
     }
     if (crossed(timing.sSec)) {
       const mmi = s.quake?.grid && s.pin ? gridMmiAt(s.quake.grid, s.pin.lat, s.pin.lon) : null;
       play('S', mmi === null ? 0.5 : Math.min(1, Math.max(0, (mmi - 3) / 6)));
-      announce(mmi === null ? t('announce.s') : t('announce.sShaking', { level: t(`shaking.${shaking(mmi)}`), mmi: number(mmi, 1) }));
+      said.push(mmi === null ? t('announce.s') : t('announce.sShaking', { level: t(`shaking.${shaking(mmi)}`), mmi: number(mmi, 1) }));
     }
     if (crossed(s.alertSec)) {
       play('alert');
-      announce(t('announce.alert', { result: timing.blind ? t('alert.blind') : t('alert.result', { s: seconds(timing.warningSec) }) }));
+      said.push(t('announce.alert', { result: timing.blind ? t('alert.blind') : t('alert.result', { s: seconds(timing.warningSec) }) }));
     }
+    if (said.length) announce(said.join(' '));
   }
 
   clock.listeners.add((time) => {
