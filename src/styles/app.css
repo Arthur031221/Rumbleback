@@ -10,6 +10,11 @@
   --dock-h: 72px;
   --dock-extra: 0px;
   --dock-total: calc(var(--dock-h) + var(--dock-extra));
+  /* The notch, the rounded corners and the home indicator of a phone, which the page extends under (viewport-fit=cover). */
+  --sat: env(safe-area-inset-top, 0px);
+  --sar: env(safe-area-inset-right, 0px);
+  --sab: env(safe-area-inset-bottom, 0px);
+  --sal: env(safe-area-inset-left, 0px);
   color-scheme: dark;
 }
 
@@ -199,7 +204,8 @@ button {
   color: var(--muted) !important;
 }
 .maplibregl-ctrl-bottom-right {
-  bottom: calc(var(--dock-total) + 30px);
+  bottom: calc(var(--dock-total) + 30px + var(--sab));
+  right: var(--sar);
 }
 
 /* Buttons and controls */
@@ -314,9 +320,9 @@ button {
 .topbar {
   position: fixed;
   z-index: 20;
-  top: 12px;
-  left: 12px;
-  right: 12px;
+  top: calc(12px + var(--sat));
+  left: calc(12px + var(--sal));
+  right: calc(12px + var(--sar));
   display: flex;
   justify-content: space-between;
   gap: 12px;
@@ -333,6 +339,7 @@ button {
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: var(--r-panel);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
   backdrop-filter: blur(14px) saturate(140%);
   box-shadow: var(--shadow);
 }
@@ -388,9 +395,9 @@ button {
 .panel {
   position: fixed;
   z-index: 10;
-  top: 76px;
-  bottom: calc(var(--dock-total) + 30px);
-  left: 12px;
+  top: calc(76px + var(--sat));
+  bottom: calc(var(--dock-total) + 30px + var(--sab));
+  left: calc(12px + var(--sal));
   width: var(--panel-w);
   display: flex;
   flex-direction: column;
@@ -410,6 +417,7 @@ button {
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: var(--r-panel);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
   backdrop-filter: blur(14px) saturate(140%);
   box-shadow: var(--shadow);
   animation: rise 0.55s var(--ease) both;
@@ -804,9 +812,9 @@ button {
 .layers-strip {
   position: fixed;
   z-index: 12;
-  top: 76px;
-  left: calc(var(--panel-w) + 24px);
-  right: 12px;
+  top: calc(76px + var(--sat));
+  left: calc(var(--panel-w) + 24px + var(--sal));
+  right: calc(12px + var(--sar));
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-end;
@@ -816,6 +824,7 @@ button {
 .layers-strip .chip {
   pointer-events: auto;
   background: var(--panel);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
   backdrop-filter: blur(14px) saturate(140%);
   box-shadow: var(--shadow);
 }
@@ -905,9 +914,9 @@ button {
 .dock {
   position: fixed;
   z-index: 15;
-  bottom: 14px;
-  left: calc(var(--panel-w) + 24px);
-  right: 12px;
+  bottom: calc(14px + var(--sab));
+  left: calc(var(--panel-w) + 24px + var(--sal));
+  right: calc(12px + var(--sar));
   display: grid;
   grid-template-columns: auto auto 1fr auto auto;
   grid-template-rows: auto 1fr;
@@ -918,6 +927,7 @@ button {
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: var(--r-panel);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
   backdrop-filter: blur(14px) saturate(140%);
   box-shadow: var(--shadow);
 }
@@ -1079,6 +1089,7 @@ dialog.sheet[open] {
 }
 dialog.sheet::backdrop {
   background: var(--scrim);
+  -webkit-backdrop-filter: blur(3px);
   backdrop-filter: blur(3px);
 }
 @keyframes sheet-in {
@@ -1344,7 +1355,7 @@ dialog.sheet::backdrop {
   position: fixed;
   z-index: 30;
   left: 50%;
-  top: 76px;
+  top: calc(76px + var(--sat));
   transform: translateX(-50%);
   max-width: min(520px, calc(100vw - 24px));
   padding: 10px 16px;
@@ -1387,9 +1398,9 @@ dialog.sheet::backdrop {
     --dock-h: 98px;
   }
   .topbar {
-    top: 8px;
-    left: 8px;
-    right: 8px;
+    top: calc(8px + var(--sat));
+    left: calc(8px + var(--sal));
+    right: calc(8px + var(--sar));
   }
   .brand,
   .topbar-actions {
@@ -1420,9 +1431,9 @@ dialog.sheet::backdrop {
     display: none;
   }
   .dock {
-    left: 8px;
-    right: 8px;
-    bottom: 8px;
+    left: calc(8px + var(--sal));
+    right: calc(8px + var(--sar));
+    bottom: calc(8px + var(--sab));
     grid-template-columns: auto 1fr auto auto;
     grid-template-rows: auto auto;
     gap: 6px 10px;
@@ -1466,10 +1477,10 @@ dialog.sheet::backdrop {
   }
   .panel {
     top: auto;
-    left: 8px;
-    right: 8px;
+    left: calc(8px + var(--sal));
+    right: calc(8px + var(--sar));
     width: auto;
-    bottom: calc(var(--dock-total) + 16px);
+    bottom: calc(var(--dock-total) + 16px + var(--sab));
     max-height: min(42dvh, 330px);
     padding: 0;
     border-radius: var(--r-panel);
@@ -1511,7 +1522,7 @@ dialog.sheet::backdrop {
   }
   /* The credit stays visible on a phone, tucked under the layer chips where the sheet does not cover it. */
   .maplibregl-ctrl-bottom-right {
-    top: 104px;
+    top: calc(104px + var(--sat));
     bottom: auto;
   }
   .search-form {
@@ -1537,9 +1548,9 @@ dialog.sheet::backdrop {
     grid-row: 3;
   }
   .layers-strip {
-    top: 62px;
-    left: 8px;
-    right: 8px;
+    top: calc(62px + var(--sat));
+    left: calc(8px + var(--sal));
+    right: calc(8px + var(--sar));
     flex-wrap: nowrap;
     justify-content: flex-start;
     overflow-x: auto;

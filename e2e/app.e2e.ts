@@ -895,6 +895,29 @@ test('a screen reader hears the P wave, the S wave and the alert reach the pin, 
   await page.waitForFunction(() => document.querySelector('#announcer')!.textContent!.startsWith('The alert goes out now.'));
 });
 
+test('the controls keep clear of a notch and a home indicator', async () => {
+  const insets = { top: 47, right: 44, bottom: 34, left: 44 };
+  for (const [width, height] of [
+    [390, 844],
+    [1280, 800],
+  ] as const) {
+    const { page } = await h.open({ width, height });
+    await pause(page);
+    await page.evaluate((inset) => {
+      for (const [side, px] of Object.entries(inset)) document.documentElement.style.setProperty(`--sa${side[0]}`, `${px}px`);
+    }, insets);
+    const box = (selector: string) => page.locator(selector).first().boundingBox();
+    const [topbar, dock, panel] = [await box('.topbar > *'), await box('.dock'), await box('.panel')];
+    const where = `at ${width} px wide`;
+    assert.ok(topbar!.y >= insets.top, `the top bar starts under the notch ${where}: ${topbar!.y}`);
+    assert.ok(topbar!.x >= insets.left, `the logo starts under the notch edge ${where}: ${topbar!.x}`);
+    assert.ok(dock!.y + dock!.height <= height - insets.bottom, `the timeline sits on the home indicator ${where}`);
+    assert.ok(dock!.x + dock!.width <= width - insets.right, `the timeline reaches under the notch edge ${where}`);
+    assert.ok(panel!.x >= insets.left, `the panel starts under the notch edge ${where}: ${panel!.x}`);
+    assert.ok(panel!.y + panel!.height <= dock!.y, `the panel sits on the timeline ${where}`);
+  }
+});
+
 test('the map credit stays reachable on a phone: a small button that opens the text', async () => {
   const { page } = await h.open({ width: 390, height: 844, tileJson: true });
   const credit = page.locator('.maplibregl-ctrl-attrib');
