@@ -17,6 +17,26 @@ const cities = JSON.parse(readFileSync(new URL('../public/data/cities.json', imp
 };
 const seconds = (n: number) => `${n.toFixed(Math.abs(n) < 10 ? 1 : 0)} s`;
 
+test('before the app script arrives the page already has its theme and a placeholder, and the placeholder goes', async () => {
+  const context = await h.browser.newContext({ colorScheme: 'light', viewport: { width: 1280, height: 800 } });
+  try {
+    const page = await context.newPage();
+    // The script request never finishes, which is what a slow connection looks like.
+    await page.route('**/assets/app.js*', () => {});
+    await page.goto(h.url, { waitUntil: 'commit' });
+    await page.locator('#boot').waitFor();
+    assert.equal(await page.evaluate(() => document.documentElement.dataset.theme), 'light');
+    assert.equal(await page.locator('.topbar').count(), 0);
+    await page.unroute('**/assets/app.js*');
+    await page.reload();
+    await ready(page);
+    await page.locator('#boot').waitFor({ state: 'detached' });
+    assert.equal(await page.evaluate(() => document.documentElement.dataset.theme), 'light');
+  } finally {
+    await context.close();
+  }
+});
+
 test('opens on the 2024 Hualien quake and starts the replay', async () => {
   const { page, errors, unexpected, external } = await h.open();
   assert.equal(await page.locator('.quake-title').innerText(), '2024 Hualien, Taiwan');
@@ -191,6 +211,30 @@ test('recent and search tabs read the USGS catalog', async () => {
   await page.selectOption('#search-region', 'tw');
   await page.getByRole('button', { name: 'Search', exact: true }).click();
   await page.locator('.quake-row', { hasText: 'Hualien City' }).waitFor();
+});
+
+test('Back and Forward move between the quakes that were opened', async () => {
+  const { page } = await h.open();
+  const choose = async (name: string) => {
+    await page.getByRole('button', { name: 'Choose a quake' }).click();
+    await page.locator('.quake-row', { hasText: name }).click();
+    await page.locator('.quake-title', { hasText: name }).waitFor();
+  };
+  const entries = () => page.evaluate(() => history.length);
+  const start = await entries();
+  await choose('2022 Chishang, Taiwan');
+  await choose('1999 Chi-Chi, Taiwan');
+  assert.equal(await entries(), start + 2);
+  // Choosing the quake that is already open adds nothing.
+  await choose('1999 Chi-Chi, Taiwan');
+  assert.equal(await entries(), start + 2);
+  await page.goBack();
+  await page.locator('.quake-title', { hasText: '2022 Chishang, Taiwan' }).waitFor();
+  assert.ok(page.url().includes('event=us7000i90q'));
+  await page.goBack();
+  await page.locator('.quake-title', { hasText: '2024 Hualien, Taiwan' }).waitFor();
+  await page.goForward();
+  await page.locator('.quake-title', { hasText: '2022 Chishang, Taiwan' }).waitFor();
 });
 
 test('the recent list can ask for a higher magnitude, and says how far back it reaches', async () => {

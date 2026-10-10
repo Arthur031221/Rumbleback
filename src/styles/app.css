@@ -54,6 +54,59 @@
   box-sizing: border-box;
 }
 
+/* What index.html shows while the app downloads: the P ring runs ahead of the S ring, as the waves do. */
+.boot {
+  position: fixed;
+  z-index: 200;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 26px;
+  background: var(--bg);
+  color: var(--text);
+  font: 750 22px/1 var(--font-ui);
+  letter-spacing: -0.02em;
+  pointer-events: none;
+  transition: opacity 0.45s var(--ease);
+}
+.boot[data-done] {
+  opacity: 0;
+}
+.boot-rings {
+  position: relative;
+  width: 104px;
+  height: 104px;
+}
+.boot-rings i {
+  position: absolute;
+  inset: 0;
+  border: 3px solid var(--p);
+  border-radius: 50%;
+  opacity: 0.55;
+  animation: boot-ring 1.5s cubic-bezier(0.2, 0.6, 0.3, 1) infinite;
+}
+.boot-rings i + i {
+  border-color: var(--s);
+  animation-duration: 2.6s;
+}
+.boot-rings b {
+  position: absolute;
+  inset: 44px;
+  border-radius: 50%;
+  background: var(--text);
+}
+@keyframes boot-ring {
+  from {
+    transform: scale(0.1);
+    opacity: 0.95;
+  }
+  to {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
 html,
 body {
   height: 100%;

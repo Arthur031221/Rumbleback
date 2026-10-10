@@ -77,7 +77,16 @@ export async function start(): Promise<void> {
   });
   document.documentElement.dataset.theme = resolveTheme();
 
+  // index.html shows a placeholder while this script downloads. It goes once the page has its own.
+  const retireBoot = () => {
+    const boot = document.getElementById('boot');
+    if (!boot) return;
+    boot.dataset.done = '';
+    setTimeout(() => boot.remove(), 600);
+  };
+
   if (!hasWebGL2()) {
+    retireBoot();
     document.title = 'Rumbleback';
     document.body.append(h('main', { class: 'fatal' }, h('h1', { text: 'Rumbleback' }), h('p', { text: t('error.webgl') })));
     return;
@@ -162,7 +171,7 @@ export async function start(): Promise<void> {
     },
   });
   const panel = createPanel(panelEl, {
-    retry: () => currentId && void openQuake(currentId, true),
+    retry: () => currentId && void openQuake(currentId, true, 'keep'),
     pickCity: (index) => {
       const c = cities()?.list[index];
       if (c) setPin({ lat: c.lat, lon: c.lon, city: index });
@@ -179,7 +188,7 @@ export async function start(): Promise<void> {
     setAlert: (sec) => set({ alertSec: sec }),
   });
   const layers = createLayers(layersEl, (key: LayerKey, on) => set({ layers: { ...get().layers, [key]: on } }));
-  const picker = createPicker((id) => void openQuake(id, true));
+  const picker = createPicker((id) => void openQuake(id, true, 'push'));
   const learn = createLearn();
   const share = createShare({
     layers: () => ({ map: view.map.getCanvas(), overlay: overlayCanvas, width: mapEl.clientWidth, height: mapEl.clientHeight }),
@@ -510,8 +519,14 @@ export async function start(): Promise<void> {
   let currentId = '';
   let initialLoad = true;
 
-  async function openQuake(id: string, animate: boolean): Promise<void> {
+  /**
+   * `entry` says what the address bar does: a quake the viewer chose becomes a history entry, so Back
+   * returns to the one before it; the first quake and a retry rewrite the current entry; going back or
+   * forward has already changed it.
+   */
+  async function openQuake(id: string, animate: boolean, entry: 'push' | 'replace' | 'keep' = 'replace'): Promise<void> {
     loading?.abort();
+    const again = id === currentId;
     currentId = id;
     const ctl = (loading = new AbortController());
     userMoved = false;
@@ -521,7 +536,9 @@ export async function start(): Promise<void> {
     // The first quake keeps what the link said, so a reload of a shared link shows the same thing.
     const kept = initialLoad ? { t: link.t, alert: link.alert, lang: link.lang, pin: link.pin } : {};
     initialLoad = false;
-    history.replaceState(null, '', buildLink(location.pathname, { event: id, ...kept }));
+    const address = buildLink(location.pathname, { event: id, ...kept });
+    if (entry === 'push' && !again) history.pushState(null, '', address);
+    else if (entry !== 'keep') history.replaceState(null, '', address);
 
     // A link's moment applies to the quake the link names, and holds the replay there.
     const wanted = id === (link.event ?? FEATURED[0]!.id) ? link.t : undefined;
@@ -582,6 +599,12 @@ export async function start(): Promise<void> {
     }
   }
 
+  // Back and forward move between the quakes the viewer has opened.
+  window.addEventListener('popstate', () => {
+    const id = parseLink(location.search, location.hash).event ?? FEATURED[0]!.id;
+    if (id !== currentId) void openQuake(id, true, 'keep');
+  });
+
   // Start
   relocalize();
   layoutPadding();
@@ -589,6 +612,7 @@ export async function start(): Promise<void> {
     .then(() => panel.update()) // a pin chosen by city name in an earlier visit needs the list to be named
     .catch(() => {});
   requestAnimationFrame(frame);
+  retireBoot();
   await openQuake(link.event ?? FEATURED[0]!.id, false);
   layoutPadding();
   if (get().pin) syncPin();

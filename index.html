@@ -18,9 +18,23 @@
     />
     <meta property="og:image" content="https://arthur031221.github.io/Rumbleback/social-card.png" />
     <meta name="twitter:card" content="summary_large_image" />
+    <script>
+      // The theme before the first paint, so a light screen does not start dark.
+      (function () {
+        try {
+          var saved = localStorage.getItem('rumbleback.theme');
+          var light = saved === 'light' || (saved !== 'dark' && matchMedia('(prefers-color-scheme: light)').matches);
+          document.documentElement.dataset.theme = light ? 'light' : 'dark';
+        } catch (e) {}
+      })();
+    </script>
     <link rel="stylesheet" href="assets/app.css?v=__VERSION__" />
   </head>
   <body>
+    <div class="boot" id="boot" aria-hidden="true">
+      <span class="boot-rings"><i></i><i></i><b></b></span>
+      <span class="boot-name">Rumbleback</span>
+    </div>
     <noscript>Rumbleback needs JavaScript to draw the map and replay the waves.</noscript>
     <script type="module" src="assets/app.js?v=__VERSION__"></script>
   </body>
