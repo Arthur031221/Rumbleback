@@ -108,6 +108,7 @@
   "picker.recentAll": "최근 {days}일, 최신순입니다.",
   "picker.recentCapped": "최근 {days}일 중 최신 {n}건입니다. 최소 규모를 높이면 더 오래된 지진까지 볼 수 있습니다.",
   "picker.badRange": "시작일이 종료일보다 늦습니다.",
+  "picker.searchCapped": "규모가 큰 순서로 {n}건만 표시합니다. 날짜 범위를 좁히거나 최소 규모를 높이면 다른 지진을 볼 수 있습니다.",
   "region.california": "캘리포니아",
   "region.alaska": "알래스카",
   "region.hawaii": "하와이",

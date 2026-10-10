@@ -10,6 +10,8 @@ New
   Nicaragua, Panama, Puerto Rico, the Dominican Republic, South Korea, Algeria, Albania, Romania, Tajikistan,
   Kyrgyzstan and Argentina) and in two areas that are not countries: Hawaii, and Kamchatka with the Kurils. The
   names follow the language of the page.
+- A search that comes back with its limit of 40 earthquakes says that it stopped there and how to see the rest, in
+  all nine languages. It used to end the list without a word, as if nothing else matched.
 - The README opens with one plain sentence on what the page does, in all nine languages.
 
 Fixed

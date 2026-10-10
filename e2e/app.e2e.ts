@@ -610,6 +610,28 @@ test('recent and search tabs read the USGS catalog', async () => {
   await page.locator('.quake-row', { hasText: 'Hualien City' }).waitFor();
 });
 
+test('a search that comes back full says it stopped at 40, and one that did not says nothing', async () => {
+  const feature = JSON.parse(readFileSync(new URL('../test/fixtures/event-us7000m9g4.json', import.meta.url), 'utf8'));
+  for (const [count, lang, expected] of [
+    [40, 'en', /^The strongest 40 are listed\. Narrow the dates/],
+    [40, 'ja', /^規模の大きい順に 40 件だけ/],
+    [39, 'en', /^$/],
+  ] as const) {
+    await h.closeContexts();
+    const { page } = await h.open({ query: `?lang=${lang}` });
+    await page.route('https://earthquake.usgs.gov/fdsnws/event/1/query*', (route) =>
+      route.fulfill({
+        json: { type: 'FeatureCollection', features: Array.from({ length: count }, (_, i) => ({ ...feature, id: `us7000m${i}` })) },
+      }),
+    );
+    await page.locator('.topbar-actions .btn-primary').click();
+    await page.getByRole('tab').nth(2).click();
+    await page.locator('.quake-row').first().waitFor();
+    assert.equal(await page.locator('.quake-row').count(), count);
+    assert.match(await page.locator('.list-message').innerText(), expected, `${count} results in ${lang}`);
+  }
+});
+
 test('the search offers Hawaii and Kamchatka, and an area that is not a country sends its own rectangle', async () => {
   const { page } = await h.open();
   await page.getByRole('button', { name: 'Choose a quake' }).click();

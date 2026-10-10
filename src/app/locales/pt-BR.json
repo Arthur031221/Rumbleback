@@ -108,6 +108,7 @@
   "picker.recentAll": "Os últimos {days} dias, do mais recente ao mais antigo.",
   "picker.recentCapped": "Os {n} mais recentes dos últimos {days} dias. Aumente a magnitude mínima para ir mais longe.",
   "picker.badRange": "A data inicial é posterior à data final.",
+  "picker.searchCapped": "Só os {n} mais fortes aparecem. Reduza as datas ou aumente a magnitude mínima para ver os demais.",
   "region.california": "Califórnia",
   "region.alaska": "Alasca",
   "region.hawaii": "Havaí",

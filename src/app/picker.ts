@@ -1,4 +1,4 @@
-import { RECENT_DAYS, RECENT_LIMIT, isUnknownEvent, quakeDetail, recentQuakes, searchQuakes } from '../core/client.ts';
+import { RECENT_DAYS, RECENT_LIMIT, SEARCH_LIMIT, isUnknownEvent, quakeDetail, recentQuakes, searchQuakes } from '../core/client.ts';
 import { eventIdFrom } from '../core/link.ts';
 import { REGIONS, type Region } from '../core/regions.ts';
 import type { QuakeSummary } from '../core/quake.ts';
@@ -155,7 +155,7 @@ export function createPicker(onChoose: (id: string) => void) {
   };
 
   // What the list shows is kept as data, so a change of language can draw it again without a request.
-  type Notice = 'loading' | 'empty' | 'error' | 'badRange' | 'badId' | 'noEvent' | 'checking';
+  type Notice = 'loading' | 'empty' | 'error' | 'badRange' | 'badId' | 'noEvent' | 'checking' | 'searchCapped';
   let shown: { items: QuakeSummary[]; featured: boolean } = { items: [], featured: false };
   let notice: Notice | null = null;
   let generation = 0;
@@ -168,12 +168,13 @@ export function createPicker(onChoose: (id: string) => void) {
           : row(q.id, quakeTitle(q), [q.place === quakeTitle(q) ? '' : q.place, ...describe(q)], q.mag),
       ),
     );
-    message.textContent = notice ? t(`picker.${notice}`) : '';
+    message.textContent = notice ? t(`picker.${notice}`, { n: number(SEARCH_LIMIT) }) : '';
   }
 
-  const show = (items: QuakeSummary[], featured = false) => {
+  /** `capped` is a search that came back full, so the list says it stops there. */
+  const show = (items: QuakeSummary[], featured = false, capped = false) => {
     shown = { items, featured };
-    notice = items.length ? null : 'empty';
+    notice = !items.length ? 'empty' : capped ? 'searchCapped' : null;
     paint();
   };
 
@@ -211,7 +212,7 @@ export function createPicker(onChoose: (id: string) => void) {
     );
     if (items) {
       results = items;
-      show(items);
+      show(items, false, items.length >= SEARCH_LIMIT);
     }
   }
 
@@ -264,7 +265,7 @@ export function createPicker(onChoose: (id: string) => void) {
       paint();
       if (focusField) lookupInput.focus();
     } else if (results.length) {
-      show(results);
+      show(results, false, results.length >= SEARCH_LIMIT);
     } else {
       void runSearch();
     }

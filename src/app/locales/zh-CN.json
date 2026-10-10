@@ -108,6 +108,7 @@
   "picker.recentAll": "最近 {days} 天，按时间从新到旧。",
   "picker.recentCapped": "最近 {days} 天中最新的 {n} 条。调高最小震级可以看到更早的地震。",
   "picker.badRange": "开始日期晚于结束日期。",
+  "picker.searchCapped": "只列出震级最大的 {n} 条。缩小日期范围或调高最小震级，就能看到其他地震。",
   "region.california": "加利福尼亚",
   "region.alaska": "阿拉斯加",
   "region.hawaii": "夏威夷",

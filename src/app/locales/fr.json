@@ -108,6 +108,7 @@
   "picker.recentAll": "Les {days} derniers jours, du plus récent au plus ancien.",
   "picker.recentCapped": "Les {n} plus récents des {days} derniers jours. Relevez la magnitude minimale pour remonter plus loin.",
   "picker.badRange": "La date de début est postérieure à la date de fin.",
+  "picker.searchCapped": "Seuls les {n} séismes les plus forts sont listés. Réduisez les dates ou relevez la magnitude minimale pour voir les autres.",
   "region.california": "Californie",
   "region.alaska": "Alaska",
   "region.hawaii": "Hawaï",

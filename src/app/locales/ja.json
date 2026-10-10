@@ -108,6 +108,7 @@
   "picker.recentAll": "過去 {days} 日間、新しい順。",
   "picker.recentCapped": "過去 {days} 日間のうち新しい {n} 件。最小マグニチュードを上げると、さらに前まで届きます。",
   "picker.badRange": "開始日が終了日より後になっています。",
+  "picker.searchCapped": "規模の大きい順に {n} 件だけを表示しています。日付の範囲を狭めるか、最小マグニチュードを上げると、ほかの地震も見られます。",
   "region.california": "カリフォルニア",
   "region.alaska": "アラスカ",
   "region.hawaii": "ハワイ",

@@ -47,13 +47,16 @@ function summaries(collection: { features?: unknown[] }): QuakeSummary[] {
   return (collection.features ?? []).map((f) => parseSummary(f as never)).filter((q): q is QuakeSummary => q !== null);
 }
 
+/** How many earthquakes a search asks for. A search that fills this many has left some out. */
+export const SEARCH_LIMIT = 40;
+
 /** Earthquakes from the USGS catalog, strongest first. */
 export async function searchQuakes(o: SearchOptions, f: Fetch = fetch, signal?: AbortSignal): Promise<QuakeSummary[]> {
   const q = new URLSearchParams({
     format: 'geojson',
     eventtype: 'earthquake',
     orderby: 'magnitude',
-    limit: String(o.limit ?? 40),
+    limit: String(o.limit ?? SEARCH_LIMIT),
     minmagnitude: String(o.minMag),
     starttime: o.start,
     endtime: `${o.end}T23:59:59`,
