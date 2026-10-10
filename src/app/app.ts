@@ -1,6 +1,7 @@
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { loadQuake } from '../core/client.ts';
 import { decodeQuake } from '../core/codec.ts';
+import { shaking } from '../core/intensity.ts';
 import { buildLink, parseLink } from '../core/link.ts';
 import type { QuakeData } from '../core/quake.ts';
 import { defaultSpeed, openingBounds, replayLength, SPEEDS } from '../core/replay.ts';
@@ -12,7 +13,7 @@ import { createAudio } from './audio.ts';
 import { createDock } from './dock.ts';
 import { $, h } from './dom.ts';
 import { icon } from './icons.ts';
-import { LANGS, LOCALES, pickLanguage, setLanguage, t, translateTree, type Lang } from './i18n.ts';
+import { LANGS, LOCALES, number, pickLanguage, seconds, setLanguage, t, translateTree, type Lang } from './i18n.ts';
 import { createLearn } from './learn.ts';
 import { createMap } from './map.ts';
 import { Overlay } from './overlay.ts';
@@ -98,6 +99,8 @@ export async function start(): Promise<void> {
   const dockEl = h('footer', { class: 'dock' });
   const layersEl = h('div', { class: 'layers-strip', role: 'group' });
   const toast = h('div', { class: 'toast', role: 'status', hidden: true });
+  // Read out by a screen reader as the waves reach the pin; a sighted viewer sees the rings and the countdown instead.
+  const announcer = h('p', { id: 'announcer', class: 'sr-only', role: 'status', 'aria-live': 'polite', 'aria-atomic': 'true' });
   const chooseBtn = h('button', { class: 'btn btn-primary', type: 'button', onclick: () => picker.open() }, icon('list'), h('span'));
   const learnBtn = h('button', { class: 'btn btn-ghost', type: 'button', onclick: () => learn.open() }, icon('info'), h('span'));
   const shareBtn = h('button', { class: 'btn btn-ghost', type: 'button', onclick: () => share.open() }, icon('share'), h('span'));
@@ -128,7 +131,7 @@ export async function start(): Promise<void> {
   );
   const overlayCanvas = h('canvas', { class: 'overlay', 'aria-hidden': 'true' });
   // The map and its layer chips are the main landmark, so no content sits outside a landmark.
-  document.body.append(h('main', { class: 'stage' }, mapEl, layersEl), topbar, panelEl, dockEl, toast);
+  document.body.append(h('main', { class: 'stage' }, mapEl, layersEl), topbar, panelEl, dockEl, toast, announcer);
 
   let toastTimer: number | undefined;
   const showToast = (text: string) => {
@@ -136,6 +139,14 @@ export async function start(): Promise<void> {
     toast.hidden = false;
     clearTimeout(toastTimer);
     toastTimer = window.setTimeout(() => (toast.hidden = true), 5000);
+  };
+
+  let announceTimer: number | undefined;
+  const announce = (text: string) => {
+    // Emptying the region first makes a screen reader read the same sentence again on the next replay.
+    announcer.textContent = '';
+    clearTimeout(announceTimer);
+    announceTimer = window.setTimeout(() => (announcer.textContent = text), 60);
   };
 
   // Map and overlay
@@ -337,19 +348,27 @@ export async function start(): Promise<void> {
 
   // State changes
   let lastT = START;
-  /** Sound cues for the pin, only while the replay is running forward, not when the viewer jumps around. */
+  /** Sound cues and screen reader announcements for the pin, only while the replay is running forward, not when the viewer jumps around. */
   function cues(from: number, to: number): void {
     const s = get();
-    if (!s.sound || !s.playing || to <= from || to - from > 1.5 * s.speed) return;
+    if (!s.playing || to <= from || to - from > 1.5 * s.speed) return;
     const timing = pinTiming(s);
     if (!timing) return;
     const crossed = (x: number) => from < x && to >= x;
-    if (crossed(timing.pSec)) audio.play('P');
+    const play = (cue: 'P' | 'S' | 'alert', intensity?: number) => s.sound && audio.play(cue, intensity);
+    if (crossed(timing.pSec)) {
+      play('P');
+      announce(t('announce.p', { s: seconds(timing.gapSec) }));
+    }
     if (crossed(timing.sSec)) {
       const mmi = s.quake?.grid && s.pin ? gridMmiAt(s.quake.grid, s.pin.lat, s.pin.lon) : null;
-      audio.play('S', mmi === null ? 0.5 : Math.min(1, Math.max(0, (mmi - 3) / 6)));
+      play('S', mmi === null ? 0.5 : Math.min(1, Math.max(0, (mmi - 3) / 6)));
+      announce(mmi === null ? t('announce.s') : t('announce.sShaking', { level: t(`shaking.${shaking(mmi)}`), mmi: number(mmi, 1) }));
     }
-    if (crossed(s.alertSec)) audio.play('alert');
+    if (crossed(s.alertSec)) {
+      play('alert');
+      announce(t('announce.alert', { result: timing.blind ? t('alert.blind') : t('alert.result', { s: seconds(timing.warningSec) }) }));
+    }
   }
 
   clock.listeners.add((time) => {

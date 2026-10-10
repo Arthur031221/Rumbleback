@@ -860,6 +860,41 @@ test('on a phone a new pin scrolls the sheet to its numbers, and removing it scr
   assert.equal(await inSheet('.quake-title'), true);
 });
 
+test('a screen reader hears the P wave, the S wave and the alert reach the pin, and nothing when the viewer jumps around', async () => {
+  const { page } = await h.open();
+  await pause(page);
+  await page.locator('.chip', { hasText: /^Taipei$/ }).click();
+  await page.locator('.pin').waitFor();
+  const region = page.locator('#announcer');
+  assert.equal(await region.getAttribute('aria-live'), 'polite');
+  const say = () => region.innerText();
+  const playFrom = async (t: number) => {
+    await seek(page, t);
+    await page.locator('.play-btn').click();
+  };
+  // Jumping across both arrivals, paused, says nothing.
+  await seek(page, 40);
+  await seek(page, 5);
+  await page.waitForTimeout(300);
+  assert.equal(await say(), '');
+  await playFrom(8);
+  await page.waitForFunction(() => document.querySelector('#announcer')!.textContent!.startsWith('The alert goes out now.'));
+  assert.match(await say(), /You would have had 2\d s before the S wave\.$/);
+  await pause(page);
+  await playFrom(18);
+  await page.waitForFunction(() => document.querySelector('#announcer')!.textContent!.startsWith('P wave at your place.'));
+  assert.match(await say(), /^P wave at your place\. S wave in 1\d s\.$/);
+  await pause(page);
+  await playFrom(33);
+  await page.waitForFunction(() => document.querySelector('#announcer')!.textContent!.startsWith('S wave at your place.'));
+  assert.match(await say(), /^S wave at your place\. Shaking here: Strong, MMI 5\.9\.$/);
+  // The same sentence is read again on the next run.
+  await pause(page);
+  await seek(page, 5);
+  await playFrom(8);
+  await page.waitForFunction(() => document.querySelector('#announcer')!.textContent!.startsWith('The alert goes out now.'));
+});
+
 test('the map credit stays reachable on a phone: a small button that opens the text', async () => {
   const { page } = await h.open({ width: 390, height: 844, tileJson: true });
   const credit = page.locator('.maplibregl-ctrl-attrib');
