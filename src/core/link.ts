@@ -50,3 +50,22 @@ export function buildLink(base: string, s: LinkState): string {
   const pin = s.pin ? `#pin=${s.pin[0].toFixed(2)},${s.pin[1].toFixed(2)}` : '';
   return `${base}${query ? `?${query}` : ''}${pin}`;
 }
+
+/**
+ * The USGS event id in what a person pasted: the id itself (`us7000m9g4`), a USGS event page
+ * (`.../earthquakes/eventpage/us7000m9g4/executive`), a catalog query with `eventid=` or a Rumbleback link.
+ * Returns null when nothing in it looks like an id.
+ */
+export function eventIdFrom(text: string): string | null {
+  const id = /^[a-z]{2}[a-z0-9]{6,12}$/i;
+  const given = text.trim();
+  if (id.test(given)) return given.toLowerCase();
+  let url: URL;
+  try {
+    url = new URL(/^[a-z][a-z0-9+.-]*:/i.test(given) ? given : `https://${given}`);
+  } catch {
+    return null;
+  }
+  const found = url.searchParams.get('eventid') ?? url.searchParams.get('event') ?? /\/eventpage\/([^/?#]+)/i.exec(url.pathname)?.[1];
+  return found && id.test(found) ? found.toLowerCase() : null;
+}

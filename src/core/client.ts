@@ -17,10 +17,20 @@ export interface SearchOptions {
   limit?: number;
 }
 
+/** A USGS answer that is not a success, with its HTTP status. */
+export class HttpError extends Error {
+  status: number;
+  constructor(status: number, url: string) {
+    super(`${status} ${url}`);
+    this.name = 'HttpError';
+    this.status = status;
+  }
+}
+
 async function json<T>(url: string, f: Fetch, signal?: AbortSignal): Promise<T> {
   // A request that stalls for half a minute fails, so a list or a replay cannot stay loading for ever.
   const res = await f(url, { signal: signal ? AbortSignal.any([signal, AbortSignal.timeout(30000)]) : AbortSignal.timeout(30000) });
-  if (!res.ok) throw new Error(`${res.status} ${url}`);
+  if (!res.ok) throw new HttpError(res.status, url);
   return (await res.json()) as T;
 }
 
@@ -48,15 +58,19 @@ export async function searchQuakes(o: SearchOptions, f: Fetch = fetch, signal?: 
   return summaries(await json(`${FDSN}?${q}`, f, signal));
 }
 
-/** Magnitude 5 and up from the last 30 days, newest first. */
-export async function recentQuakes(f: Fetch = fetch, signal?: AbortSignal, now = Date.now()): Promise<QuakeSummary[]> {
+/** How many earthquakes the recent list asks for, and how far back it looks, in days. */
+export const RECENT_LIMIT = 60;
+export const RECENT_DAYS = 30;
+
+/** The newest earthquakes of the last 30 days at the given magnitude and up (5 unless said), at most `RECENT_LIMIT`. */
+export async function recentQuakes(f: Fetch = fetch, signal?: AbortSignal, now = Date.now(), minMag = 5): Promise<QuakeSummary[]> {
   const q = new URLSearchParams({
     format: 'geojson',
     eventtype: 'earthquake',
     orderby: 'time',
-    limit: '30',
-    minmagnitude: '5',
-    starttime: new Date(now - 30 * 86400000).toISOString().slice(0, 10),
+    limit: String(RECENT_LIMIT),
+    minmagnitude: String(minMag),
+    starttime: new Date(now - RECENT_DAYS * 86400000).toISOString().slice(0, 10),
   });
   return summaries(await json(`${FDSN}?${q}`, f, signal));
 }

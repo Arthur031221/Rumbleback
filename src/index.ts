@@ -13,7 +13,8 @@ export {
 } from './core/geo.ts';
 export { mmiColor, mmiRoman, shaking, type Shaking } from './core/intensity.ts';
 export { gridMmiAt, parseGrid, parsePhaseData, parseProducts, parseStations, parseSummary, waveOfPhase } from './core/usgs.ts';
-export { loadQuake, quakeDetail, recentQuakes, searchQuakes } from './core/client.ts';
+export { HttpError, RECENT_DAYS, RECENT_LIMIT, loadQuake, quakeDetail, recentQuakes, searchQuakes } from './core/client.ts';
+export { eventIdFrom } from './core/link.ts';
 export { decodeQuake, encodeQuake } from './core/codec.ts';
 export { pickResiduals, summarize, type ResidualStats } from './core/residuals.ts';
 export { candidates, condense, loadSeismogram, parseGeoCsv, parseGeoCsvBlocks, type Trace } from './core/waveform.ts';

@@ -4,7 +4,7 @@ import { after, afterEach, before, test } from 'node:test';
 import { decodeQuake } from '../src/core/codec.ts';
 import { distanceDeg } from '../src/core/geo.ts';
 import { TravelTimes } from '../src/core/traveltime.ts';
-import { harness, pause, ready, seek, type Harness } from './helpers.ts';
+import { harness, LIVE_ID, MISSING_ID, pause, ready, seek, type Harness } from './helpers.ts';
 
 let h: Harness;
 before(async () => (h = await harness()));
@@ -191,6 +191,64 @@ test('recent and search tabs read the USGS catalog', async () => {
   await page.selectOption('#search-region', 'tw');
   await page.getByRole('button', { name: 'Search', exact: true }).click();
   await page.locator('.quake-row', { hasText: 'Hualien City' }).waitFor();
+});
+
+test('the recent list can ask for a higher magnitude, and says how far back it reaches', async () => {
+  const { page, external } = await h.open();
+  await page.getByRole('button', { name: 'Choose a quake' }).click();
+  await page.getByRole('tab', { name: 'Recent' }).click();
+  await page.locator('.quake-row').first().waitFor();
+  assert.match(await page.locator('.recent-note').first().innerText(), /last 30 days, newest first/);
+  assert.ok(external.some((r) => r.includes('minmagnitude=5') && r.includes('orderby=time')));
+  await page.selectOption('#recent-mag', '6');
+  await page.locator('.quake-row').first().waitFor();
+  assert.ok(external.some((r) => r.includes('minmagnitude=6')));
+});
+
+test('a search whose start date is after the end date says so instead of blaming the network', async () => {
+  const { page, external } = await h.open();
+  await page.getByRole('button', { name: 'Choose a quake' }).click();
+  await page.getByRole('tab', { name: 'Search' }).click();
+  await page.locator('.quake-row').first().waitFor();
+  const before = external.length;
+  await page.fill('#search-from', '2025-05-01');
+  await page.fill('#search-to', '2025-01-01');
+  await page.getByRole('button', { name: 'Search', exact: true }).click();
+  await page.getByText('The start date is after the end date.').waitFor();
+  assert.equal(await page.locator('.quake-row').count(), 0);
+  assert.equal(external.length, before, 'no request for a range that cannot hold anything');
+});
+
+test('the picker tabs follow the arrow keys', async () => {
+  const { page } = await h.open();
+  await page.getByRole('button', { name: 'Choose a quake' }).click();
+  await page.locator('.quake-row').first().waitFor();
+  await page.getByRole('tab', { name: 'Featured' }).focus();
+  await page.keyboard.press('ArrowRight');
+  assert.equal(await page.getByRole('tab', { name: 'Recent' }).getAttribute('aria-selected'), 'true');
+  assert.equal(await page.getByRole('tab', { name: 'Recent' }).getAttribute('tabindex'), '0');
+  assert.equal(await page.getByRole('tab', { name: 'Featured' }).getAttribute('tabindex'), '-1');
+  await page.keyboard.press('End');
+  assert.equal(await page.getByRole('tab', { name: 'Link', exact: true }).getAttribute('aria-selected'), 'true');
+  assert.equal(await page.getByRole('tabpanel').getAttribute('aria-labelledby'), 'picker-tab-lookup');
+});
+
+test('a pasted USGS link opens that earthquake, and a wrong one says what is wrong', async () => {
+  const { page } = await h.open();
+  await page.getByRole('button', { name: 'Choose a quake' }).click();
+  await page.getByRole('tab', { name: 'Link', exact: true }).click();
+  await page.fill('#lookup-id', 'not an event');
+  await page.getByRole('button', { name: 'Open', exact: true }).click();
+  await page.getByText('That does not look like a USGS event link or id.').waitFor();
+  await page.fill('#lookup-id', MISSING_ID);
+  await page.getByRole('button', { name: 'Open', exact: true }).click();
+  await page.getByText('USGS has no earthquake with that id.').waitFor();
+  assert.equal(await page.locator('dialog[open]').count(), 1, 'the picker stays open');
+  await page.fill('#lookup-id', `https://earthquake.usgs.gov/earthquakes/eventpage/${LIVE_ID}/executive`);
+  await page.getByRole('button', { name: 'Open', exact: true }).click();
+  await page.locator('dialog[open]').waitFor({ state: 'detached' });
+  await page.waitForFunction((id) => location.search.includes(`event=${id}`), LIVE_ID);
+  await page.locator('.quake-title', { hasText: 'Hualien' }).waitFor();
 });
 
 test('a deep link restores the quake, the pin, the clock, the alert and the language', async () => {

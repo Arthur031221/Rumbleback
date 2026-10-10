@@ -72,7 +72,7 @@ The same quake, the 2024 Hualien M7.4, seen from Taipei.
 - **Your seconds.** P and S arrival at your pin, the gap between them, the ShakeMap intensity there and an alert slider. It's arithmetic on the model, not a record of any real alert.
 - **Sound.** An optional low thump for P, a rumble for S that grows with the intensity at your pin, and a soft chime at the alert second.
 - **Share.** A link, a square card, a story card and a recorded video clip. The link leaves your pin out unless you tick a box, and then keeps it after the `#`, which browsers never send to a server. Cards show a city name, never coordinates.
-- **Any quake.** Fourteen featured events work with no call to USGS, and ten of them carry a seismogram. Recent and Search tabs read the live USGS catalog and fetch a seismogram from EarthScope when one is available.
+- **Any quake.** Fourteen featured events work with no call to USGS, and ten of them carry a seismogram. Recent and Search tabs read the live USGS catalog, a Link tab opens any USGS event page or id you paste, and a seismogram comes from EarthScope when one is available.
 - **Nine languages.** English, Traditional and Simplified Chinese, Japanese, Korean, Spanish, French, German and Brazilian Portuguese, including the map labels.
 
 ## Try it

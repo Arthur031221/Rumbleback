@@ -10,8 +10,10 @@
 ## Replay a quake
 
 1. Press "Choose a quake". The *Featured* tab has fourteen well known events and works without
-   calling USGS. *Recent* lists the last 30 days at magnitude 5 and up. *Search* takes a minimum
-   magnitude, a region and a date range.
+   calling USGS. *Recent* lists the newest quakes of the last 30 days, at most 60, and a menu raises the minimum
+   magnitude (4.5, 5, 6 or 7) to reach further back. *Search* takes a minimum magnitude, a region and a date
+   range. *Link* takes the address of a USGS event page (news stories often link to one) or an event id such as
+   `us7000m9g4`, and opens that quake once USGS confirms it exists.
 2. The replay starts by itself, at a speed chosen so the whole thing takes about half a minute.
    Space plays and pauses. Left and right step one second, with Shift ten seconds. Plus and minus zoom the map.
 3. Drag the timeline to any moment. `T+12.4 s` is seconds since the earthquake began.

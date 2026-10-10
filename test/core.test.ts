@@ -4,7 +4,7 @@ import { test } from 'node:test';
 import { decodeQuake } from '../src/core/codec.ts';
 import { citiesNear, parseCities, searchCities, type CityFile } from '../src/core/cities.ts';
 import { mmiColor, mmiRoman, shaking } from '../src/core/intensity.ts';
-import { buildLink, parseLink } from '../src/core/link.ts';
+import { buildLink, eventIdFrom, parseLink } from '../src/core/link.ts';
 import { defaultSpeed, feltRadiusKm, openingBounds, replayLength } from '../src/core/replay.ts';
 import { TravelTimes } from '../src/core/traveltime.ts';
 
@@ -119,4 +119,33 @@ test('the replay lasts until the S wave reaches the seismogram station', () => {
   const withStation = replayLength(tt, data, view);
   assert.ok(data.seismogram && withStation >= Math.ceil(tt.time('S', data.seismogram.dist) + 20), `${without} ${withStation}`);
   assert.ok(withStation > without);
+});
+
+test('an event id is found in an id, a USGS event page, a catalog query or a Rumbleback link', () => {
+  const id = 'us7000m9g4';
+  for (const text of [
+    id,
+    `  ${id.toUpperCase()}\n`,
+    `https://earthquake.usgs.gov/earthquakes/eventpage/${id}/executive`,
+    `earthquake.usgs.gov/earthquakes/eventpage/${id}`,
+    `https://earthquake.usgs.gov/fdsnws/event/1/query?eventid=${id}&format=geojson`,
+    `https://arthur031221.github.io/Rumbleback/?event=${id}&t=20#pin=25.03,121.56`,
+  ])
+    assert.equal(eventIdFrom(text), id, text);
+  assert.equal(eventIdFrom('ci40123456'), 'ci40123456');
+  assert.equal(eventIdFrom('https://earthquake.usgs.gov/earthquakes/eventpage/nc73999999'), 'nc73999999');
+});
+
+test('text that is not an event id is refused', () => {
+  for (const text of [
+    '',
+    '   ',
+    'hello world',
+    'us70',
+    'https://example.com/',
+    'https://earthquake.usgs.gov/earthquakes/map/',
+    '<script>',
+    'us7000m9g4 and more',
+  ])
+    assert.equal(eventIdFrom(text), null, JSON.stringify(text));
 });

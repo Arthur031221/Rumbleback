@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
-import { loadQuake, recentQuakes, searchQuakes } from '../src/core/client.ts';
+import { HttpError, RECENT_LIMIT, loadQuake, quakeDetail, recentQuakes, searchQuakes } from '../src/core/client.ts';
 import type { QuakeData } from '../src/core/quake.ts';
 
 const read = (name: string) => readFileSync(new URL(`./fixtures/${name}`, import.meta.url), 'utf8');
@@ -97,13 +97,25 @@ test('search builds a USGS query with the box and the date range', async () => {
   assert.equal(q.get('orderby'), 'magnitude');
 });
 
-test('recent quakes ask for the last 30 days at magnitude 5 and up', async () => {
+test('recent quakes ask for the last 30 days at magnitude 5 and up, newest first and capped', async () => {
   const calls: string[] = [];
   await recentQuakes(router({ query: () => ok('{"features":[]}') }, calls), undefined, Date.parse('2026-10-10T00:00:00Z'));
   const q = new URL(calls[0]!).searchParams;
   assert.equal(q.get('starttime'), '2026-09-10');
   assert.equal(q.get('minmagnitude'), '5');
   assert.equal(q.get('orderby'), 'time');
+  assert.equal(q.get('limit'), String(RECENT_LIMIT));
+});
+
+test('recent quakes take another minimum magnitude', async () => {
+  const calls: string[] = [];
+  await recentQuakes(router({ query: () => ok('{"features":[]}') }, calls), undefined, Date.parse('2026-10-10T00:00:00Z'), 4.5);
+  assert.equal(new URL(calls[0]!).searchParams.get('minmagnitude'), '4.5');
+});
+
+test('an answer that is not a success carries its status', async () => {
+  const f = router({ 'eventid=nope': () => new Response('Not Found', { status: 404 }) });
+  await assert.rejects(quakeDetail('nope', f), (e) => e instanceof HttpError && e.status === 404);
 });
 
 test('pick distances are measured to the summary epicenter', async () => {

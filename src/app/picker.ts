@@ -1,4 +1,5 @@
-import { recentQuakes, searchQuakes } from '../core/client.ts';
+import { HttpError, RECENT_DAYS, RECENT_LIMIT, quakeDetail, recentQuakes, searchQuakes } from '../core/client.ts';
+import { eventIdFrom } from '../core/link.ts';
 import type { QuakeSummary } from '../core/quake.ts';
 import { FEATURED } from '../data/featured.ts';
 import { quakeTitle } from './derived.ts';
@@ -34,6 +35,8 @@ const REGIONS: Region[] = [
 ];
 
 const MAGNITUDES = [5, 5.5, 6, 6.5, 7, 7.5, 8];
+/** The minimum magnitudes the recent list offers. Below 4.5 USGS lists too many to be of use. */
+const RECENT_MAGNITUDES = [4.5, 5, 6, 7];
 
 function regionLabel(r: Region): string {
   if ('key' in r.label) return t(r.label.key);
@@ -46,11 +49,64 @@ export function createPicker(onChoose: (id: string) => void) {
   const dialog = h('dialog', { class: 'sheet picker', 'aria-labelledby': 'picker-title' });
   const title = h('h2', { id: 'picker-title', class: 'sheet-title' });
   const closeBtn = h('button', { class: 'icon-btn', type: 'button', onclick: () => dialog.close() }, icon('close'));
-  const tabNames = ['featured', 'recent', 'search'] as const;
-  const tabs = tabNames.map((name) => h('button', { class: 'tab', type: 'button', role: 'tab', onclick: () => select(name) }));
+  const tabNames = ['featured', 'recent', 'search', 'lookup'] as const;
+  const tabs = tabNames.map((name) =>
+    h('button', {
+      class: 'tab',
+      id: `picker-tab-${name}`,
+      type: 'button',
+      role: 'tab',
+      'aria-controls': 'picker-panel',
+      onclick: () => select(name),
+      // Arrow keys, Home and End move between the tabs, as in the ARIA tabs pattern.
+      onkeydown: (e) => {
+        const at = tabNames.indexOf(name);
+        const n = tabNames.length;
+        const to = ({ ArrowRight: (at + 1) % n, ArrowLeft: (at + n - 1) % n, Home: 0, End: n - 1 } as Record<string, number>)[
+          (e as KeyboardEvent).key
+        ];
+        if (to === undefined) return;
+        e.preventDefault();
+        tabs[to]!.focus();
+        void select(tabNames[to]!);
+      },
+    }),
+  );
   const tabBar = h('div', { class: 'tabs', role: 'tablist' }, ...tabs);
   const list = h('ul', { class: 'quake-list' });
   const message = h('p', { class: 'list-message', role: 'status' });
+  const panel = h('div', { class: 'picker-panel', id: 'picker-panel', role: 'tabpanel' });
+
+  const recentMag = h('select', { id: 'recent-mag', class: 'input' });
+  const recentLabel = h('label', { class: 'field-label', for: 'recent-mag' });
+  const recentNote = h('p', { class: 'recent-note' });
+  const recentBar = h('div', { class: 'recent-bar' }, h('div', {}, recentLabel, recentMag), recentNote);
+
+  const lookupInput = h('input', {
+    id: 'lookup-id',
+    class: 'input',
+    type: 'text',
+    autocomplete: 'off',
+    spellcheck: 'false',
+    placeholder: 'us7000m9g4',
+    'aria-describedby': 'lookup-hint',
+  });
+  const lookupLabel = h('label', { class: 'field-label', for: 'lookup-id' });
+  const lookupGo = h('button', { class: 'btn btn-primary', type: 'submit' });
+  const lookupHint = h('p', { class: 'recent-note', id: 'lookup-hint' });
+  const lookupForm = h(
+    'form',
+    {
+      class: 'lookup-form',
+      onsubmit: (e) => {
+        e.preventDefault();
+        void runLookup();
+      },
+    },
+    lookupLabel,
+    h('div', { class: 'lookup-row' }, lookupInput, lookupGo),
+    lookupHint,
+  );
 
   const minMag = h('select', { id: 'search-mag', class: 'input' });
   const region = h('select', { id: 'search-region', class: 'input' });
@@ -73,16 +129,19 @@ export function createPicker(onChoose: (id: string) => void) {
     h('div', {}, labels[3]!, to),
     go,
   );
-  dialog.append(h('div', { class: 'sheet-head' }, title, closeBtn), tabBar, form, message, list);
+  panel.append(recentBar, form, lookupForm, message, list);
+  dialog.append(h('div', { class: 'sheet-head' }, title, closeBtn), tabBar, panel);
   dialog.addEventListener('click', (e) => e.target === dialog && dialog.close());
 
   const today = new Date();
   to.value = isoDay(today);
   from.value = isoDay(new Date(today.getTime() - 365 * 86400000));
   MAGNITUDES.forEach((m) => minMag.append(h('option', { value: String(m), selected: m === 7 }, `M ${number(m, 1)}+`)));
+  RECENT_MAGNITUDES.forEach((m) => recentMag.append(h('option', { value: String(m), selected: m === 5 }, `M ${number(m, 1)}+`)));
+  recentMag.addEventListener('change', () => void select('recent'));
 
   let tab: (typeof tabNames)[number] = 'featured';
-  let recent: { at: number; items: QuakeSummary[] } | null = null;
+  const recent = new Map<number, { at: number; items: QuakeSummary[] }>();
   let results: QuakeSummary[] = [];
   let busy: AbortController | null = null;
 
@@ -117,7 +176,7 @@ export function createPicker(onChoose: (id: string) => void) {
   };
 
   // What the list shows is kept as data, so a change of language can draw it again without a request.
-  type Notice = 'loading' | 'empty' | 'error';
+  type Notice = 'loading' | 'empty' | 'error' | 'badRange' | 'badId' | 'noEvent' | 'checking';
   let shown: { items: QuakeSummary[]; featured: boolean } = { items: [], featured: false };
   let notice: Notice | null = null;
   let generation = 0;
@@ -162,6 +221,11 @@ export function createPicker(onChoose: (id: string) => void) {
 
   async function runSearch(): Promise<void> {
     results = []; // a failed search must not leave the last good one behind
+    if (from.value > to.value) {
+      busy?.abort();
+      generation++;
+      return wait('badRange');
+    }
     const box = REGIONS.find((r) => r.id === region.value)?.box ?? null;
     const items = await load((signal) =>
       searchQuakes({ minMag: Number(minMag.value), start: from.value, end: to.value, box }, fetch, signal),
@@ -169,6 +233,27 @@ export function createPicker(onChoose: (id: string) => void) {
     if (items) {
       results = items;
       show(items);
+    }
+  }
+
+  /** Opens what the viewer pasted, after USGS has confirmed that the earthquake exists. */
+  async function runLookup(): Promise<void> {
+    const id = eventIdFrom(lookupInput.value);
+    busy?.abort();
+    const mine = (busy = new AbortController());
+    const gen = ++generation;
+    if (!id) return wait('badId');
+    wait('checking');
+    try {
+      await quakeDetail(id, fetch, mine.signal);
+      if (gen !== generation) return;
+      dialog.close();
+      onChoose(id);
+    } catch (e) {
+      if (gen !== generation || (e as Error).name === 'AbortError') return;
+      // USGS answers 404 for an id it does not know, and the detail call itself refuses what is not an earthquake.
+      const unknown = e instanceof HttpError ? e.status === 404 || e.status === 400 : /^no earthquake/.test((e as Error).message);
+      wait(unknown ? 'noEvent' : 'error');
     }
   }
 
@@ -186,12 +271,20 @@ export function createPicker(onChoose: (id: string) => void) {
         if (gen === generation) wait('error');
       }
     } else if (next === 'recent') {
-      if (!recent || Date.now() - recent.at > 300000) {
-        const items = await load((signal) => recentQuakes(fetch, signal));
+      const mag = Number(recentMag.value);
+      const kept = recent.get(mag);
+      if (!kept || Date.now() - kept.at > 300000) {
+        const items = await load((signal) => recentQuakes(fetch, signal, Date.now(), mag));
         if (!items) return;
-        recent = { at: Date.now(), items };
+        recent.set(mag, { at: Date.now(), items });
       }
-      show(recent.items);
+      show(recent.get(mag)!.items);
+      describeRecent();
+    } else if (next === 'lookup') {
+      shown = { items: [], featured: false };
+      notice = null;
+      paint();
+      lookupInput.focus();
     } else if (results.length) {
       show(results);
     } else {
@@ -211,14 +304,33 @@ export function createPicker(onChoose: (id: string) => void) {
     return index;
   }
 
+  /** Says how far back the recent list reaches, and that it stops at a limit when it does. */
+  function describeRecent(): void {
+    const kept = recent.get(Number(recentMag.value));
+    recentNote.textContent = !kept
+      ? ''
+      : kept.items.length >= RECENT_LIMIT
+        ? t('picker.recentCapped', { n: number(RECENT_LIMIT), days: number(RECENT_DAYS) })
+        : t('picker.recentAll', { days: number(RECENT_DAYS) });
+  }
+
   function render(): void {
     title.textContent = t('picker.title');
     closeBtn.setAttribute('aria-label', t('common.close'));
     tabs.forEach((b, i) => {
       b.textContent = t(`picker.${tabNames[i]}`);
       b.setAttribute('aria-selected', String(tabNames[i] === tab));
+      b.tabIndex = tabNames[i] === tab ? 0 : -1;
     });
+    panel.setAttribute('aria-labelledby', `picker-tab-${tab}`);
     form.hidden = tab !== 'search';
+    recentBar.hidden = tab !== 'recent';
+    lookupForm.hidden = tab !== 'lookup';
+    recentLabel.textContent = t('picker.minMag');
+    describeRecent();
+    lookupLabel.textContent = t('picker.lookupLabel');
+    lookupGo.textContent = t('picker.lookupGo');
+    lookupHint.textContent = t('picker.lookupHint');
     labels[0]!.textContent = t('picker.minMag');
     labels[1]!.textContent = t('picker.region');
     labels[2]!.textContent = t('picker.from');
@@ -226,6 +338,10 @@ export function createPicker(onChoose: (id: string) => void) {
     go.textContent = t('picker.go');
     const chosen = region.value || 'world';
     region.replaceChildren(...REGIONS.map((r) => h('option', { value: r.id, selected: r.id === chosen }, regionLabel(r))));
+    const mag = recentMag.value;
+    recentMag.replaceChildren(
+      ...RECENT_MAGNITUDES.map((m) => h('option', { value: String(m), selected: String(m) === (mag || '5') }, `M ${number(m, 1)}+`)),
+    );
   }
 
   return {

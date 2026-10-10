@@ -1012,12 +1012,17 @@ dialog.sheet::backdrop {
 }
 .tabs {
   display: flex;
+  flex: none;
   gap: 4px;
   padding: 6px 16px 10px;
+  overflow-x: auto;
+  scrollbar-width: none;
 }
 .tab {
+  flex: none;
   height: 34px;
   padding: 0 14px;
+  white-space: nowrap;
   border: 1px solid transparent;
   border-radius: 999px;
   background: transparent;
@@ -1039,6 +1044,44 @@ dialog.sheet::backdrop {
   grid-column: 1 / -1;
   margin-top: 12px;
   justify-content: center;
+}
+.picker-panel {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+.recent-bar,
+.lookup-form {
+  padding: 0 20px 10px;
+}
+.recent-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 4px 16px;
+}
+.recent-bar .input {
+  min-width: 128px;
+}
+.recent-note {
+  flex: 1;
+  min-width: 180px;
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.4;
+}
+.lookup-row {
+  display: flex;
+  gap: 10px;
+}
+.lookup-row .input {
+  flex: 1;
+  min-width: 0;
+}
+.lookup-form .recent-note {
+  margin: 10px 0 0;
 }
 .quake-list {
   margin: 0;
