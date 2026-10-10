@@ -110,6 +110,8 @@
   "picker.badRange": "La date de début est postérieure à la date de fin.",
   "region.california": "Californie",
   "region.alaska": "Alaska",
+  "region.hawaii": "Hawaï",
+  "region.kamchatka": "Kamtchatka et îles Kouriles",
   "learn.title": "Comment ça marche",
   "learn.p.title": "D'abord P, ensuite S",
   "learn.p.body": "Un séisme envoie deux sortes d'ondes. Les ondes P sont rapides et douces. Les ondes S sont plus lentes et causent l'essentiel des dégâts. L'alerte précoce fonctionne parce qu'un message peut aller plus vite que l'onde S.",

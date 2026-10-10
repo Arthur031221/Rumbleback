@@ -110,6 +110,8 @@
   "picker.badRange": "開始日が終了日より後になっています。",
   "region.california": "カリフォルニア",
   "region.alaska": "アラスカ",
+  "region.hawaii": "ハワイ",
+  "region.kamchatka": "カムチャツカと千島列島",
   "learn.title": "しくみ",
   "learn.p.title": "先にP波、あとにS波",
   "learn.p.body": "地震は2種類の波を出します。P波は速くて弱く、S波は遅く、被害の大部分を起こします。警報が使えるのは、警報の方がS波より速く伝わるからです。",

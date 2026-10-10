@@ -110,6 +110,8 @@
   "picker.badRange": "La fecha de inicio es posterior a la de fin.",
   "region.california": "California",
   "region.alaska": "Alaska",
+  "region.hawaii": "Hawái",
+  "region.kamchatka": "Kamchatka y las Kuriles",
   "learn.title": "Cómo funciona",
   "learn.p.title": "Primero P, después S",
   "learn.p.body": "Un sismo emite dos tipos de ondas. Las ondas P son rápidas y suaves. Las ondas S son más lentas y causan la mayor parte del daño. La alerta temprana funciona porque un aviso puede viajar más rápido que la onda S.",

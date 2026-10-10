@@ -610,6 +610,22 @@ test('recent and search tabs read the USGS catalog', async () => {
   await page.locator('.quake-row', { hasText: 'Hualien City' }).waitFor();
 });
 
+test('the search offers Hawaii and Kamchatka, and an area that is not a country sends its own rectangle', async () => {
+  const { page } = await h.open();
+  await page.getByRole('button', { name: 'Choose a quake' }).click();
+  await page.getByRole('tab', { name: 'Search' }).click();
+  const places = await page.locator('#search-region option').allInnerTexts();
+  for (const name of ['Hawaii', 'Kamchatka and the Kurils', 'Iceland', 'Tonga', 'Costa Rica', 'Puerto Rico', 'South Korea']) {
+    assert.ok(places.includes(name), name);
+  }
+  await page.selectOption('#search-region', 'hi');
+  const query = page.waitForRequest(
+    (r) => r.url().includes('fdsnws/event') && r.url().includes('minlatitude=18.5') && r.url().includes('maxlongitude=-154.5'),
+  );
+  await page.getByRole('button', { name: 'Search', exact: true }).click();
+  await query;
+});
+
 test('the tab is named after the quake that is open', async () => {
   const { page } = await h.open();
   assert.equal(await page.title(), '2024 Hualien, Taiwan | Rumbleback');

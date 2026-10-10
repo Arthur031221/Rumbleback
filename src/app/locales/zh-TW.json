@@ -110,6 +110,8 @@
   "picker.badRange": "起始日期晚於結束日期。",
   "region.california": "加州",
   "region.alaska": "阿拉斯加",
+  "region.hawaii": "夏威夷",
+  "region.kamchatka": "堪察加與千島群島",
   "learn.title": "運作原理",
   "learn.p.title": "先 P 波，後 S 波",
   "learn.p.body": "地震會放出兩種波。P 波速度快、力道輕，S 波較慢，造成大部分破壞。地震預警之所以可行，是因為警報傳得比 S 波快。",

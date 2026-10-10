@@ -110,6 +110,8 @@
   "picker.badRange": "시작일이 종료일보다 늦습니다.",
   "region.california": "캘리포니아",
   "region.alaska": "알래스카",
+  "region.hawaii": "하와이",
+  "region.kamchatka": "캄차카와 쿠릴 열도",
   "learn.title": "원리",
   "learn.p.title": "P파가 먼저, S파는 나중에",
   "learn.p.body": "지진은 두 종류의 파를 냅니다. P파는 빠르고 약하며, S파는 느리고 피해 대부분을 일으킵니다. 조기경보가 가능한 것은 경보가 S파보다 빨리 전달되기 때문입니다.",

@@ -110,6 +110,8 @@
   "picker.badRange": "Das Startdatum liegt nach dem Enddatum.",
   "region.california": "Kalifornien",
   "region.alaska": "Alaska",
+  "region.hawaii": "Hawaii",
+  "region.kamchatka": "Kamtschatka und Kurilen",
   "learn.title": "So funktioniert es",
   "learn.p.title": "Erst P, dann S",
   "learn.p.body": "Ein Beben sendet zwei Arten von Wellen aus. P-Wellen sind schnell und sanft. S-Wellen sind langsamer und richten den größten Schaden an. Frühwarnung funktioniert, weil eine Warnung schneller sein kann als die S-Welle.",

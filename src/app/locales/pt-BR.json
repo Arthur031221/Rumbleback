@@ -110,6 +110,8 @@
   "picker.badRange": "A data inicial é posterior à data final.",
   "region.california": "Califórnia",
   "region.alaska": "Alasca",
+  "region.hawaii": "Havaí",
+  "region.kamchatka": "Camchatca e Ilhas Curilas",
   "learn.title": "Como funciona",
   "learn.p.title": "Primeiro P, depois S",
   "learn.p.body": "Um terremoto emite dois tipos de onda. As ondas P são rápidas e suaves. As ondas S são mais lentas e causam a maior parte do dano. O alerta antecipado funciona porque um aviso pode viajar mais rápido que a onda S.",

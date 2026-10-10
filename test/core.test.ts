@@ -175,6 +175,33 @@ test('every search region is a real rectangle with a unique id, and its name is 
   }
 });
 
+test('the search regions hold the epicenters of well known quakes, so a search there finds them', () => {
+  const where = (id: string) => REGIONS.find((r) => r.id === id)!.box!;
+  const inside = (id: string, lat: number, lon: number) => {
+    const b = where(id);
+    return lat >= b.minLat && lat <= b.maxLat && lon >= b.minLon && lon <= b.maxLon;
+  };
+  for (const [id, lat, lon, what] of [
+    ['kam', 52.5, 160.3, 'Kamchatka 2025, M8.8'],
+    ['kam', 45.8, 151.0, 'Kuril Islands 2006, M8.3'],
+    ['hi', 19.32, -155.0, 'Hawaii, Kalapana 1975'],
+    ['hi', 19.4, -155.3, 'Hawaii, Kilauea summit'],
+    ['is', 63.9, -22.2, 'Reykjanes peninsula'],
+    ['to', -20.6, -175.4, 'Tonga Trench'],
+    ['sb', -10.7, 165.9, 'Santa Cruz Islands 2013, M8.0'],
+    ['cr', 10.2, -85.3, 'Nicoya 2012, M7.6'],
+    ['pr', 17.9, -66.9, 'Puerto Rico 2020, M6.4'],
+    ['kr', 36.1, 129.4, 'Pohang 2017, M5.4'],
+    ['dz', 36.9, 3.7, 'Boumerdes 2003, M6.8'],
+    ['ro', 45.7, 26.6, 'Vrancea 1977, M7.4'],
+    ['tj', 38.2, 72.9, 'Pamir'],
+    ['ar', -31.7, -68.5, 'San Juan, Argentina'],
+  ] as const)
+    assert.ok(inside(id, lat, lon), `${what} is outside ${id}`);
+  // The regions are boxes that never cross the antimeridian, so none of them may run onto the wrong side of it.
+  assert.ok(!inside('kam', 52.5, -170) && !inside('hi', 19.5, 160));
+});
+
 test('a clip is recorded as MP4 when the browser can, so it plays on an iPhone and in social apps', () => {
   const only =
     (...mimes: string[]) =>

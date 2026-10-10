@@ -110,6 +110,8 @@
   "picker.badRange": "The start date is after the end date.",
   "region.california": "California",
   "region.alaska": "Alaska",
+  "region.hawaii": "Hawaii",
+  "region.kamchatka": "Kamchatka and the Kurils",
   "learn.title": "How it works",
   "learn.p.title": "P first, then S",
   "learn.p.body": "A quake sends out two kinds of waves. P waves are fast and gentle. S waves are slower and do most of the damage. Early warning works because an alert can travel faster than the S wave.",
