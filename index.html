@@ -8,20 +8,21 @@
       name="description"
       content="Replay a real earthquake in your browser: P and S waves roll across the map, real seismometers light up as they arrive, and a pin on your home shows how many seconds you had."
     />
-    <meta name="theme-color" content="#090d12" />
+    <meta name="theme-color" content="#090d12" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#e9eef3" media="(prefers-color-scheme: light)" />
     <link rel="icon" href="icon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png" />
     <link rel="manifest" href="manifest.webmanifest" />
-    <link rel="canonical" href="https://arthur031221.github.io/Rumbleback/" />
+    <link rel="canonical" href="__SITE_URL__" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Rumbleback" />
-    <meta property="og:url" content="https://arthur031221.github.io/Rumbleback/" />
+    <meta property="og:url" content="__SITE_URL__" />
     <meta property="og:title" content="Rumbleback: replay any earthquake" />
     <meta
       property="og:description"
       content="P and S waves rolling across the map, checked against real seismometers. Drop a pin on your home to see your seconds."
     />
-    <meta property="og:image" content="https://arthur031221.github.io/Rumbleback/social-card.png" />
+    <meta property="og:image" content="__SITE_URL__social-card.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="675" />
     <meta
@@ -34,7 +35,7 @@
       name="twitter:description"
       content="Watch the P and S waves of a real earthquake cross the map, then pin your home to see your seconds."
     />
-    <meta name="twitter:image" content="https://arthur031221.github.io/Rumbleback/social-card.png" />
+    <meta name="twitter:image" content="__SITE_URL__social-card.png" />
     <script>
       // The theme before the first paint, so a light screen does not start dark.
       (function () {
@@ -42,6 +43,14 @@
           var saved = localStorage.getItem('rumbleback.theme');
           var light = saved === 'light' || (saved !== 'dark' && matchMedia('(prefers-color-scheme: light)').matches);
           document.documentElement.dataset.theme = light ? 'light' : 'dark';
+          // A choice made in the page beats the system setting for the browser's own bar as well.
+          if (saved === 'light' || saved === 'dark') {
+            var bars = document.querySelectorAll('meta[name="theme-color"]');
+            for (var i = 0; i < bars.length; i++) {
+              bars[i].setAttribute('content', light ? '#e9eef3' : '#090d12');
+              bars[i].removeAttribute('media');
+            }
+          }
         } catch (e) {}
       })();
     </script>

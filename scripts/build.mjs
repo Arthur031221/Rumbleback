@@ -2,6 +2,7 @@
 import { build } from 'esbuild';
 import { spawnSync } from 'node:child_process';
 import { cpSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { fillIndex } from './lib/site.mjs';
 
 const root = new URL('../', import.meta.url);
 const path = (p) => new URL(p, root).pathname;
@@ -51,5 +52,5 @@ for (const entry of readdirSync(path('dist/types'), { recursive: true, withFileT
 cpSync(path('node_modules/maplibre-gl/dist/maplibre-gl-worker.mjs'), path('dist/assets/maplibre-gl-worker.mjs'));
 cpSync(path('public'), path('dist'), { recursive: true });
 cpSync(path('assets/social-card.png'), path('dist/social-card.png')); // the link preview image named in index.html
-writeFileSync(path('dist/index.html'), readFileSync(path('index.html'), 'utf8').replaceAll('__VERSION__', version));
+writeFileSync(path('dist/index.html'), fillIndex(readFileSync(path('index.html'), 'utf8'), { version, siteUrl: process.env.SITE_URL }));
 console.log(`built ${version}`);

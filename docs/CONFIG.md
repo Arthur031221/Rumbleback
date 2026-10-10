@@ -31,6 +31,13 @@ Clear them from the browser's site data, or remove the pin with the cross on the
 | `src/data/featured.ts` | The featured shelf | 14 quakes |
 | `scripts/build_tables.py` `DEPTHS`, `DISTANCES` | Grid of the travel-time table | 34 depths, 913 distances |
 
+## The address of your copy
+
+`SITE_URL` is read by `npm run build`. Set it to the address the built site will be served from, for example
+`SITE_URL=https://example.org/quakes/ npm run build`, and the canonical link, `og:url` and the link preview image
+point there. Left unset, the canonical link and `og:url` are left out, so search engines do not take your copy for a
+duplicate of the upstream one, and the preview image points at the upstream card. The Pages workflow sets it for you.
+
 ## Map tiles
 
 `src/app/style.ts` builds the style. Tiles and glyphs come from OpenFreeMap (`TILES` and `GLYPHS`).

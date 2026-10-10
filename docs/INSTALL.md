@@ -16,13 +16,15 @@ npm run serve
 ```
 
 Open <http://127.0.0.1:4173/>. `npm run build` writes the whole site to `dist/`. Any static host can
-serve that folder as it is: GitHub Pages, Netlify, an S3 bucket, `python3 -m http.server -d dist`.
+serve that folder as it is: GitHub Pages, Netlify, an S3 bucket, `python3 -m http.server -d dist`. Set `SITE_URL` when you
+build for a public address.
 All links inside the site are relative, so it also works from a sub-folder such as `/Rumbleback/`.
 
 ## Host it on GitHub Pages
 
 Fork the repository, then in the fork open Settings, Pages, and choose "GitHub Actions" as the source.
-The `Publish demo page` workflow runs after the CI workflow passes on `main` and deploys `dist/`.
+The `Publish demo page` workflow runs after the CI workflow passes on `main` and deploys `dist/`, with `SITE_URL` set to
+your Pages address (see [CONFIG.md](CONFIG.md#the-address-of-your-copy)).
 
 ## Use the library alone
 

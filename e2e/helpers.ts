@@ -44,6 +44,7 @@ export interface Harness {
     script?: () => void;
     /** The browser's time zone. UTC unless said, so the times on the page do not depend on the machine. */
     timezone?: string;
+    reducedMotion?: 'reduce' | 'no-preference';
   }): Promise<Session>;
 }
 
@@ -94,6 +95,7 @@ export async function harness(): Promise<Harness> {
       tileJson = false,
       script,
       timezone = 'UTC',
+      reducedMotion = 'no-preference',
     } = {}) {
       const permissions = [...(name === 'chromium' ? ['clipboard-read', 'clipboard-write'] : []), ...(geolocation ? ['geolocation'] : [])];
       const context = await browser.newContext({
@@ -101,6 +103,7 @@ export async function harness(): Promise<Harness> {
         locale,
         colorScheme,
         timezoneId: timezone,
+        reducedMotion,
         hasTouch: width < 600,
         permissions,
         geolocation,

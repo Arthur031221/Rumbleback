@@ -6,6 +6,7 @@ import { citiesNear, parseCities, searchCities, type CityFile } from '../src/cor
 import { mmiColor, mmiRoman, shaking } from '../src/core/intensity.ts';
 import { buildLink, eventIdFrom, parseLink } from '../src/core/link.ts';
 import { REGIONS } from '../src/core/regions.ts';
+import { FEATURED } from '../src/data/featured.ts';
 import { defaultSpeed, feltRadiusKm, openingBounds, replayLength } from '../src/core/replay.ts';
 import { TravelTimes } from '../src/core/traveltime.ts';
 
@@ -135,6 +136,14 @@ test('an event id is found in an id, a USGS event page, a catalog query or a Rum
     assert.equal(eventIdFrom(text), id, text);
   assert.equal(eventIdFrom('ci40123456'), 'ci40123456');
   assert.equal(eventIdFrom('https://earthquake.usgs.gov/earthquakes/eventpage/nc73999999'), 'nc73999999');
+});
+
+test('every featured quake can be pasted back, as an id, an event page address and a Rumbleback link', () => {
+  for (const { id } of FEATURED) {
+    assert.equal(eventIdFrom(id), id, id);
+    assert.equal(eventIdFrom(`https://earthquake.usgs.gov/earthquakes/eventpage/${id}/executive`), id, id);
+    assert.equal(eventIdFrom(`https://arthur031221.github.io/Rumbleback/?event=${id}&t=10`), id, id);
+  }
 });
 
 test('text that is not an event id is refused', () => {

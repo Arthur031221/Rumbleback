@@ -40,6 +40,9 @@ jobs:
         run: npm ci
       - if: steps.pages.outcome == 'success'
         run: npm run build
+        env:
+          # The address this copy is served from, for the canonical link and the link preview tags.
+          SITE_URL: ${{ steps.pages.outputs.base_url }}
       - if: steps.pages.outcome == 'success'
         uses: actions/upload-pages-artifact@v3
         with:

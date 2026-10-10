@@ -103,7 +103,10 @@ export async function start(): Promise<void> {
   const shareBtn = h('button', { class: 'btn btn-ghost', type: 'button', onclick: () => share.open() }, icon('share'), h('span'));
   const langSelect = h('select', { class: 'select', id: 'lang' });
   for (const l of LANGS) langSelect.append(h('option', { value: l, selected: l === lang }, LOCALES[l]['meta.name']));
-  langSelect.addEventListener('change', () => changeLanguage(langSelect.value as Lang));
+  langSelect.addEventListener('change', () => {
+    changeLanguage(langSelect.value as Lang);
+    langSelect.blur(); // so the arrow keys step the replay again instead of changing the language
+  });
   const langBox = h('label', { class: 'lang', for: 'lang' }, icon('globe'), langSelect);
   const themeBtn = h('button', { class: 'icon-btn', type: 'button', onclick: () => cycleTheme() });
   const gh = h(
@@ -387,6 +390,12 @@ export async function start(): Promise<void> {
   function applyLook(): void {
     const theme = resolveTheme();
     document.documentElement.dataset.theme = theme;
+    // The browser's own bar follows the page, whichever way the theme was chosen. A choice made in the page has to
+    // beat the system setting that the two tags in index.html name, so both lose their media query.
+    for (const bar of document.querySelectorAll('meta[name="theme-color"]')) {
+      bar.setAttribute('content', theme === 'dark' ? '#090d12' : '#e9eef3');
+      bar.removeAttribute('media');
+    }
     $('.brand-mark', topbar).dataset.theme = theme;
     themeBtn.replaceChildren(icon(theme === 'dark' ? 'sun' : 'moon'));
     const next = theme === 'dark' ? t('theme.light') : t('theme.dark');
@@ -482,12 +491,13 @@ export async function start(): Promise<void> {
 
   document.addEventListener('keydown', (e) => {
     const target = e.target as HTMLElement;
-    // A button or a summary takes Space as a click, and arrows are free. Fields keep every key.
+    // A button or a summary takes Space as a click, and arrows are free. Fields keep every key, except
+    // the timeline: it keeps the focus after a drag, and its own arrow keys step a tenth of a second.
     if (
       e.metaKey ||
       e.ctrlKey ||
       e.altKey ||
-      /^(INPUT|SELECT|TEXTAREA)$/.test(target.tagName) ||
+      (/^(INPUT|SELECT|TEXTAREA)$/.test(target.tagName) && !target.classList.contains('scrub')) ||
       (e.key === ' ' && /^(BUTTON|SUMMARY|A)$/.test(target.tagName)) ||
       document.querySelector('dialog[open]')
     )

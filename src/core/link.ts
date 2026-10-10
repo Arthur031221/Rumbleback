@@ -57,7 +57,8 @@ export function buildLink(base: string, s: LinkState): string {
  * Returns null when nothing in it looks like an id.
  */
 export function eventIdFrom(text: string): string | null {
-  const id = /^[a-z]{2}[a-z0-9]{6,12}$/i;
+  // Network code, then the rest. Some ids are long and carry an underscore, such as official20110311054624120_30.
+  const id = /^[a-z]{2}[a-z0-9_]{6,40}$/i;
   const given = text.trim();
   if (id.test(given)) return given.toLowerCase();
   let url: URL;

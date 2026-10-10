@@ -152,6 +152,24 @@ test('a double tap on a phone leaves the pin where it was, and a single tap stil
   await page.waitForFunction((was) => localStorage.getItem('rumbleback.pin') !== was, pin);
 });
 
+test('the city list closes when the field loses the focus and comes back with it', async () => {
+  const { page } = await h.open();
+  await pause(page);
+  await page.fill('#city-search', 'tok');
+  await page.locator('.result').first().waitFor();
+  await page.locator('.pin-prompt').click();
+  await page.locator('#city-results').waitFor({ state: 'hidden' });
+  assert.equal(await page.locator('#city-search').getAttribute('aria-expanded'), 'false');
+  await page.locator('#city-search').focus();
+  await page.locator('.result').first().waitFor();
+  // A pin placed some other way ends the search it leaves behind.
+  await page.mouse.click(900, 400);
+  await page.locator('.pin').waitFor();
+  await page.locator('.pin-card .icon-btn').first().click();
+  assert.equal(await page.locator('#city-search').inputValue(), '');
+  assert.equal(await page.locator('#city-results').isHidden(), true);
+});
+
 test('a pin on Taichung shows the same seconds as the library computes', async () => {
   const { page } = await h.open();
   await pause(page);
@@ -303,6 +321,17 @@ test('the browser language picks the first language', async () => {
   const { page } = await h.open({ locale: 'zh-TW' });
   assert.equal(await page.locator('#lang').inputValue(), 'zh-TW');
   assert.equal(await page.locator('.quake-title').innerText(), '2024 花蓮（臺灣）');
+});
+
+test("the browser's own bar takes the colour of the theme in use, the one chosen in the page included", async () => {
+  const { page } = await h.open({ colorScheme: 'light' });
+  const bars = () =>
+    page.evaluate(() =>
+      [...document.querySelectorAll('meta[name="theme-color"]')].map((m) => `${m.getAttribute('content')} ${m.hasAttribute('media')}`),
+    );
+  assert.deepEqual(await bars(), ['#e9eef3 false', '#e9eef3 false']);
+  await page.getByRole('button', { name: /^Theme/ }).click();
+  assert.deepEqual(await bars(), ['#090d12 false', '#090d12 false']);
 });
 
 test('theme toggle switches and is remembered', async () => {
@@ -524,6 +553,67 @@ test('the arrow keys still step the clock after a button has focus, and never pa
   await page.keyboard.press('ArrowDown');
   assert.match(await page.locator('.time-now').innerText(), /^T\+12/);
   assert.deepEqual(await page.locator('.pin').boundingBox(), before);
+});
+
+test('after the timeline has been used, Space still plays and the arrows still step a second', async () => {
+  const { page } = await h.open();
+  await pause(page);
+  await seek(page, 10);
+  await page.locator('.scrub').focus();
+  const label = () => page.locator('.play-btn').getAttribute('aria-label');
+  // On its own the range steps a tenth of a second, and ignores Space.
+  await page.keyboard.press('ArrowRight');
+  assert.match(await page.locator('.time-now').innerText(), /^T\+11/);
+  await page.keyboard.press('Shift+ArrowRight');
+  assert.match(await page.locator('.time-now').innerText(), /^T\+21/);
+  await page.keyboard.press('Space');
+  assert.equal(await label(), 'Pause');
+  await page.keyboard.press('ArrowLeft');
+  assert.equal(await label(), 'Play', 'an arrow key stops the replay, as dragging the timeline does');
+});
+
+test('plus and minus zoom the map', async () => {
+  const { page } = await h.open();
+  await pause(page);
+  // Far from the middle of the map, where a zoom moves a point the most.
+  await page.mouse.click(1200, 250);
+  await page.locator('.pin').waitFor();
+  const at = async () => {
+    const box = (await page.locator('.pin').boundingBox())!;
+    return [box.x, box.y] as [number, number];
+  };
+  const start = await at();
+  await page.keyboard.press('+');
+  await page.waitForFunction(([x, y]) => {
+    const r = document.querySelector('.pin')!.getBoundingClientRect();
+    return Math.hypot(r.x - x!, r.y - y!) > 60;
+  }, start);
+  await page.keyboard.press('-');
+  await page.waitForFunction(([x, y]) => {
+    const r = document.querySelector('.pin')!.getBoundingClientRect();
+    return Math.hypot(r.x - x!, r.y - y!) < 5;
+  }, start);
+});
+
+test('with reduced motion the map jumps to a new quake, and without it the map flies', async () => {
+  const positions = async (reducedMotion: 'reduce' | 'no-preference') => {
+    await h.closeContexts();
+    const { page } = await h.open({ reducedMotion });
+    await pause(page);
+    await page.mouse.click(900, 400);
+    await page.locator('.pin').waitFor();
+    await page.getByRole('button', { name: 'Choose a quake' }).click();
+    await page.locator('.quake-row', { hasText: '2022 Chishang, Taiwan' }).click();
+    const seen = new Set<string>();
+    for (let i = 0; i < 24; i++) {
+      const box = (await page.locator('.pin').boundingBox())!;
+      seen.add(`${Math.round(box.x)},${Math.round(box.y)}`);
+      await page.waitForTimeout(60);
+    }
+    return seen.size;
+  };
+  assert.ok((await positions('no-preference')) >= 4, 'the control: the map does fly when motion is allowed');
+  assert.ok((await positions('reduce')) <= 3, 'it only jumps');
 });
 
 test('a double click zooms the map and leaves the pin where it was', async () => {
@@ -798,6 +888,13 @@ for (const colorScheme of ['dark', 'light'] as const)
           });
           assert.deepEqual(found, [], `${colorScheme} ${width}x${height} ${what}`);
         };
+        await page.fill('#city-search', 'tok');
+        await page.locator('.result').first().waitFor();
+        await scan('the city list');
+        await page.fill('#city-search', 'zzzzzz');
+        await page.locator('.result.none').waitFor();
+        await scan('the city list with no match');
+        await page.fill('#city-search', '');
         await page.locator('.chip', { hasText: 'Taichung' }).click();
         await page.locator('.pin-live').waitFor({ state: 'visible' });
         await page.locator('.check-card summary').click();

@@ -142,9 +142,10 @@ export function createPanel(host: HTMLElement, cb: PanelCallbacks) {
     if (!list) return;
     const asked = search.value.trim() !== '';
     results.hidden = current.length === 0 && !asked;
-    search.setAttribute('aria-expanded', String(current.length > 0));
+    search.setAttribute('aria-expanded', String(!results.hidden));
     if (current.length === 0 && asked) {
-      results.append(h('li', { class: 'result none', text: t('pin.noResults') }));
+      // A listbox holds options only, so the "no match" row is a disabled one.
+      results.append(h('li', { role: 'option', 'aria-disabled': 'true', class: 'result none', text: t('pin.noResults') }));
       resultsHint.textContent = t('pin.noResults');
       return;
     }
@@ -180,6 +181,20 @@ export function createPanel(host: HTMLElement, cb: PanelCallbacks) {
       })
       .catch(() => {});
   });
+  // The list closes when the field loses the focus, as on a phone when the keyboard is put away. The rows keep
+  // the focus on the field themselves (see onmousedown above), so a tap on one still lands.
+  search.addEventListener('focusout', (e) => {
+    if (results.contains((e as FocusEvent).relatedTarget as Node | null)) return;
+    current = [];
+    active = -1;
+    results.replaceChildren();
+    results.hidden = true;
+    resultsHint.textContent = '';
+    search.setAttribute('aria-expanded', 'false');
+    search.removeAttribute('aria-activedescendant');
+  });
+  // Coming back to a field that still holds a search shows its list again.
+  search.addEventListener('focus', () => search.value && search.dispatchEvent(new Event('input')));
   search.addEventListener('keydown', (e) => {
     const key = (e as KeyboardEvent).key;
     if (key === 'ArrowDown' || key === 'ArrowUp') {
@@ -238,6 +253,12 @@ export function createPanel(host: HTMLElement, cb: PanelCallbacks) {
     removeBtn.setAttribute('aria-label', t('pin.remove'));
     removeBtn.setAttribute('title', t('pin.remove'));
     setup.hidden = !!s.pin;
+    // A pin placed another way, on the map or with the location button, ends the search it leaves behind.
+    if (s.pin && search.value) {
+      search.value = '';
+      current = [];
+      renderResults();
+    }
     prompt.textContent = t('pin.prompt');
     searchLabel.textContent = t('pin.search');
     search.setAttribute('placeholder', t('pin.searchHint'));

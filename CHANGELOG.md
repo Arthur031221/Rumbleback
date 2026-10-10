@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.2.1
+
+Released 2026-10-10.
+
+Fixed
+
+- Pasting the address of a quake with a long id was refused, as it was for the 2011 Tohoku and 2010 Chile quakes on
+  the featured shelf. A test now pastes every featured quake back as an id, an event page address and a Rumbleback link.
+- Once the timeline had the focus, Space did nothing and the arrow keys stepped a tenth of a second instead of a second.
+  They act on the replay now, and the language menu gives the focus back after a choice.
+- The city list stayed open when the field lost the focus, which on a phone hid the location button and the city
+  chips, and an old search came back after the pin was removed. The list closes with the focus and a pin ends the search.
+- The "no match" row was not an option of the list. The accessibility scan now covers the list with matches and without.
+- The browser's own bar stayed dark in the light theme. It follows the theme in use, the system's or the one chosen
+  in the page.
+- A copy of the site named the upstream address as its canonical link. `SITE_URL` sets the address when you build, the
+  Pages workflow passes it, and without it the canonical link and `og:url` are left out.
+
+Tests
+
+- New browser tests for the plus and minus keys, the reduced motion setting, the timeline keys and the city list.
+
 ## 0.2.0
 
 Released 2026-10-10.
