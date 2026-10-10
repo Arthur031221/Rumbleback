@@ -13,6 +13,7 @@ const TYPES = {
   '.png': 'image/png',
   '.woff2': 'font/woff2',
   '.woff': 'font/woff',
+  '.webmanifest': 'application/manifest+json',
 };
 
 /** Serves a directory on a free port (or `port`) and resolves with the server and its base URL. `onRequest` sees each request the way a real host would. */

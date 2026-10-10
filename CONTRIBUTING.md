@@ -33,7 +33,8 @@ compile step to forget. The end-to-end tests run against `dist/`, so run `npm ru
   framework. Anything that changes a number belongs here, with a test.
 - `src/app` is the page: map, overlay canvas, panels, dialogs, language files in `src/app/locales`.
 - `scripts` builds the site and the data. `scripts/build_tables.py` is the only Python and the only
-  place ObsPy is used.
+  place ObsPy is used. `make-assets.mjs`, `record-demo.mjs` and `make-icons.mjs` redraw the screenshots, the demo GIF
+  and the app icons from the real page.
 - `public/events` holds the featured earthquakes as downloaded from USGS by `npm run events`.
 - `docs` explains the model, the data and the privacy choices.
 

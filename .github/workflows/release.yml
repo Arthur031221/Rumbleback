@@ -1,7 +1,7 @@
 name: Release
 
 # Pushing a tag such as v0.1.0 builds the site, runs the unit tests and publishes a release with the
-# site as a zip and the library as one file. The tag has to match the version in package.json, and the
+# site as a zip, the library as one file and its type declarations as a zip. The tag has to match the version in package.json, and the
 # notes are that version's section of CHANGELOG.md.
 on:
   push:
@@ -24,11 +24,13 @@ jobs:
       - name: The tag matches package.json
         run: test "v$(node -p "require('./package.json').version")" = "$GITHUB_REF_NAME"
       - run: npm run typecheck
+      - run: npm run format:check
       - run: npm test
       - run: npm run build
       - name: Package
         run: |
-          (cd dist && zip -qr ../rumbleback-site.zip . -x rumbleback.js)
+          (cd dist && zip -qr ../rumbleback-site.zip . -x rumbleback.js 'types/*')
+          (cd dist && zip -qr ../rumbleback-types.zip types)
           cp dist/rumbleback.js rumbleback.js
       - name: Notes from the changelog
         run: |
@@ -38,4 +40,4 @@ jobs:
       - name: Publish
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" rumbleback-site.zip rumbleback.js --title "Rumbleback $GITHUB_REF_NAME" --notes-file notes.md
+        run: gh release create "$GITHUB_REF_NAME" rumbleback-site.zip rumbleback.js rumbleback-types.zip --title "Rumbleback $GITHUB_REF_NAME" --notes-file notes.md
