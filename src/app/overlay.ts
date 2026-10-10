@@ -1,5 +1,6 @@
 import type { Map } from 'maplibre-gl';
 import { distanceDeg, ring, type LatLon } from '../core/geo.ts';
+import { nearestPoint } from '../core/hit.ts';
 import { mmiColor, mmiRgb } from '../core/intensity.ts';
 import type { IntensityGrid, QuakeData } from '../core/quake.ts';
 import type { TravelTimes } from '../core/traveltime.ts';
@@ -25,6 +26,12 @@ export interface Frame {
   alertSec: number;
   /** Playback speed, used to keep ripples visible for a similar time on screen at any speed. */
   speed: number;
+}
+
+/** The dot under the pointer: which kind, and its place in the quake's list of that kind. */
+export interface Hit {
+  kind: 'pick' | 'instrument' | 'felt';
+  index: number;
 }
 
 const COLORS = {
@@ -98,6 +105,9 @@ export class Overlay {
   private feltT = new Float32Array(0);
   private proj = { picks: new Float32Array(0), instruments: new Float32Array(0), felt: new Float32Array(0), dirty: true };
 
+  /** The frame on screen, which says what is lit and which layers show. */
+  private shown: Frame | null = null;
+
   private readonly map: Map;
   readonly canvas: HTMLCanvasElement;
 
@@ -139,6 +149,29 @@ export class Overlay {
         )
       : 0;
     this.proj.dirty = true;
+  }
+
+  /**
+   * The lit dot at a point of the map, for the inspector: a seismometer first, then a strong motion instrument,
+   * then a felt report. A dot that has not lit yet, or whose layer is off, is not there.
+   */
+  hit(x: number, y: number): Hit | null {
+    const f = this.shown;
+    if (!f) return null;
+    if (this.proj.dirty) this.reproject();
+    if (f.layers.picks) {
+      const i = nearestPoint(this.proj.picks, x, y, 8, (n) => f.quake.picks[n]!.t <= f.t);
+      if (i >= 0) return { kind: 'pick', index: i };
+    }
+    if (f.layers.instruments) {
+      const i = nearestPoint(this.proj.instruments, x, y, 9, (n) => this.instrumentT[n]! <= f.t);
+      if (i >= 0) return { kind: 'instrument', index: i };
+    }
+    if (f.layers.felt) {
+      const i = nearestPoint(this.proj.felt, x, y, 6, (n) => this.feltT[n]! <= f.t);
+      if (i >= 0) return { kind: 'felt', index: i };
+    }
+    return null;
   }
 
   private screen(lat: number, lon: number, center: number): [number, number] {
@@ -186,7 +219,9 @@ export class Overlay {
     const { ctx, dpr } = this;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, this.width, this.height);
+    this.shown = null;
     if (!f || !this.quake || !this.tt || this.quake !== f.quake) return;
+    this.shown = f;
     if (this.proj.dirty) this.reproject();
 
     const c = COLORS[f.theme];

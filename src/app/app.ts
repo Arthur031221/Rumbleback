@@ -12,6 +12,7 @@ import { cities, loadCities, nearestCityName, pinLabel, pinTiming, quakeTitle } 
 import { createAudio } from './audio.ts';
 import { createDock } from './dock.ts';
 import { $, h } from './dom.ts';
+import { createInspector } from './inspector.ts';
 import { icon } from './icons.ts';
 import { LANGS, LOCALES, number, pickLanguage, seconds, setLanguage, t, translateTree, type Lang } from './i18n.ts';
 import { createLearn } from './learn.ts';
@@ -160,6 +161,29 @@ export async function start(): Promise<void> {
   });
   view.map.getCanvasContainer().appendChild(overlayCanvas);
   const overlay = new Overlay(view.map, overlayCanvas);
+
+  // A mouse over a lit dot says what the dot is. The dots are drawn on a canvas, so the overlay finds the one under the pointer.
+  const inspector = createInspector();
+  let pointer: { x: number; y: number; clientX: number; clientY: number } | null = null;
+  function inspect(): void {
+    const s = get();
+    const hit = pointer && s.quake && s.tt ? overlay.hit(pointer.x, pointer.y) : null;
+    if (hit && pointer && s.quake && s.tt) inspector.show(hit, s.quake, s.tt, { x: pointer.clientX, y: pointer.clientY });
+    else inspector.hide();
+  }
+  mapEl.addEventListener('pointermove', (e) => {
+    // A finger taps to drop a pin, and a drag moves the map: neither asks what a dot is.
+    if (e.pointerType !== 'mouse' || e.buttons) pointer = null;
+    else {
+      const box = mapEl.getBoundingClientRect();
+      pointer = { x: e.clientX - box.left, y: e.clientY - box.top, clientX: e.clientX, clientY: e.clientY };
+    }
+    inspect();
+  });
+  mapEl.addEventListener('pointerleave', () => {
+    pointer = null;
+    inspect();
+  });
   view.map.on('move', () => (dirty = true));
   view.map.on('dragstart', () => (userMoved = true));
   view.map.on('moveend', () => updateOffscreen());
@@ -332,7 +356,10 @@ export async function start(): Promise<void> {
 
   function drawNow(): void {
     const s = get();
-    if (!s.quake || !s.tt) return overlay.draw(null);
+    if (!s.quake || !s.tt) {
+      overlay.draw(null);
+      return inspect();
+    }
     const timing = pinTiming(s);
     overlay.draw({
       t: clock.t,
@@ -344,6 +371,7 @@ export async function start(): Promise<void> {
       alertSec: s.alertSec,
       speed: s.speed,
     });
+    inspect();
   }
 
   // State changes

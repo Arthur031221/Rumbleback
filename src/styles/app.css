@@ -1353,6 +1353,45 @@ dialog.sheet::backdrop {
   font-size: 17px;
 }
 
+/* The card that follows the mouse over a dot on the map */
+.inspector {
+  position: fixed;
+  z-index: 18;
+  top: 0;
+  left: 0;
+  max-width: 280px;
+  padding: 9px 12px 10px;
+  background: var(--panel-solid);
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  pointer-events: none;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+.inspector[hidden] {
+  display: none;
+}
+.inspector-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 3px;
+  color: var(--text);
+  font-weight: 700;
+  font-size: 14px;
+}
+.inspector-title .mmi-chip {
+  min-width: 30px;
+  height: 22px;
+  padding: 0 6px;
+  font-size: 12px;
+}
+.inspector-line {
+  margin: 2px 0 0;
+}
+
 /* Toast */
 .toast {
   position: fixed;

@@ -45,7 +45,7 @@ test('translations are not copies of the English text, apart from names, units a
 });
 
 test('every message key used in the source exists', () => {
-  const sources = ['app', 'panel', 'dock', 'picker', 'learn', 'share', 'layers', 'derived', 'overlay'].map((f) =>
+  const sources = ['app', 'panel', 'dock', 'picker', 'learn', 'share', 'layers', 'derived', 'overlay', 'inspector'].map((f) =>
     readFileSync(new URL(`../src/app/${f}.ts`, import.meta.url), 'utf8'),
   );
   const used = new Set<string>();

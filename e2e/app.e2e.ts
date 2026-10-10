@@ -114,6 +114,75 @@ test('the overlay draws the waves: with every other layer off, pixels appear as 
   assert.ok((await painted()) < before + 300, 'with the waves off the overlay is almost empty again');
 });
 
+test('a mouse over a lit dot says what it is, and a finger, a dot not yet lit or a hidden layer does not', async () => {
+  const { page } = await h.open();
+  await pause(page);
+  // Moves a mouse (or a finger) over a grid of points in the page and keeps the first card of each kind it opens.
+  const sweep = () =>
+    page.evaluate(() => {
+      const map = document.querySelector('#map')!;
+      const seen: Record<string, string> = {};
+      const outside: string[] = [];
+      const texts: string[] = [];
+      for (const pointerType of ['touch', 'mouse']) {
+        for (let y = 90; y < 700; y += 5) {
+          for (let x = 390; x < 1430; x += 5) {
+            map.dispatchEvent(new PointerEvent('pointermove', { bubbles: true, clientX: x, clientY: y, pointerType }));
+            const box = document.querySelector<HTMLElement>('.inspector');
+            if (!box || box.hidden) continue;
+            const r = box.getBoundingClientRect();
+            if (r.left < 0 || r.top < 0 || r.right > innerWidth || r.bottom > innerHeight) outside.push(`${x},${y}`);
+            const text = box.innerText;
+            const kind = /analyst/.test(text)
+              ? 'pick'
+              : /Strong motion/.test(text)
+                ? 'instrument'
+                : /Felt reports/.test(text)
+                  ? 'felt'
+                  : text;
+            seen[`${pointerType} ${kind}`] ??= text;
+            if (texts.length < 600 && !texts.includes(text)) texts.push(text);
+          }
+        }
+      }
+      map.dispatchEvent(new PointerEvent('pointerleave'));
+      return { seen, texts, outside, open: !document.querySelector<HTMLElement>('.inspector')!.hidden };
+    });
+  await seek(page, -1);
+  assert.deepEqual((await sweep()).seen, {}, 'nothing has reached any dot yet');
+  await seek(page, 45);
+  const { seen, outside, open } = await sweep();
+  assert.deepEqual(Object.keys(seen).sort(), ['mouse felt', 'mouse instrument', 'mouse pick'], 'a finger opens no card');
+  assert.deepEqual(outside, [], 'the card stays on the screen');
+  assert.equal(open, false, 'the card goes when the mouse leaves the map');
+  const lines = (text: string) => text.split(/\n+/);
+  const [pickTitle, pickAway, pickSays] = lines(seen['mouse pick']!);
+  assert.match(pickTitle!, /^[A-Z0-9]+\.[A-Z0-9]+$/);
+  assert.match(pickAway!, /^\d+ km from the epicenter$/);
+  assert.match(pickSays!, /^An analyst picked the [PS] wave at \d+\.\d s after the origin\. The model says \d+\.\d s\.$/);
+  const instrument = lines(seen['mouse instrument']!);
+  assert.match(instrument[1]!, /^[IVX]+$/);
+  assert.match(instrument[2]!, /^Strong motion instrument, network \w+$/);
+  assert.match(instrument[3]!, /^\w+( \w+)? \(MMI \d\.\d\)$/);
+  assert.match(instrument.slice(4, -1).join(' '), /Peak acceleration [\d.]+ %g Peak velocity [\d.]+ cm\/s/);
+  assert.match(instrument.at(-1)!, /^\d+ km from the epicenter$/);
+  const felt = lines(seen['mouse felt']!);
+  assert.match(felt[0]!, /^Felt reports here: \d+$/);
+  assert.match(felt[1]!, /^[IVX]+$/);
+  assert.match(felt[2]!, /^\w+( \w+)? \(MMI \d\.\d\)$/);
+  // The card speaks the language of the page.
+  await page.selectOption('#lang', 'ja');
+  const japanese = (await sweep()).texts;
+  assert.ok(japanese.some((text) => text.includes('解析者')) && japanese.some((text) => text.includes('強震計')), japanese.join(' | '));
+  // Layers that are off show no dots, so they have no card either.
+  await page.selectOption('#lang', 'en');
+  for (const layer of ['Seismometers', 'Strong motion', 'Felt reports'])
+    await page.locator('.layers-strip .chip', { hasText: layer }).click();
+  // The overlay redraws on the next animation frame, and the cards follow what it drew.
+  await page.evaluate(() => new Promise<void>((done) => requestAnimationFrame(() => requestAnimationFrame(() => done()))));
+  assert.deepEqual((await sweep()).seen, {});
+});
+
 test('a click that is still waiting does not bring back a pin that was removed, and two clicks apart are two choices', async () => {
   const { page } = await h.open();
   await pause(page);
