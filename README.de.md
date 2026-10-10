@@ -6,6 +6,8 @@
 
 <p align="center"><strong>Jedes Erdbeben noch einmal abspielen. Sehen, wie viele Sekunden Sie hatten.</strong></p>
 
+<p align="center">Wählen Sie ein echtes Erdbeben, markieren Sie Ihr Zuhause auf der Karte und sehen Sie, wie viele Sekunden zwischen der ersten Welle und dem starken Beben vergingen.</p>
+
 <p align="center">
   <a href="README.md">English</a> | <a href="README.zh-TW.md">zh-TW</a> | <a href="README.zh-CN.md">zh-CN</a> | <a href="README.ja.md">ja</a> | <a href="README.ko.md">ko</a> | <a href="README.es.md">es</a> | <a href="README.fr.md">fr</a> | <a href="README.de.md">de</a> | <a href="README.pt-BR.md">pt-BR</a>
 </p>

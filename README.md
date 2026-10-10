@@ -5,6 +5,8 @@
 
 <p align="center"><strong>Replay any earthquake. See your seconds.</strong></p>
 
+<p align="center">Pick a real earthquake and pin your home on the map. See how many seconds passed between the first wave and strong shaking.</p>
+
 <p align="center">
   <a href="https://arthur031221.github.io/Rumbleback/"><img src="https://img.shields.io/badge/live_demo-open-ff7b42?style=for-the-badge&labelColor=0b1118" alt="Live demo"></a>
   <a href="https://github.com/Arthur031221/Rumbleback/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/Arthur031221/Rumbleback/ci.yml?branch=main&style=for-the-badge&labelColor=0b1118&color=4cc3ff&label=CI" alt="CI"></a>
@@ -33,7 +35,7 @@
 
 ## Pick a story
 
-Each link opens a quake on the live page, pins a city and starts the replay. P and S times come from the model. Shaking comes from the USGS ShakeMap. These are the same numbers shown on the pin card.
+Each link opens a quake on the live page, pins a city and starts the replay. The model gives the P and S times. The USGS ShakeMap gives the shaking. The pin card shows the same numbers.
 
 | Quake | Pin | P wave | S wave | Shaking there |
 |---|---|---:|---:|---|
@@ -44,11 +46,11 @@ Each link opens a quake on the live page, pins a city and starts the replay. P a
 
 ## Why
 
-An earthquake makes the news, and you get a magnitude and a shaded map. I wanted to see what the waves did and how many seconds I'd have had at my place. Rumbleback replays a real earthquake. You can check every claim on the screen.
+An earthquake makes the news. You get a magnitude and a shaded map. I wanted to see what the waves did and how many seconds I'd have had at my place. Rumbleback replays a real earthquake. You can check every claim on the screen.
 
-- **Real data.** Every dot is a real instrument, pick or felt report from USGS. A real seismogram runs under the timeline, with the model's P and S arrivals beside the station's recorded signal. The two rings come from a published Earth model. I check it against ObsPy at 600 random points and against real picks on every quake.
+- **Real data.** Every dot is a real instrument, pick or felt report from USGS. A real seismogram runs under the timeline, with the model's P and S arrivals beside the station's recorded signal. The two rings use a published Earth model. I check it against ObsPy at 600 random points and against real picks on every quake.
 - **Your place.** Pin your home to see when the P and S waves arrived and how strong the shaking was. Choose any alert time to see how many seconds it would've given you.
-- **No server.** It's a static page. No account or analytics. Your pin never leaves the browser.
+- **No server.** It's a static page. No account, no analytics. Your pin never leaves the browser.
 
 ## Before and after
 
@@ -73,16 +75,16 @@ The 2024 Hualien M7.4 quake, seen from Taipei.
 
 - **Waves.** The first P and S wavefronts at the surface account for depth. For a deep quake, no ring appears until the wave reaches the surface.
 - **Seismometers.** Each dot flashes at an analyst's picked P arrival time for a real station (USGS phase data).
-- **Inspect a dot.** Hover over a lit dot. A station shows its pick beside the model's time. An instrument shows its intensity and peak readings. A felt report shows its count. The check card lists ten stations the same way and works with a keyboard or touch screen.
-- **Seismogram.** A nearby station's real vertical trace runs along the timeline. The model's P and S arrivals and the analyst's pick are drawn over it (EarthScope archive).
+- **Inspect a dot.** Hover over a lit dot. A station shows its pick beside the model's time. An instrument shows its intensity and peak readings. A felt report shows its count. The check card lists ten stations the same way. It works with a keyboard or touch screen.
+- **Seismogram.** A nearby station's real vertical trace runs along the timeline, with the model's P and S arrivals and the analyst's pick drawn over it (EarthScope archive).
 - **ShakeMap, strong motion and felt reports.** The USGS intensity map, instruments coloured by the intensity USGS computed from their recordings, and Did You Feel It groups. The quake card has a colour key.
 - **Blind zone.** The area where the S wave beat an alert issued at your chosen time.
-- **Your seconds.** P and S arrivals at your pin, the gap between them, the ShakeMap intensity there and an alert slider. It's arithmetic on the model and doesn't reflect any real alert. A button replays the waves from just before they reach your pin.
+- **Your seconds.** P and S arrivals at your pin, the gap between them, the ShakeMap intensity there and an alert slider. The slider uses arithmetic on the model and doesn't reflect any real alert. A button replays the waves from just before they reach your pin.
 - **Sound.** An optional low thump for P, a rumble for S that grows with the intensity at your pin, and a soft chime at the alert second.
-- **Share.** A link, a square card, a story card and a recorded video clip. The clip saves as MP4 where the browser supports it, so it plays on an iPhone and in social apps. On a phone, a card opens the system share sheet. The link includes your pin only if you tick a box. It keeps the pin after the `#`, which browsers never send to a server. Cards show a city name, never coordinates.
-- **Any quake.** Fourteen featured events work without calling USGS. Ten include a seismogram. Recent and Search tabs read the live USGS catalog. The Link tab opens any USGS event page or id you paste, with an EarthScope seismogram when available.
+- **Share.** A link, a square card, a story card and a recorded video clip. The clip saves as MP4 where the browser supports it, so it plays on an iPhone and in social apps. On a phone, a card opens the system share sheet. The link includes your pin only if you tick a box. The pin stays after the `#`, which browsers never send to a server. Cards show a city name, never coordinates.
+- **Any quake.** Fourteen featured events work without calling USGS. Ten include a seismogram. Recent and Search tabs read the live USGS catalog. Paste any USGS event page or id into the Link tab to open it, with an EarthScope seismogram when available.
 - **Your time zone.** The quake card shows the time in UTC and your own time zone.
-- **Phones and keyboards.** On a phone, the panel is a bottom sheet and the seismogram stays above the timeline. A new pin scrolls the sheet to its numbers. Turn the phone sideways and the panel moves to the side, leaving room for the map. Space plays and pauses, the arrows step the clock, and plus and minus zoom the map. A screen reader announces when the P wave, the S wave and the alert reach your pin. Browser tests run axe over both themes on desktop and phone screens, with each dialog open.
+- **Phones and keyboards.** On a phone, the panel is a bottom sheet and the seismogram stays above the timeline. A new pin scrolls the sheet to its numbers. Turn the phone sideways and the panel moves to the side, leaving room for the map. Space plays and pauses. The arrows step the clock, and plus and minus zoom the map. A screen reader announces when the P wave, the S wave and the alert reach your pin. Browser tests run axe over both themes on desktop and phone screens, with each dialog open.
 - **Nine languages.** English, Traditional and Simplified Chinese, Japanese, Korean, Spanish, French, German and Brazilian Portuguese, including the map labels.
 
 <p align="center">
@@ -116,7 +118,7 @@ Open <http://127.0.0.1:4173/>.
 <details>
 <summary>Use the travel-time library in Node or a browser</summary>
 
-`npm run build` writes `dist/rumbleback.js`, a single ES module with no DOM code. The live page serves the same file at `/rumbleback.js`. It's also attached to tagged releases.
+`npm run build` writes `dist/rumbleback.js`, a single ES module with no DOM code. The live page serves the same file at `/rumbleback.js`. Tagged releases include it too.
 
 ```js
 import { TravelTimes, timingAt } from './rumbleback.js';

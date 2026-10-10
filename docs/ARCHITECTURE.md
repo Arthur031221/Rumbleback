@@ -26,6 +26,7 @@ Pure functions and small classes. No DOM, so it runs under Node for the tests an
 | `residuals.ts` | Observed minus modelled arrival for every pick |
 | `waveform.ts` | Picks a station, fetches its GeoCSV from EarthScope, keeps a min and max per time bin (a quarter second or two samples) |
 | `replay.ts` | Opening view, replay length, default speed |
+| `signal.ts` | `AbortSignal.timeout` and `AbortSignal.any`, with a by-hand version for a Safari that lacks them |
 | `intensity.ts`, `cities.ts`, `link.ts`, `regions.ts` | MMI colours and words, city search, deep links and the event id in a pasted USGS address, the search regions |
 
 ### The travel-time table

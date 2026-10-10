@@ -52,7 +52,8 @@ Running `npm run tables` reproduces the committed table exactly when ObsPy is ve
 
 ## Requirements for the browser
 
-A browser with WebGL 2: any current Chrome, Edge, Firefox or Safari. The replay needs `canvas`, and the
+A browser with WebGL 2: any current Chrome, Edge, Firefox or Safari. Requests to USGS and EarthScope also work on
+a Safari before 17.4 and a Chrome before 116, which lack `AbortSignal.any`. The replay needs `canvas`, and the
 video clip needs `MediaRecorder` (Chrome, Edge, Firefox and recent Safari) and is saved as MP4 where the
 browser can record it and as WebM otherwise. Without `MediaRecorder` the clip button says so and everything
 else works.

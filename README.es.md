@@ -6,6 +6,8 @@
 
 <p align="center"><strong>Reproduce cualquier terremoto. Mira tus segundos.</strong></p>
 
+<p align="center">Elige un terremoto real, marca tu casa en el mapa y mira cuántos segundos pasaron entre la primera onda y la sacudida fuerte.</p>
+
 <p align="center">
   <a href="README.md">English</a> | <a href="README.zh-TW.md">zh-TW</a> | <a href="README.zh-CN.md">zh-CN</a> | <a href="README.ja.md">ja</a> | <a href="README.ko.md">ko</a> | <a href="README.es.md">es</a> | <a href="README.fr.md">fr</a> | <a href="README.de.md">de</a> | <a href="README.pt-BR.md">pt-BR</a>
 </p>

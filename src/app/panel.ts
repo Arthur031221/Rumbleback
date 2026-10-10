@@ -443,7 +443,7 @@ export function createPanel(host: HTMLElement, cb: PanelCallbacks) {
 
   /** Null until the first update, so a pin kept from an earlier visit does not move the sheet. */
   let hadPin: boolean | null = null;
-  /** The panel scrolls itself to the pin card and to the check card; a viewer who asked for less motion gets a jump. */
+  /** The panel scrolls itself to the pin card and to the check card. A viewer who asked for less motion gets a jump. */
   const scrollBehavior = (): ScrollBehavior => (window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth');
   /** On a phone the sheet shows the quake card first, which would hide the numbers of a pin just placed. */
   function followPin(placed: boolean): void {

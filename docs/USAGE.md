@@ -11,8 +11,8 @@
 
 1. Press "Choose a quake". The *Featured* tab has fourteen well known events and works without
    calling USGS. *Recent* lists the newest quakes of the last 30 days, at most 60, and a menu raises the minimum
-   magnitude (4.5, 5, 6 or 7) to reach further back. *Search* takes a minimum magnitude, a region (sorted by name in your language) and a date
-   range. *Link* takes the address of a USGS event page (news stories often link to one) or an event id such as
+   magnitude (4.5, 5, 6 or 7) to reach further back. *Search* takes a minimum magnitude, a region (sorted by name in your language: 41 countries, California,
+   Alaska, Hawaii, and Kamchatka with the Kurils) and a date range. *Link* takes the address of a USGS event page (news stories often link to one) or an event id such as
    `us7000m9g4`, and opens that quake once USGS confirms it exists.
 2. The replay starts by itself, at a speed chosen so the whole thing takes about half a minute.
    Space plays and pauses. Left and right step one second, with Shift ten seconds. Plus and minus zoom the map.
@@ -121,6 +121,10 @@ Firefox. The file name tells you which one you got.
 | `t` | Clock in seconds after the origin. When present the replay opens paused |
 | `alert` | Alert issue time in seconds after the origin, 0 to 60 |
 | `lang` | `en`, `zh-TW`, `zh-CN`, `ja`, `ko`, `es`, `fr`, `de` or `pt-BR` |
+
+A link's pin and language are where the page starts, and they beat what the browser has saved. Once you choose your own
+pin or language, the address stops carrying the link's, so a reload keeps your choice. The link's other parts, the quake,
+the moment and the alert time, stay in the address.
 
 A link to an id USGS does not have says "USGS has no earthquake with that id" and offers no retry. When USGS cannot
 be reached, the quake card says so and has a "Try again" button.

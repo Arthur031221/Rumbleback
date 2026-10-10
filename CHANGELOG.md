@@ -1,5 +1,33 @@
 # Changelog
 
+## 0.4.1
+
+Released 2026-10-10.
+
+New
+
+- The search can look in sixteen more countries (Iceland, Tonga, the Solomon Islands, Costa Rica, El Salvador,
+  Nicaragua, Panama, Puerto Rico, the Dominican Republic, South Korea, Algeria, Albania, Romania, Tajikistan,
+  Kyrgyzstan and Argentina) and in two areas that are not countries: Hawaii, and Kamchatka with the Kurils. The
+  names follow the language of the page.
+- The README opens with one plain sentence on what the page does, in all nine languages.
+
+Fixed
+
+- A shared link's pin and language beat what the browser had saved, and they came back on every reload. Someone who
+  opened a friend's link, moved the pin to their own home and reloaded found the friend's pin again, and a removed pin
+  came back too. The address now drops the link's pin and language once the viewer chooses their own.
+- On a Safari before 17.4 (and a Chrome before 116) every request to USGS and EarthScope failed before it was sent,
+  because `AbortSignal.any` is missing there, so a quake that is not on the featured shelf, the Recent, Search and
+  Link tabs and the seismogram did not load. `AbortSignal.timeout`, missing before Safari 16.4, has the same fallback.
+- On a phone the prompt to drop a pin was cut off at the bottom of the sheet for anyone whose time zone is not UTC,
+  and on a 640 pixel high screen in every zone, because the quake card spent four lines on its facts. They run on as a
+  row that wraps, and the cards take a little less padding on a screen of 700 pixels or fewer, so the prompt shows at
+  390 by 664, 375 by 667 and 360 by 640 in all nine languages.
+- Opening the check card scrolled it into view with an animation even when the viewer had asked for less motion.
+- The dots for strong motion stations and felt reports built a colour string for every dot on every frame, about 0.4
+  milliseconds a frame for 5,000 dots on a desktop processor and more on a phone. Each dot's colour is made once per quake.
+
 ## 0.4.0
 
 Released 2026-10-10.

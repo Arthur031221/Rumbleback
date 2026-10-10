@@ -6,6 +6,8 @@
 
 <p align="center"><strong>Rejouez n'importe quel séisme. Voyez vos secondes.</strong></p>
 
+<p align="center">Choisissez un vrai séisme, placez votre domicile sur la carte et voyez combien de secondes se sont écoulées entre la première onde et les fortes secousses.</p>
+
 <p align="center">
   <a href="README.md">English</a> | <a href="README.zh-TW.md">zh-TW</a> | <a href="README.zh-CN.md">zh-CN</a> | <a href="README.ja.md">ja</a> | <a href="README.ko.md">ko</a> | <a href="README.es.md">es</a> | <a href="README.fr.md">fr</a> | <a href="README.de.md">de</a> | <a href="README.pt-BR.md">pt-BR</a>
 </p>

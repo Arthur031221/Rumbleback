@@ -6,6 +6,8 @@
 
 <p align="center"><strong>어떤 지진이든 다시 재생하고, 내게 몇 초가 있었는지 확인하세요.</strong></p>
 
+<p align="center">실제로 일어난 지진을 고르고 지도에 집을 표시하면, 첫 지진파부터 강한 흔들림까지 몇 초가 걸렸는지 볼 수 있습니다.</p>
+
 <p align="center">
   <a href="README.md">English</a> | <a href="README.zh-TW.md">zh-TW</a> | <a href="README.zh-CN.md">zh-CN</a> | <a href="README.ja.md">ja</a> | <a href="README.ko.md">ko</a> | <a href="README.es.md">es</a> | <a href="README.fr.md">fr</a> | <a href="README.de.md">de</a> | <a href="README.pt-BR.md">pt-BR</a>
 </p>
