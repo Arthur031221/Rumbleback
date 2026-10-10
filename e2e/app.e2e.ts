@@ -269,6 +269,45 @@ test('the alert slider moves the result from a warning to the blind zone', async
   assert.ok(await page.locator('.alert-result.is-blind').isVisible());
 });
 
+test('a pin the ShakeMap does not reach says so, where a pin inside it gives the shaking', async () => {
+  const outside = await h.open({ query: '?event=us7000m9g4#pin=35.69,139.75' });
+  assert.equal(await outside.page.locator('.shake-text').innerText(), 'The ShakeMap has no estimate for this place');
+  assert.equal(await outside.page.locator('.shake-row .mmi-chip').isVisible(), false);
+  const inside = await h.open({ query: '?event=us7000m9g4#pin=24.15,120.68' });
+  assert.match(await inside.page.locator('.shake-text').innerText(), /^Strong \(MMI 5\.\d\)$/);
+  assert.equal(await inside.page.locator('.shake-row .mmi-chip').innerText(), 'VI');
+});
+
+test('a key names the colours of the shaking layers, in the language of the page, and goes when none of them is on', async () => {
+  const { page } = await h.open();
+  const key = page.locator('.mmi-key');
+  await key.waitFor();
+  assert.equal(await key.locator('.mmi-key-title').innerText(), 'Shaking on the map (MMI)');
+  assert.deepEqual((await key.locator('.mmi-key-ticks').innerText()).split(/\s+/), ['II', 'IV', 'VI', 'VIII', 'X']);
+  assert.match(await key.locator('.mmi-key-bar').evaluate((el) => getComputedStyle(el).backgroundImage), /^linear-gradient\(/);
+  for (const layer of ['shaking', 'instruments', 'felt']) await page.locator(`.layer-${layer}`).click();
+  assert.equal(await key.isVisible(), false);
+  await page.locator('.layer-felt').click();
+  assert.equal(await key.isVisible(), true);
+  await page.locator('.select').selectOption('de');
+  assert.equal(await key.locator('.mmi-key-title').innerText(), 'Erschütterung auf der Karte (MMI)');
+});
+
+test('the pin card runs the replay again from five seconds before the P wave reaches the pin', async () => {
+  const { page } = await h.open();
+  await pause(page);
+  await page.locator('.chip', { hasText: 'Taichung' }).click();
+  const [, lat, lon] = [0, ...cities.cities.find((c) => c[3] === 'Taichung')!].slice(0, 3) as [number, number, number];
+  const pSec = new TravelTimes(hualien.quake.depthKm).time('P', distanceDeg([hualien.quake.lat, hualien.quake.lon], [lat, lon]));
+  await seek(page, 80);
+  assert.equal(await page.locator('.pin-status').innerText(), 'Both waves have arrived');
+  await page.locator('.pin-watch').click();
+  const now = Number(/T\+(-?\d+(?:\.\d+)?)/.exec(await page.locator('.time-now').innerText())![1]);
+  assert.ok(now >= pSec - 5 - 0.6 && now < pSec - 5 + 4, `the clock is at ${now} s, the P wave reaches the pin at ${pSec} s`);
+  assert.equal(await page.locator('.play-btn').getAttribute('aria-label'), 'Pause');
+  assert.match(await page.locator('.pin-status').innerText(), /^P wave arrives in /);
+});
+
 test('the city search works from the keyboard and tells a screen reader what it offers', async () => {
   const { page } = await h.open();
   await pause(page);

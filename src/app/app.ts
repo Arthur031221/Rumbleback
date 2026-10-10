@@ -232,6 +232,13 @@ export async function start(): Promise<void> {
     },
     removePin: () => setPin(null),
     setAlert: (sec) => set({ alertSec: sec }),
+    watchPin: () => {
+      const timing = pinTiming(get());
+      if (!timing) return;
+      seek(Math.max(START, timing.pSec - 5));
+      set({ playing: true });
+      dirty = true;
+    },
   });
   const layers = createLayers(layersEl, (key: LayerKey, on) => set({ layers: { ...get().layers, [key]: on } }));
   const picker = createPicker((id) => void openQuake(id, true, 'push'));

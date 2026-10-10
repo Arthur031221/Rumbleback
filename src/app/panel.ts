@@ -10,12 +10,19 @@ import { drawResiduals } from './residual-chart.ts';
 import { isPhone, isShort } from './layout.ts';
 import { clock, get } from './state.ts';
 
+/** The intensities the colour key spans (1 is white, 10 dark red), and the ones it names. */
+const KEY_LOW = 1;
+const KEY_HIGH = 10;
+const KEY_TICKS = [2, 4, 6, 8, 10];
+
 export interface PanelCallbacks {
   retry(): void;
   pickCity(index: number): void;
   locate(): void;
   removePin(): void;
   setAlert(sec: number): void;
+  /** Rewinds to a few seconds before the P wave reaches the pin and plays. */
+  watchPin(): void;
 }
 
 export function createPanel(host: HTMLElement, cb: PanelCallbacks) {
@@ -32,11 +39,25 @@ export function createPanel(host: HTMLElement, cb: PanelCallbacks) {
   const errorText = h('span');
   const retryBtn = h('button', { class: 'btn', type: 'button', onclick: () => cb.retry() });
   const errorLine = h('p', { class: 'quake-error', role: 'alert' }, errorText, retryBtn);
+  // The key to the colours of the ShakeMap, the instrument dots and the felt reports, which share one scale.
+  const keyTitle = h('span', { class: 'mmi-key-title' });
+  const keyBar = h('span', { class: 'mmi-key-bar', 'aria-hidden': 'true' });
+  keyBar.style.setProperty(
+    '--ramp',
+    `linear-gradient(90deg, ${Array.from({ length: KEY_HIGH - KEY_LOW + 1 }, (_, i) => mmiColor(KEY_LOW + i)).join(', ')})`,
+  );
+  const keyTicks = h(
+    'span',
+    { class: 'mmi-key-ticks mono', 'aria-hidden': 'true' },
+    ...KEY_TICKS.map((v) => h('span', { text: mmiRoman(v), style: `--at:${((v - KEY_LOW) / (KEY_HIGH - KEY_LOW)) * 100}%` })),
+  );
+  const mmiKey = h('div', { class: 'mmi-key', hidden: true }, keyTitle, keyBar, keyTicks);
   const quakeCard = h(
     'section',
     { class: 'card quake-card' },
     h('div', { class: 'quake-head' }, mag, h('div', { class: 'quake-meta' }, title, place)),
     facts,
+    mmiKey,
     loadingLine,
     errorLine,
   );
@@ -81,6 +102,12 @@ export function createPanel(host: HTMLElement, cb: PanelCallbacks) {
   const distance = h('p', { class: 'pin-distance' });
   const offscreen = h('p', { class: 'fine pin-offscreen', hidden: true });
   const status = h('p', { class: 'pin-status' });
+  const watchBtn = h(
+    'button',
+    { class: 'btn btn-quiet pin-watch', type: 'button', onclick: () => cb.watchPin() },
+    icon('replay'),
+    h('span'),
+  );
   const shakeChip = h('span', { class: 'mmi-chip mono' });
   const shakeText = h('span', { class: 'shake-text' });
   const shakeLabel = h('span', { class: 'shake-label' });
@@ -94,7 +121,7 @@ export function createPanel(host: HTMLElement, cb: PanelCallbacks) {
   const alertNote = h('p', { class: 'fine' });
   const alertBox = h('div', { class: 'alert' }, alertTitle, alertLabel, range, alertResult, alertRadius, alertNote);
   const stays = h('p', { class: 'fine' });
-  const pinned = h('div', { class: 'pin-live' }, distance, offscreen, stats, status, shakeRow, alertBox, stays);
+  const pinned = h('div', { class: 'pin-live' }, distance, offscreen, stats, status, watchBtn, shakeRow, alertBox, stays);
   const pinCard = h('section', { class: 'card pin-card' }, pinHead, setup, pinned);
 
   // Model check
@@ -240,6 +267,12 @@ export function createPanel(host: HTMLElement, cb: PanelCallbacks) {
       : [];
     if (q?.felt) factParts.push(t('quake.felt', { n: number(q.felt) }));
     facts.replaceChildren(...factParts.map((p) => h('span', { text: p })));
+    // The key shows while something on the map is coloured by shaking.
+    const d = s.quake;
+    const coloured =
+      !!d && ((s.layers.shaking && !!d.grid) || (s.layers.instruments && d.instruments.length > 0) || (s.layers.felt && d.felt.length > 0));
+    mmiKey.hidden = !coloured;
+    keyTitle.textContent = t('legend.title');
     quakeCard.classList.toggle('is-loading', s.status === 'loading');
     quakeCard.classList.toggle('is-failed', s.status === 'error');
     loadingLine.hidden = !(s.status === 'ready' && s.layersLoading);
@@ -301,13 +334,15 @@ export function createPanel(host: HTMLElement, cb: PanelCallbacks) {
       shakeLabel.textContent = t('pin.shaking');
       if (mmi === null) {
         shakeChip.hidden = true;
-        shakeText.textContent = t('pin.noShake');
+        // The quake has a ShakeMap but it does not reach this place, or has no estimate there.
+        shakeText.textContent = t(s.quake.grid ? 'pin.noShakeHere' : 'pin.noShake');
       } else {
         shakeChip.hidden = false;
         shakeChip.textContent = mmiRoman(mmi);
         shakeChip.style.setProperty('--mmi', mmiColor(mmi));
         shakeText.textContent = `${t('shaking.' + shaking(mmi))} (MMI ${number(mmi, 1)})`;
       }
+      $('span', watchBtn).textContent = t('pin.watch');
       alertTitle.textContent = t('alert.title');
       alertLabel.textContent = t('alert.label', { s: seconds(s.alertSec) });
       range.value = String(s.alertSec);
