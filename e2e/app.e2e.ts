@@ -704,11 +704,12 @@ test('with reduced motion the map jumps to a new quake, and without it the map f
     await page.locator('.pin').waitFor();
     await page.getByRole('button', { name: 'Choose a quake' }).click();
     await page.locator('.quake-row', { hasText: '2022 Chishang, Taiwan' }).click();
+    // The flight starts once the quake's file has arrived and lasts about a second, so on a slow machine look for longer.
     const seen = new Set<string>();
-    for (let i = 0; i < 24; i++) {
+    for (let i = 0; i < 60; i++) {
       const box = (await page.locator('.pin').boundingBox())!;
       seen.add(`${Math.round(box.x)},${Math.round(box.y)}`);
-      await page.waitForTimeout(60);
+      await page.waitForTimeout(50);
     }
     return seen.size;
   };
