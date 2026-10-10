@@ -995,6 +995,39 @@ test('a screen reader hears the P wave, the S wave and the alert reach the pin, 
   await page.waitForFunction(() => document.querySelector('#announcer')!.textContent!.startsWith('The alert goes out now.'));
 });
 
+test('a phone held sideways keeps the map: the panel stays at the side, the timeline is one row and the pin shows its numbers', async () => {
+  for (const [width, height] of [
+    [844, 390],
+    [667, 375],
+  ] as const) {
+    const { page } = await h.open({ width, height });
+    await pause(page);
+    const rect = (selector: string) => page.locator(selector).first().boundingBox();
+    const where = `at ${width} by ${height}`;
+    const [dock, panel] = [(await rect('.dock'))!, (await rect('.panel'))!];
+    assert.ok(dock.height <= 64, `the timeline is one row ${where}: ${dock.height}`);
+    assert.equal(await page.locator('.dock canvas').isVisible(), false, `no seismogram strip ${where}`);
+    assert.ok(dock.x + dock.width <= width && panel.x + panel.width <= width, `nothing leaves the screen ${where}`);
+    assert.ok(panel.x + panel.width <= dock.x || panel.y + panel.height <= dock.y, `the panel and the timeline do not overlap ${where}`);
+    // What is left for the map: to the right of the panel and above the timeline.
+    const [free, high] = [width - (panel.x + panel.width), dock.y - 54];
+    assert.ok(free >= 330 && high >= 200, `the map keeps ${free} by ${high} pixels ${where}`);
+    // A pin scrolls the panel to its numbers, as it does on an upright phone.
+    await page.mouse.click(panel.x + panel.width + free / 2, 150);
+    await page.locator('.pin-live').waitFor();
+    await page.waitForFunction(() => document.querySelector('.panel')!.scrollTop > 0);
+    await page.waitForTimeout(700);
+    const [stat, sheet] = [(await rect('.stat.p'))!, (await rect('.panel'))!];
+    assert.ok(stat.y >= sheet.y && stat.y + stat.height <= sheet.y + sheet.height, `the P wave number is in view ${where}`);
+    // The dialogs fit, and the share one gives up its preview for the buttons.
+    await page.getByRole('button', { name: 'Share this replay' }).click();
+    const [dialog, copy] = [(await rect('dialog[open]'))!, (await rect('dialog[open] .btn-primary'))!];
+    assert.ok(dialog.y >= 0 && dialog.y + dialog.height <= height, `the share dialog fits ${where}`);
+    assert.ok(copy.y >= dialog.y && copy.y + copy.height <= dialog.y + dialog.height, `the buttons are in the dialog ${where}`);
+    assert.equal(await page.locator('.share-preview').isVisible(), false);
+  }
+});
+
 test('the controls keep clear of a notch and a home indicator', async () => {
   const insets = { top: 47, right: 44, bottom: 34, left: 44 };
   for (const [width, height] of [

@@ -3,6 +3,7 @@ import { pinTiming } from './derived.ts';
 import { h } from './dom.ts';
 import { icon } from './icons.ts';
 import { seconds, t } from './i18n.ts';
+import { isPhone, isShort, PHONE, SHORT } from './layout.ts';
 import { clock, get, START } from './state.ts';
 import { createStrip, stripHeight } from './strip.ts';
 
@@ -67,8 +68,9 @@ export function createDock(host: HTMLElement, cb: DockCallbacks) {
     markA.title = t('dock.markAlert');
     strip.update();
     // The seismogram strip sits above the controls, so the dock grows by its height when there is one.
-    const withStrip = !!s.quake?.seismogram;
-    const tall = withStrip ? stripHeight() + (window.matchMedia('(max-width: 820px)').matches ? 6 : 8) : 0;
+    // A short screen has no room for it.
+    const withStrip = !!s.quake?.seismogram && !isShort();
+    const tall = withStrip ? stripHeight() + (isPhone() ? 6 : 8) : 0;
     host.classList.toggle('has-strip', withStrip);
     document.documentElement.style.setProperty('--dock-extra', `${tall}px`);
     tick(clock.t);
@@ -92,11 +94,12 @@ export function createDock(host: HTMLElement, cb: DockCallbacks) {
     }
   }
 
-  // Crossing the phone breakpoint changes how tall the strip is, and with it the dock.
-  window.matchMedia('(max-width: 820px)').addEventListener('change', () => {
-    update();
-    cb.layoutChanged();
-  });
+  // Crossing the phone or the short screen breakpoint changes how tall the strip is, or drops it, and with it the dock.
+  for (const query of [PHONE, SHORT])
+    window.matchMedia(query).addEventListener('change', () => {
+      update();
+      cb.layoutChanged();
+    });
 
   return { update, tick };
 }

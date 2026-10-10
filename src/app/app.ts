@@ -22,6 +22,7 @@ import { createLayers } from './layers.ts';
 import { createPanel } from './panel.ts';
 import { createPicker } from './picker.ts';
 import { createShare } from './share.ts';
+import { isPhone, isShort } from './layout.ts';
 import { clock, get, seek, set, START, subscribe, type LayerKey, type Pin, type ThemeChoice } from './state.ts';
 import type { Theme } from './style.ts';
 
@@ -574,12 +575,14 @@ export async function start(): Promise<void> {
 
   // Layout: the map centres the epicenter in the space the panels leave free.
   function layoutPadding(): void {
-    const narrow = window.matchMedia('(max-width: 820px)').matches;
     const dockH = dockEl.getBoundingClientRect().height;
+    const aside = panelEl.getBoundingClientRect().right + 24;
     view.setPadding(
-      narrow
+      isPhone()
         ? { left: 12, right: 12, top: 64, bottom: Math.min(window.innerHeight * 0.42, 330) + dockH }
-        : { left: panelEl.getBoundingClientRect().right + 24, right: 24, top: 76, bottom: dockH + 36 },
+        : isShort()
+          ? { left: aside - 8, right: 16, top: 56, bottom: dockH + 24 }
+          : { left: aside, right: 24, top: 76, bottom: dockH + 36 },
     );
   }
   window.addEventListener('resize', () => {

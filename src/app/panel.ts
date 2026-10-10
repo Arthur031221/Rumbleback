@@ -7,6 +7,7 @@ import { $, h } from './dom.ts';
 import { icon } from './icons.ts';
 import { km, language, localDate, number, seconds, t, utcDate } from './i18n.ts';
 import { drawResiduals } from './residual-chart.ts';
+import { isPhone, isShort } from './layout.ts';
 import { clock, get } from './state.ts';
 
 export interface PanelCallbacks {
@@ -348,7 +349,7 @@ export function createPanel(host: HTMLElement, cb: PanelCallbacks) {
   let hadPin: boolean | null = null;
   /** On a phone the sheet shows the quake card first, which would hide the numbers of a pin just placed. */
   function followPin(placed: boolean): void {
-    if (!window.matchMedia('(max-width: 820px)').matches) return;
+    if (!isPhone() && !isShort()) return;
     if (placed && host.dataset.collapsed === 'true') toggle();
     // The pin card has just been shown, so wait for the layout before measuring where it starts.
     requestAnimationFrame(() => {

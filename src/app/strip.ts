@@ -2,10 +2,11 @@ import { KM_PER_DEGREE } from '../core/geo.ts';
 import type { Seismogram } from '../core/quake.ts';
 import { TravelTimes } from '../core/traveltime.ts';
 import { km, t } from './i18n.ts';
+import { isPhone, isShort } from './layout.ts';
 import { get, START } from './state.ts';
 
 /** The strip is shorter on a phone, where the dock shares the screen with the sheet. */
-export const stripHeight = (): number => (window.matchMedia('(max-width: 820px)').matches ? 52 : 70);
+export const stripHeight = (): number => (isPhone() ? 52 : 70);
 /** Rows at the top of the strip: the caption, then the letters that name the P and S lines. */
 const CAPTION_ROW = 13;
 const LETTER_ROW = 11;
@@ -39,8 +40,8 @@ export function createStrip(canvas: HTMLCanvasElement) {
   function update(): void {
     const s = get();
     const seis = s.quake?.seismogram ?? null;
-    canvas.hidden = !seis;
-    if (!seis || !s.tt || !s.quake) {
+    canvas.hidden = !seis || isShort();
+    if (!seis || canvas.hidden || !s.tt || !s.quake) {
       source = null;
       marks = null;
       return;

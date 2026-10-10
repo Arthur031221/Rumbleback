@@ -1436,9 +1436,6 @@ dialog.sheet::backdrop {
 }
 
 @media (max-width: 820px) {
-  :root {
-    --dock-h: 98px;
-  }
   .topbar {
     top: calc(8px + var(--sat));
     left: calc(8px + var(--sal));
@@ -1472,6 +1469,43 @@ dialog.sheet::backdrop {
   .topbar-actions a.icon-btn {
     display: none;
   }
+  .speed {
+    min-width: 30px;
+    padding: 0 3px;
+    font-size: 11.5px;
+  }
+  .time-now {
+    min-width: 0;
+    font-size: 15px;
+    white-space: nowrap;
+  }
+  .speed:first-child,
+  .speed:last-child {
+    display: none;
+  }
+  .quake-head {
+    gap: 10px;
+  }
+  .mag {
+    width: 52px;
+    height: 52px;
+  }
+  .mag-num {
+    font-size: 22px;
+  }
+  .quake-title {
+    font-size: 17px;
+  }
+  .search-form {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* A phone held upright: the panel is a sheet above the timeline, which carries the seismogram strip. */
+@media (max-width: 820px) and (min-height: 481px) {
+  :root {
+    --dock-h: 98px;
+  }
   .dock {
     left: calc(8px + var(--sal));
     right: calc(8px + var(--sar));
@@ -1502,20 +1536,6 @@ dialog.sheet::backdrop {
     grid-column: 1 / -1;
     grid-row: 2;
     height: 34px;
-  }
-  .speed {
-    min-width: 30px;
-    padding: 0 3px;
-    font-size: 11.5px;
-  }
-  .time-now {
-    min-width: 0;
-    font-size: 15px;
-    white-space: nowrap;
-  }
-  .speed:first-child,
-  .speed:last-child {
-    display: none;
   }
   .panel {
     top: auto;
@@ -1549,26 +1569,10 @@ dialog.sheet::backdrop {
   .panel[data-collapsed='true'] .quake-card > :not(.quake-head):not(.quake-error) {
     display: none;
   }
-  .quake-head {
-    gap: 10px;
-  }
-  .mag {
-    width: 52px;
-    height: 52px;
-  }
-  .mag-num {
-    font-size: 22px;
-  }
-  .quake-title {
-    font-size: 17px;
-  }
   /* The credit stays visible on a phone, tucked under the layer chips where the sheet does not cover it. */
   .maplibregl-ctrl-bottom-right {
     top: calc(104px + var(--sat));
     bottom: auto;
-  }
-  .search-form {
-    grid-template-columns: 1fr;
   }
   .strip {
     grid-column: 1 / -1;
@@ -1602,6 +1606,77 @@ dialog.sheet::backdrop {
   }
   .layers-strip .chip {
     flex: none;
+  }
+}
+
+/* A short screen, such as a phone held sideways: the panel stays at the side, as on a desktop, and the timeline is one row
+   without the seismogram strip, so the map keeps the rest of the screen. */
+@media (max-height: 480px) {
+  :root {
+    --panel-w: min(300px, 38vw);
+    --dock-h: 56px;
+  }
+  .topbar {
+    top: calc(6px + var(--sat));
+  }
+  .brand,
+  .topbar-actions {
+    height: 40px;
+  }
+  .layers-strip {
+    top: calc(54px + var(--sat));
+  }
+  .panel {
+    top: calc(54px + var(--sat));
+    bottom: calc(8px + var(--sab));
+  }
+  .dock {
+    bottom: calc(8px + var(--sab));
+    column-gap: 10px;
+    padding: 0 12px;
+  }
+  /* Room for the timeline itself: fewer speeds, a shorter clock. */
+  .speed {
+    min-width: 30px;
+    padding: 0 3px;
+    font-size: 11.5px;
+  }
+  .speed:first-child,
+  .speed:last-child {
+    display: none;
+  }
+  .time-now {
+    min-width: 0;
+    font-size: 15px;
+    white-space: nowrap;
+  }
+  .play-btn {
+    width: 38px;
+    height: 38px;
+  }
+  .scrub-wrap {
+    height: 32px;
+  }
+  .maplibregl-ctrl-bottom-right {
+    bottom: calc(var(--dock-total) + 16px + var(--sab));
+  }
+  .toast {
+    top: calc(54px + var(--sat));
+  }
+  /* The buttons need the room more than the preview, which would be a thin slice here. */
+  .share-preview {
+    display: none;
+  }
+}
+
+/* Too narrow for the panel and the whole timeline side by side: the timeline spans the screen under the panel. */
+@media (max-height: 480px) and (max-width: 820px) {
+  .dock {
+    left: calc(8px + var(--sal));
+    right: calc(8px + var(--sar));
+  }
+  .panel {
+    bottom: calc(var(--dock-total) + 16px + var(--sab));
   }
 }
 
