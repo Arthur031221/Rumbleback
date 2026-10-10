@@ -42,14 +42,15 @@ http://127.0.0.1:4173/
 
 - **Ondas**: as primeiras frentes P e S na superfície, considerando a profundidade, então um terremoto profundo não mostra anel até a onda chegar à superfície.
 - **Sismômetros**: um ponto que acende no momento em que um analista marcou a chegada P numa estação real.
+- **Inspecionar um ponto**: pare o mouse sobre um ponto aceso. Uma estação mostra a marca ao lado do tempo do modelo, um instrumento a intensidade e os valores máximos, e um relato de sensação a quantidade.
 - **ShakeMap**: o mapa de intensidade, revelado atrás da onda S.
 - **Sismograma real**: sobre a linha do tempo, o movimento vertical real de uma estação próxima, com a chegada modelada de P e S e a chegada de P marcada por um analista.
 - **Movimento forte e relatos de sensação**: coloridos pela intensidade medida ou relatada.
 - **Zona cega**: a área onde a onda S chegou antes de um alerta emitido no momento que você escolher.
 - **Seus segundos**: o cartão do marcador mostra a chegada de P e S, a diferença, a intensidade do ShakeMap ali e um controle para a hora do alerta. É aritmética sobre o modelo, não o registro de um alerta real.
-- **Compartilhar**: um link, um cartão quadrado, um cartão vertical e um vídeo gravado. O link deixa o seu marcador de fora por padrão e os cartões mostram o nome de uma cidade.
+- **Compartilhar**: um link, um cartão quadrado, um cartão vertical e um vídeo gravado, salvo como MP4 quando o navegador consegue, para tocar no iPhone e nos apps sociais. O link deixa o seu marcador de fora por padrão e os cartões mostram o nome de uma cidade.
 - **Qualquer terremoto**: os 14 em destaque rodam sem consultar o USGS. As abas Recentes e Buscar leem o catálogo ao vivo do USGS, a aba Link abre o endereço de uma página de evento do USGS ou um id que você colar, e o sismograma do EarthScope é carregado quando existe.
-- **Celular e teclado**: no celular o painel vira uma folha inferior, a faixa do sismograma fica sob o mapa e os cartões abrem o menu de compartilhamento do sistema. Com teclado, a barra de espaço toca e pausa, as setas avançam um segundo e mais e menos aproximam ou afastam o mapa.
+- **Celular e teclado**: no celular o painel vira uma folha inferior, a faixa do sismograma fica sob o mapa e os cartões abrem o menu de compartilhamento do sistema. Com teclado, a barra de espaço toca e pausa, as setas avançam um segundo e mais e menos aproximam ou afastam o mapa. Um marcador novo leva a folha até os seus números, e um leitor de tela é avisado quando a onda P, a onda S e o alerta chegam ao marcador.
 - **Seu fuso horário**: o cartão do terremoto mostra a hora em UTC e também no seu fuso horário.
 - **Nove idiomas**, inclusive os nomes no mapa.
 

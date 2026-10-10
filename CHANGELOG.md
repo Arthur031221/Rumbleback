@@ -1,5 +1,36 @@
 # Changelog
 
+## 0.3.0
+
+Released 2026-10-10.
+
+New
+
+- Rest a mouse on a dot that has lit up and a card says what it is. A seismometer gives its distance and the time the
+  analyst picked next to the time the model gives. A strong motion instrument gives its network, intensity, peak
+  acceleration and peak velocity. A felt report gives the number of responses and their intensity. A finger does not
+  open it, because a tap drops the pin.
+- A screen reader is told when the P wave, the S wave and the alert reach your pin, with the seconds that are left. Nothing
+  is read out while you scrub or jump to another moment.
+- The video clip is saved as MP4 where the browser can record it, so it plays on an iPhone, in WhatsApp and in social
+  apps. A browser that records only WebM still gets WebM.
+- A link to a quake USGS does not have says so and offers no retry. A quake that fails to load no longer says
+  "Loading real station data" and no longer shows an empty magnitude box.
+
+Fixed
+
+- On a phone the numbers of a new pin sat below the part of the sheet you could see. A new pin now scrolls the sheet to
+  them, and removing the pin scrolls it back to the quake.
+- The controls ignored the notch and the home indicator of an iPhone, which the page extends under. The top bar, the
+  panel, the layer chips and the timeline now keep clear of them, whichever way the phone is held.
+- Safari 17 and older drew no blur behind the panels, because it knows only the prefixed property.
+
+Tests
+
+- New browser tests for the hover cards, the screen reader messages, the phone sheet, the safe areas and the failed
+  load, a check that a recorded MP4 starts with a valid header, and unit tests for the clip format and for telling a
+  missing quake from an unreachable USGS.
+
 ## 0.2.1
 
 Released 2026-10-10.

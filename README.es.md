@@ -42,14 +42,15 @@ http://127.0.0.1:4173/
 
 - **Ondas**: los primeros frentes P y S en la superficie, con la profundidad en cuenta, así que un sismo profundo no muestra anillo hasta que la onda sale a la superficie.
 - **Sismómetros**: un punto que se enciende en el momento en que un analista marcó la llegada P en una estación real.
+- **Inspeccionar un punto**: apoya el ratón en un punto encendido. Una estación muestra su marca junto al tiempo del modelo, un instrumento su intensidad y sus valores máximos, y un reporte de sensación su cantidad.
 - **ShakeMap**: el mapa de intensidad, que se revela detrás de la onda S.
 - **Sismograma real**: sobre la línea de tiempo se dibuja el movimiento vertical real de una estación cercana, con la llegada modelada de P y S y la llegada de P marcada por un analista.
 - **Movimiento fuerte y sensación reportada**: coloreados por la intensidad medida o reportada.
 - **Zona ciega**: el área donde la onda S llegó antes que una alerta emitida en el momento que elijas.
 - **Tus segundos**: la tarjeta del marcador da la llegada de P y S, la diferencia, la intensidad de ShakeMap en ese punto y un deslizador para la hora de la alerta. Es aritmética sobre el modelo, no el registro de ninguna alerta real.
-- **Compartir**: un enlace, una tarjeta cuadrada, una tarjeta vertical y un video grabado. El enlace deja fuera tu marcador por defecto y las tarjetas muestran el nombre de una ciudad.
+- **Compartir**: un enlace, una tarjeta cuadrada, una tarjeta vertical y un video grabado, guardado como MP4 si el navegador puede, para que se reproduzca en un iPhone y en las redes sociales. El enlace deja fuera tu marcador por defecto y las tarjetas muestran el nombre de una ciudad.
 - **Cualquier terremoto**: los 14 destacados se reproducen sin consultar al USGS. Las pestañas Recientes y Buscar leen el catálogo del USGS en vivo, la pestaña Enlace abre la dirección de una página de evento del USGS o un id que pegues, y el sismograma de EarthScope se carga cuando existe.
-- **Móvil y teclado**: en el móvil el panel pasa a ser una hoja inferior, la franja del sismograma se queda bajo el mapa y las tarjetas abren el menú de compartir del sistema. Con teclado, la barra espaciadora reproduce y pausa, las flechas avanzan de segundo en segundo y más y menos acercan o alejan el mapa.
+- **Móvil y teclado**: en el móvil el panel pasa a ser una hoja inferior, la franja del sismograma se queda bajo el mapa y las tarjetas abren el menú de compartir del sistema. Con teclado, la barra espaciadora reproduce y pausa, las flechas avanzan de segundo en segundo y más y menos acercan o alejan el mapa. Un marcador nuevo lleva la hoja hasta sus números, y un lector de pantalla oye cuándo llegan al marcador la onda P, la onda S y la alerta.
 - **Tu zona horaria**: la tarjeta del terremoto da la hora en UTC y también en tu zona horaria.
 - **Nueve idiomas**, incluidos los nombres del mapa.
 

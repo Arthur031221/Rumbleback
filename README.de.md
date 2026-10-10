@@ -42,14 +42,15 @@ http://127.0.0.1:4173/
 
 - **Wellen**: die ersten P- und S-Fronten an der Oberfläche, mit Herdtiefe, sodass ein tiefes Beben erst einen Ring zeigt, wenn die Welle an die Oberfläche kommt.
 - **Seismometer**: ein Punkt, der aufleuchtet, wenn ein Analyst an einer echten Station den P-Einsatz gesetzt hat.
+- **Punkt untersuchen**: Halten Sie die Maus auf einen aufgeleuchteten Punkt. Eine Station zeigt ihren Einsatz neben der Modellzeit, ein Instrument seine Intensität und Spitzenwerte, ein Wahrnehmungsbericht seine Anzahl.
 - **ShakeMap**: die Intensitätskarte, die hinter der S-Welle sichtbar wird.
 - **Echtes Seismogramm**: über der Zeitleiste die echte Vertikalbewegung einer nahen Station, mit dem modellierten P- und S-Einsatz und dem von einem Analysten gesetzten P-Einsatz.
 - **Starkbeben und Wahrnehmung**: eingefärbt nach gemessener oder gemeldeter Intensität.
 - **Blinde Zone**: der Bereich, in dem die S-Welle vor einer Warnung zum gewählten Zeitpunkt ankam.
 - **Ihre Sekunden**: die Karte zur Markierung zeigt P- und S-Ankunft, die Differenz, die ShakeMap-Intensität dort und einen Regler für den Warnzeitpunkt. Das ist Rechnung am Modell, kein Protokoll einer echten Warnung.
-- **Teilen**: ein Link, eine quadratische Karte, eine Hochformat-Karte und ein Videoclip. Der Link lässt Ihre Markierung standardmäßig weg, und Karten zeigen einen Städtenamen.
+- **Teilen**: ein Link, eine quadratische Karte, eine Hochformat-Karte und ein Videoclip, wenn der Browser es kann als MP4, damit er auf dem iPhone und in sozialen Apps läuft. Der Link lässt Ihre Markierung standardmäßig weg, und Karten zeigen einen Städtenamen.
 - **Jedes Beben**: Die 14 ausgewählten Beben laufen ohne Anfrage an den USGS. Die Tabs Aktuell und Suche lesen den Live-Katalog des USGS, der Tab Link öffnet die Adresse einer USGS-Ereignisseite oder eine eingefügte ID, und das Seismogramm von EarthScope wird geladen, wenn es eines gibt.
-- **Smartphone und Tastatur**: Auf dem Smartphone wird das Panel zu einem Bottom Sheet, der Seismogrammstreifen bleibt unter der Karte und Karten öffnen das System-Menü zum Teilen. Mit der Tastatur startet und pausiert die Leertaste, die Pfeiltasten gehen sekundenweise vor, Plus und Minus zoomen die Karte.
+- **Smartphone und Tastatur**: Auf dem Smartphone wird das Panel zu einem Bottom Sheet, der Seismogrammstreifen bleibt unter der Karte und Karten öffnen das System-Menü zum Teilen. Mit der Tastatur startet und pausiert die Leertaste, die Pfeiltasten gehen sekundenweise vor, Plus und Minus zoomen die Karte. Eine neue Markierung scrollt das Sheet zu ihren Zahlen, und ein Screenreader erfährt, wann P-Welle, S-Welle und Warnung die Markierung erreichen.
 - **Ihre Zeitzone**: Die Bebenkarte nennt die Zeit in UTC und zusätzlich in Ihrer Zeitzone.
 - **Neun Sprachen**, auch die Namen auf der Karte.
 

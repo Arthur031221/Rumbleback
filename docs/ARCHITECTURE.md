@@ -51,7 +51,8 @@ is why a deep quake has no ring for its first seconds.
 | `app.ts` | Wires everything. Owns loading, the playback loop, the pin and the address bar: a quake the viewer chooses is a history entry, so Back returns to the one before |
 | `state.ts` | A small store. The replay clock is kept apart so a frame does not wake every subscriber |
 | `map.ts`, `style.ts` | MapLibre with a bundled coastline layer under OpenFreeMap vector tiles. Labels follow the language. A click waits a moment before it drops the pin, so a double click zooms without moving it |
-| `overlay.ts` | A 2D canvas above the map. Draws the ShakeMap wash clipped to the S front, the two fronts, instruments, picks, felt reports and the blind zone. Screen positions are cached and recomputed when the map moves |
+| `overlay.ts` | A 2D canvas above the map. Draws the ShakeMap wash clipped to the S front, the two fronts, instruments, picks, felt reports and the blind zone. Screen positions are cached and recomputed when the map moves, and the same cache answers `hit()`, which finds the lit dot under the mouse |
+| `inspector.ts` | The card that follows a mouse over a dot. It is hidden from the accessibility tree, and a touch pointer never opens it |
 | `panel.ts`, `dock.ts`, `layers.ts` | The left panel, the timeline and the layer chips |
 | `strip.ts` | The seismogram strip above the timeline, lined up with the scrubber. A caption row, a row for the P and S letters, then the trace. Shorter on a phone |
 | `picker.ts`, `learn.ts`, `share.ts` | The three dialogs. `share.ts` also composes the cards and records the clip from the map and overlay canvases |

@@ -34,6 +34,12 @@
 The first P and S fronts are drawn at the surface. Because the waves start underground, a deep quake shows
 no ring for the first seconds: the wave has not reached the surface yet.
 
+Rest a mouse on a dot that has lit up and a small card says what it is. For a seismometer it names the station and
+gives its distance, the time the analyst picked and the time the model gives, to a tenth of a second. For a strong motion
+instrument it gives the network, the intensity, the peak acceleration and the peak velocity USGS has for it. For a
+felt report it gives the number of responses and their intensity. A dot that has not lit yet, or whose layer is
+off, shows no card. A finger does not open it, because a tap on the map drops the pin.
+
 ## The seismogram strip
 
 When a station near the quake has data in the EarthScope archive, a strip above the timeline draws its vertical
@@ -54,9 +60,19 @@ Tap the map, search a city, or use your location. The pin card shows:
   warning could have been issued. The card then shows how long before the S wave you would have heard it,
   or says you were inside the blind zone. This is arithmetic on the model, not a record of any real alert.
 
+On a phone the panel is a sheet, and a new pin scrolls it to these numbers. Removing the pin scrolls it back to the quake.
+
 Drag the pin to move it. The pin is kept in your browser only. A click on the map drops the pin after a short wait
 (0.3 s with a mouse, 0.4 s on a touch screen), so that a double click can zoom without moving it. A double click slower
 than that wait moves the pin.
+
+## Keyboard and screen readers
+
+Space plays and pauses, the arrow keys step the clock, and plus and minus zoom the map, wherever the focus is. A
+screen reader is told when the replay reaches your pin: one polite message when the P wave arrives (with the
+seconds until the S wave), one when the S wave arrives (with the shaking there) and one at the alert time (with
+the seconds it would have given you). Nothing is read out while you scrub or jump to another moment. The hover card
+for dots is for a mouse, and the numbers on the pin card give the same facts as text.
 
 ## Share
 
@@ -80,3 +96,6 @@ Firefox. The file name tells you which one you got.
 | `t` | Clock in seconds after the origin. When present the replay opens paused |
 | `alert` | Alert issue time in seconds after the origin, 0 to 60 |
 | `lang` | `en`, `zh-TW`, `zh-CN`, `ja`, `ko`, `es`, `fr`, `de` or `pt-BR` |
+
+A link to an id USGS does not have says "USGS has no earthquake with that id" and offers no retry. When USGS cannot
+be reached, the quake card says so and has a "Try again" button.

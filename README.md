@@ -22,10 +22,10 @@
 </p>
 
 > [!TIP]
-> Open the [live page](https://arthur031221.github.io/Rumbleback/). It starts on the 2024 Hualien quake and plays by itself. Tap the map to drop a pin on your home. Press "Choose a quake" for a recent one, or paste the USGS link from a news story.
+> Open the [live page](https://arthur031221.github.io/Rumbleback/). The 2024 Hualien quake starts playing by itself. Tap the map to pin your home. Press "Choose a quake" for a recent one, or paste the USGS link from a news story.
 
 <p align="center">
-  <img src="assets/demo.gif" alt="The 2024 Hualien M7.4 earthquake replayed: a blue P ring and an orange S ring spread across Taiwan, seismometers and strong motion stations light up as the waves reach them, a real seismogram runs under the timeline, then a pin on Taipei shows 20 seconds to the P wave and 36 to the S wave" width="100%">
+  <img src="assets/demo.gif" alt="The 2024 Hualien M7.4 earthquake replayed: a blue P ring and an orange S ring spread across Taiwan, seismometers and strong motion stations light up as the waves reach them, a real seismogram runs under the timeline, a pin on Taipei shows 20 seconds to the P wave and 36 to the S wave, and a mouse on one instrument opens a card with its readings" width="100%">
 </p>
 
 **0.66 s median error against 3,933 real P picks from 14 earthquakes.**
@@ -33,11 +33,11 @@
 
 ## Why
 
-When an earthquake makes the news you get a magnitude and a shaded map. I wanted the rest: what the waves did, and how many seconds I would have had at my place. Rumbleback replays a real earthquake, and you can check every claim on the screen.
+When an earthquake makes the news, you get a magnitude and a shaded map. I wanted to see what the waves did and how many seconds I would've had at my place. Rumbleback replays a real earthquake. You can check every claim on the screen.
 
-- **Real data.** Every dot is a real instrument, pick or felt report from USGS. A real seismogram runs under the timeline, so the model's P and S arrival sits next to the signal the station recorded. The two rings come from a published Earth model that I check against ObsPy at 600 random points and against real picks on every quake.
-- **Your place.** Pin your home and read the numbers for it: when the P wave got there, when the S wave got there, how strong it was, and how many seconds an alert issued at any moment would have given you.
-- **No server.** It's a static page. No account, no analytics, and your pin never leaves the browser.
+- **Real data.** Every dot is a real instrument, pick or felt report from USGS. A real seismogram runs under the timeline, with the model's P and S arrivals next to the station's recorded signal. The two rings come from a published Earth model that I check against ObsPy at 600 random points and against real picks on every quake.
+- **Your place.** Pin your home to see when the P and S waves got there, how strong the shaking was, and how many seconds an alert issued at any moment would've given you.
+- **No server.** It's a static page. No account or analytics. Your pin never leaves the browser.
 
 ## Before and after
 
@@ -60,17 +60,18 @@ The same quake, the 2024 Hualien M7.4, seen from Taipei.
   </picture>
 </p>
 
-- **Waves.** The first P and S wavefronts at the surface, depth aware, so a deep quake shows no ring until the wave comes up.
-- **Seismometers.** A dot that flashes at the moment an analyst picked the P arrival at a real station (USGS phase data).
-- **Seismogram.** The real vertical trace of a nearby station along the timeline, with the model's P and S arrival and the analyst's pick drawn over it (EarthScope archive).
-- **ShakeMap, strong motion and felt reports.** The USGS intensity map, instruments coloured by the instrumental intensity USGS computed from their recording, and Did You Feel It groups.
-- **Blind zone.** The area where the S wave beat an alert issued at the time you choose.
-- **Your seconds.** P and S arrival at your pin, the gap between them, the ShakeMap intensity there and an alert slider. It's arithmetic on the model and doesn't reflect any real alert.
+- **Waves.** The first P and S wavefronts at the surface account for depth. A deep quake shows no ring until the wave comes up.
+- **Seismometers.** Each dot flashes when an analyst picked the P arrival at a real station (USGS phase data).
+- **Inspect a dot.** Hover over a dot that's lit up. A station shows its pick next to the model's time. An instrument shows its intensity and peak readings, and a felt report shows its count.
+- **Seismogram.** A nearby station's real vertical trace runs along the timeline, with the model's P and S arrivals and the analyst's pick drawn over it (EarthScope archive).
+- **ShakeMap, strong motion and felt reports.** The USGS intensity map, instruments coloured by the instrumental intensity USGS computed from their recordings, and Did You Feel It groups.
+- **Blind zone.** The area where the S wave beat an alert issued at your chosen time.
+- **Your seconds.** P and S arrivals at your pin, the gap between them, the ShakeMap intensity there and an alert slider. It's arithmetic on the model and doesn't reflect any real alert.
 - **Sound.** An optional low thump for P, a rumble for S that grows with the intensity at your pin, and a soft chime at the alert second.
-- **Share.** A link, a square card, a story card and a recorded video clip. On a phone a card opens the system share sheet. The link leaves your pin out unless you tick a box, and then keeps it after the `#`, which browsers never send to a server. Cards show a city name, never coordinates.
-- **Any quake.** Fourteen featured events work with no call to USGS, and ten of them carry a seismogram. Recent and Search tabs read the live USGS catalog, a Link tab opens any USGS event page or id you paste, and a seismogram comes from EarthScope when one is available.
-- **Your time zone.** The quake card gives the time in UTC and again in your own time zone.
-- **Phones and keyboards.** On a phone the panel is a bottom sheet and the seismogram stays above the timeline. With a keyboard, Space plays and pauses, the arrows step the clock, and plus and minus zoom the map. The browser tests run axe over both themes, on a desktop and a phone screen, with each dialog open.
+- **Share.** A link, a square card, a story card and a recorded video clip. The clip saves as MP4 where the browser supports it, so it plays on an iPhone and in social apps. On a phone, a card opens the system share sheet. The link leaves your pin out unless you tick a box. If you do, it keeps the pin after the `#`, which browsers never send to a server. Cards show a city name, never coordinates.
+- **Any quake.** Fourteen featured events work without calling USGS. Ten include a seismogram. Recent and Search tabs read the live USGS catalog. The Link tab opens any USGS event page or id you paste, with a seismogram from EarthScope when one is available.
+- **Your time zone.** The quake card shows the time in UTC and your own time zone.
+- **Phones and keyboards.** On a phone, the panel is a bottom sheet and the seismogram stays above the timeline. A new pin scrolls the sheet to its numbers. Space plays and pauses, the arrows step the clock, and plus and minus zoom the map. A screen reader announces when the P wave, the S wave and the alert reach your pin. The browser tests run axe over both themes on desktop and phone screens, with each dialog open.
 - **Nine languages.** English, Traditional and Simplified Chinese, Japanese, Korean, Spanish, French, German and Brazilian Portuguese, including the map labels.
 
 <p align="center">
@@ -97,14 +98,14 @@ Then open <http://127.0.0.1:4173/>.
 <details>
 <summary>Host your own copy</summary>
 
-`npm run build` writes a plain static site to `dist/`. Put that folder on GitHub Pages, Netlify or any file host. All links are relative, so a sub-folder works. The Pages workflow in this repository does it for a fork once Pages is set to "GitHub Actions". See [docs/INSTALL.md](docs/INSTALL.md).
+`npm run build` writes a plain static site to `dist/`. Put that folder on GitHub Pages, Netlify or any file host. All links are relative, so a sub-folder works. The repository's Pages workflow handles this for a fork once Pages is set to "GitHub Actions". See [docs/INSTALL.md](docs/INSTALL.md).
 
 </details>
 
 <details>
 <summary>Use the travel-time library in Node or a browser</summary>
 
-`npm run build` writes `dist/rumbleback.js`, one ES module with no DOM code. The live page serves the same file at `/rumbleback.js`, and tagged releases attach it.
+`npm run build` writes `dist/rumbleback.js`, a single ES module with no DOM code. The live page serves the same file at `/rumbleback.js`. Tagged releases attach it too.
 
 ```js
 import { TravelTimes, timingAt } from './rumbleback.js';
@@ -139,7 +140,7 @@ npm run events                              # featured quakes from the USGS and 
 | Seconds at your pin | | The same table, at your distance |
 | One station's ground motion | EarthScope waveform, not corrected for the instrument | |
 
-A small Python script asks ObsPy TauP for the first P and S arrival on a grid of 34 source depths and about 900 distances and stores a 166 KB table. The browser interpolates it and inverts it to get the front's radius at each moment. Fronts and dots are drawn on a canvas over MapLibre, so a frame costs a few hundred projected points. The browser parses the USGS and EarthScope data one layer at a time, so a layer that fails leaves the rest working. [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) has the long version.
+A small Python script asks ObsPy TauP for the first P and S arrivals at 34 source depths and about 900 distances, then stores a 166 KB table. The browser interpolates the table and inverts it to find the front's radius at each moment. Fronts and dots are drawn on a canvas over MapLibre, so each frame costs a few hundred projected points. The browser parses USGS and EarthScope data one layer at a time. If a layer fails, the rest keep working. [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) has the long version.
 
 ## Benchmarks
 
@@ -151,7 +152,7 @@ A small Python script asks ObsPy TauP for the first P and S arrival on a grid of
 | iasp91 vs ak135 (the model the USGS solutions name) | at most 0.15 s for the first P arrival | `python3 scripts/compare_models.py`, 0.5 to 95 degrees, depths 10 and 40 km |
 | Lookup cost | about 160 million `TravelTimes.time()` calls per second | 30 million calls in a loop over `dist/rumbleback.js`, one core of my development machine, Node 24 |
 
-The model reproduces the first P arrivals real instruments recorded, for quakes 8 to 48 km deep. That's all these numbers show. They don't show it can forecast a quake it hasn't seen, since USGS picks and origin times come from the same data, and they say nothing about deeper quakes. S waves have almost no picks in USGS data, so the S ring is the model alone. The page says so on every quake.
+The model reproduces the first P arrivals recorded by real instruments for quakes 8 to 48 km deep. These numbers don't show that it can forecast a quake it hasn't seen: USGS picks and origin times come from the same data. They say nothing about deeper quakes. USGS data has almost no S wave picks, so the S ring comes from the model alone. The page says so on every quake.
 
 ## Common commands
 
@@ -171,7 +172,7 @@ The model reproduces the first P arrivals real instruments recorded, for quakes 
 
 ## Credits
 
-Earthquake data, phase picks, ShakeMap and Did You Feel It come from the [USGS Earthquake Hazards Program](https://earthquake.usgs.gov). Seismograms come from the [EarthScope](https://www.earthscope.org) data services. Travel times come from the iasp91 model (Kennett and Engdahl, 1991) through [ObsPy TauP](https://docs.obspy.org/packages/obspy.taup.html). Map tiles are from [OpenFreeMap](https://openfreemap.org) with data from OpenStreetMap contributors, drawn by [MapLibre GL JS](https://maplibre.org). Coastlines and city names are from [Natural Earth](https://www.naturalearthdata.com). Full list in [THIRD_PARTY.md](THIRD_PARTY.md).
+Earthquake data, phase picks, ShakeMap and Did You Feel It come from the [USGS Earthquake Hazards Program](https://earthquake.usgs.gov). Seismograms come from [EarthScope](https://www.earthscope.org) data services. Travel times come from the iasp91 model (Kennett and Engdahl, 1991) through [ObsPy TauP](https://docs.obspy.org/packages/obspy.taup.html). [MapLibre GL JS](https://maplibre.org) draws map tiles from [OpenFreeMap](https://openfreemap.org), using data from OpenStreetMap contributors. Coastlines and city names come from [Natural Earth](https://www.naturalearthdata.com). Full list in [THIRD_PARTY.md](THIRD_PARTY.md).
 
 ## License
 

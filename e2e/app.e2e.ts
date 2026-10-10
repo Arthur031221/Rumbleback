@@ -531,7 +531,7 @@ test('closing the picker while a link is being looked up opens nothing', async (
   await page.getByRole('button', { name: 'Open', exact: true }).click();
   await page.getByText('Looking it up').waitFor();
   await page.keyboard.press('Escape');
-  await page.waitForTimeout(2500);
+  await page.waitForTimeout(4500);
   assert.ok(page.url().includes('event=us7000m9g4'), page.url());
   assert.ok(!page.url().includes(SLOW_ID));
   assert.equal(await page.locator('.quake-title').innerText(), '2024 Hualien, Taiwan');
