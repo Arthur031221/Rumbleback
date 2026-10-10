@@ -53,5 +53,6 @@ Running `npm run tables` reproduces the committed table exactly when ObsPy is ve
 ## Requirements for the browser
 
 A browser with WebGL 2: any current Chrome, Edge, Firefox or Safari. The replay needs `canvas`, and the
-video clip needs `MediaRecorder` (Chrome, Edge, Firefox and recent Safari). Without `MediaRecorder` the
-clip button says so and everything else works.
+video clip needs `MediaRecorder` (Chrome, Edge, Firefox and recent Safari) and is saved as MP4 where the
+browser can record it and as WebM otherwise. Without `MediaRecorder` the clip button says so and everything
+else works.

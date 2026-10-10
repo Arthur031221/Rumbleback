@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
+import { pickClipFormat } from '../src/core/clip.ts';
 import { decodeQuake } from '../src/core/codec.ts';
 import { citiesNear, parseCities, searchCities, type CityFile } from '../src/core/cities.ts';
 import { mmiColor, mmiRoman, shaking } from '../src/core/intensity.ts';
@@ -172,4 +173,24 @@ test('every search region is a real rectangle with a unique id, and its name is 
     if ('iso' in r.label) assert.match(r.label.iso, /^[A-Z]{2}$/);
     else assert.ok(r.label.key in en, r.label.key);
   }
+});
+
+test('a clip is recorded as MP4 when the browser can, so it plays on an iPhone and in social apps', () => {
+  const only =
+    (...mimes: string[]) =>
+    (mime: string) =>
+      mimes.includes(mime);
+  // Chrome 126 and later, and Safari: both containers, MP4 wins.
+  assert.deepEqual(pickClipFormat(only('video/mp4', 'video/webm', 'video/webm;codecs=vp9')), { mime: 'video/mp4', ext: 'mp4' });
+  assert.deepEqual(pickClipFormat(only('video/mp4;codecs=avc1.42E01E', 'video/mp4', 'video/webm')), {
+    mime: 'video/mp4;codecs=avc1.42E01E',
+    ext: 'mp4',
+  });
+  // Firefox and older Chrome: WebM only, the best codec first.
+  assert.deepEqual(pickClipFormat(only('video/webm', 'video/webm;codecs=vp8')), { mime: 'video/webm;codecs=vp8', ext: 'webm' });
+  assert.deepEqual(pickClipFormat(only('video/webm;codecs=vp9', 'video/webm')), { mime: 'video/webm;codecs=vp9', ext: 'webm' });
+  assert.equal(
+    pickClipFormat(() => false),
+    null,
+  );
 });

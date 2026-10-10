@@ -781,6 +781,7 @@ test('records a video clip of the replay', { timeout: 180000 }, async () => {
   const bytes = readFileSync((await download.path())!);
   assert.ok(bytes.length > 100_000, `${bytes.length} bytes`);
   if (download.suggestedFilename().endsWith('.webm')) assert.deepEqual([...bytes.subarray(0, 4)], [0x1a, 0x45, 0xdf, 0xa3]);
+  if (download.suggestedFilename().endsWith('.mp4')) assert.equal(bytes.subarray(4, 8).toString('latin1'), 'ftyp');
   // The replay is back where it was: paused at the same moment, and the exports are usable again.
   assert.match(await page.locator('.time-now').innerText(), /^T\+12/);
   assert.equal(await page.locator('.play-btn').getAttribute('aria-label'), 'Play');

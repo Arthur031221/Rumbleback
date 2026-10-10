@@ -1,3 +1,4 @@
+import { pickClipFormat, type ClipFormat } from '../core/clip.ts';
 import { h } from './dom.ts';
 import { icon } from './icons.ts';
 import { seconds, t } from './i18n.ts';
@@ -250,18 +251,8 @@ async function shareFile(file: File): Promise<boolean> {
 const canvasBlob = (c: HTMLCanvasElement) =>
   new Promise<Blob>((res, rej) => c.toBlob((b) => (b ? res(b) : rej(new Error('no image'))), 'image/png'));
 
-function clipFormat(): { mime: string; ext: string } | null {
-  if (typeof MediaRecorder === 'undefined') return null;
-  for (const [mime, ext] of [
-    ['video/webm;codecs=vp9', 'webm'],
-    ['video/webm;codecs=vp8', 'webm'],
-    ['video/webm', 'webm'],
-    ['video/mp4', 'mp4'],
-  ] as const) {
-    if (MediaRecorder.isTypeSupported(mime)) return { mime, ext };
-  }
-  return null;
-}
+const clipFormat = (): ClipFormat | null =>
+  typeof MediaRecorder === 'undefined' ? null : pickClipFormat((mime) => MediaRecorder.isTypeSupported(mime));
 
 export function createShare(src: ShareSources) {
   const dialog = h('dialog', { class: 'sheet share', 'aria-labelledby': 'share-title' });

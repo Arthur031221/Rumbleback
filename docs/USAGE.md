@@ -65,6 +65,10 @@ The link leaves your pin out unless you tick the box, and then rounds it to abou
 city name or "My place", never coordinates. Cards show the moment the timeline is on, so scrub to the
 frame you like first. On a phone a card opens the system share sheet, and anywhere else it downloads as a PNG.
 
+The clip is a plain video file you can post anywhere. It is saved as MP4 when the browser can record that, which
+is what an iPhone, WhatsApp and most social apps accept, and as WebM in a browser that records only that, such as
+Firefox. The file name tells you which one you got.
+
 ## Deep links
 
 `?event=us7000m9g4&t=20&alert=10&lang=ja#pin=25.03,121.56`
