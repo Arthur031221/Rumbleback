@@ -450,6 +450,36 @@ test('the pin survives a reload', async () => {
   assert.equal(await page.locator('.pin-card .card-title').innerText(), 'Taichung');
 });
 
+test("a shared link's pin only starts the page: a pin the viewer sets, or removes, is still there after a reload", async () => {
+  const { page } = await h.open({ query: '?event=us7000m9g4#pin=35.69,139.75' });
+  assert.equal(await page.locator('.pin-card .card-title').innerText(), 'Tokyo');
+  assert.match(page.url(), /pin=35\.69/);
+  await page.getByRole('button', { name: 'Remove pin' }).click();
+  await page.fill('#city-search', 'Taichung');
+  await page.locator('.result', { hasText: 'Taichung' }).first().click();
+  assert.doesNotMatch(page.url(), /pin=/);
+  await page.reload();
+  await ready(page);
+  assert.equal(await page.locator('.pin-card .card-title').innerText(), 'Taichung');
+  await page.getByRole('button', { name: 'Remove pin' }).click();
+  await page.reload();
+  await ready(page);
+  assert.ok(await page.locator('#city-search').isVisible());
+  assert.doesNotMatch(page.url(), /pin=/);
+});
+
+test("a shared link's language only starts the page: the one the viewer picks is the one after a reload", async () => {
+  const { page } = await h.open({ query: '?event=us7000m9g4&t=12&lang=ja' });
+  assert.equal(await page.locator('#lang').inputValue(), 'ja');
+  await page.selectOption('#lang', 'en');
+  assert.doesNotMatch(page.url(), /lang=/);
+  assert.match(page.url(), /t=12/, 'the link keeps its moment');
+  await page.reload();
+  await ready(page);
+  assert.equal(await page.locator('#lang').inputValue(), 'en');
+  assert.equal(await page.locator('.quake-title').innerText(), '2024 Hualien, Taiwan');
+});
+
 test('the pin never reaches any server: not when set, moved by location, reloaded or opened from a shared link', async () => {
   const [lat, lon] = [25.0123, 121.5432];
   const { page, context, external, served } = await h.open({ geolocation: { latitude: lat, longitude: lon } });

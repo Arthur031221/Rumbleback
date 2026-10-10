@@ -486,7 +486,19 @@ export async function start(): Promise<void> {
     requestAnimationFrame(() => panel.redrawChart());
   }
 
+  /**
+   * A shared link's pin and language are where the page starts, and they beat what the browser has saved. Once the
+   * viewer chooses their own the address stops carrying the link's, or a reload would bring it back over the choice.
+   */
+  function dropFromAddress(...keys: ('pin' | 'lang')[]): void {
+    const here = parseLink(location.search, location.hash);
+    if (keys.every((k) => here[k] === undefined)) return;
+    for (const k of keys) delete here[k];
+    history.replaceState(history.state, '', buildLink(location.pathname, here));
+  }
+
   function changeLanguage(next: Lang): void {
+    dropFromAddress('lang');
     store.write('lang', next);
     setLanguage(next);
     set({ lang: next });
@@ -521,6 +533,7 @@ export async function start(): Promise<void> {
   }
 
   function setPin(pin: Pin | null): void {
+    dropFromAddress('pin');
     store.write('pin', pin ? JSON.stringify(pin) : null);
     set({ pin });
     refreshLength();
