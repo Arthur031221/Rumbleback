@@ -11,12 +11,14 @@ Fixed
   indicator put the epicenter or a letter behind the chips, the sheet or the timeline. They follow where those really
   are now, and the letters keep out of the strip of map they cover.
 - Sideways, the ring and name of the station behind the seismogram were still drawn, with no strip for them to point at.
-- A window of 815 by 479 pixels matched neither the upright phone layout nor the sideways one. The two now meet at
-  the same aspect ratio instead of leaving a gap.
+- A window shaped exactly between the upright phone layout and the sideways one could match both or neither. Each
+  window shape now gets exactly one, and a test checks the windows on both sides of the edge.
 - The clip asks for MP4 without a codec level. A low level pinned in the request is too small for a 720p frame.
 - The usage guide said the pin card gives the same facts as the hover cards on dots. It does not: station picks,
   instrument readings and felt counts are for a mouse only, and the guide says so.
-- The Spanish text of the felt report card reads naturally.
+- The announcements and the hover cards read better in Traditional and Simplified Chinese, Korean, French, Spanish and
+  Brazilian Portuguese: the pick sentence names the arrival time, a shaking level no longer clashes in gender, and the
+  felt reports are named the way USGS names them.
 - The zoom key test pressed minus while the map was still zooming in, and failed on a slow machine.
 
 ## 0.3.1

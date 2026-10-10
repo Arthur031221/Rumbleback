@@ -5,11 +5,12 @@
  */
 export const SHORT = '(max-height: 480px) and (min-aspect-ratio: 17/10)';
 /**
- * A phone held upright: the panel is a sheet above the timeline, and the timeline carries the seismogram strip. It
- * meets SHORT at an aspect ratio of exactly 17 to 10 and overlaps it there, which is better than a gap that leaves a
- * window with neither layout. Where both match, SHORT is the one the stylesheet and `layoutKind` prefer.
+ * A phone held upright: the panel is a sheet above the timeline, and the timeline carries the seismogram strip. The
+ * other side of SHORT among the narrow screens. An aspect ratio of exactly 17 to 10 belongs to SHORT, and no whole
+ * number of pixels falls between 16999 to 10000 and 17 to 10, so no window matches both or neither (two layouts at
+ * once would break the panel, and none the dock). The width and height may be fractions on a zoomed page.
  */
-export const PHONE = '(max-width: 820px) and (max-aspect-ratio: 17/10), (max-width: 820px) and (min-height: 481px)';
+export const PHONE = '(max-width: 820px) and (max-aspect-ratio: 16999/10000), (max-width: 820px) and (min-height: 481px)';
 
 export const isPhone = (): boolean => window.matchMedia(PHONE).matches;
 export const isShort = (): boolean => window.matchMedia(SHORT).matches;

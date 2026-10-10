@@ -50,7 +50,7 @@
   "announce.s": "S 波已到达你的位置。",
   "announce.sShaking": "S 波已到达你的位置。这里的震动：{level}，MMI {mmi}。",
   "announce.alert": "预警现在发出。{result}。",
-  "inspect.pick": "分析员在发震后 {t} 拾取到 {wave} 波，模型给出 {m}。",
+  "inspect.pick": "分析员判读的 {wave} 波到达时间为发震后 {t}，模型预测为发震后 {m}。",
   "inspect.instrument": "强震仪，台网 {network}",
   "inspect.pga": "峰值加速度 {v} %g",
   "inspect.pgv": "峰值速度 {v} cm/s",

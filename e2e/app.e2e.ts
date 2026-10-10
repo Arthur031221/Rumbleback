@@ -1068,6 +1068,34 @@ test('a phone held upright keeps its layout when a keyboard shrinks the screen, 
   assert.ok(side.x + side.width < 330, `the panel stays at the side: ${side.width}`);
 });
 
+test('every window shape gets exactly one of the phone layout and the sideways layout, also at the edge between them', async () => {
+  // [width, height, the layout]. 17 to 10 is the edge: it is sideways, and a hair under it is upright.
+  const windows = [
+    [680, 400, 'sideways'],
+    [679, 400, 'upright'],
+    [816, 480, 'sideways'],
+    [815, 480, 'upright'],
+    [821, 480, 'sideways'],
+    [820, 481, 'upright'],
+    [390, 330, 'upright'],
+  ] as const;
+  for (const [width, height, layout] of windows) {
+    await h.closeContexts();
+    const { page } = await h.open({ width, height });
+    await pause(page);
+    const [dock, panel] = [(await page.locator('.dock').boundingBox())!, (await page.locator('.panel').boundingBox())!];
+    const sheet = await page.locator('.sheet-handle').isVisible();
+    const where = `${width} by ${height}`;
+    assert.equal(sheet, layout === 'upright', `${where} is ${layout}`);
+    if (layout === 'upright') assert.ok(dock.x < 12 && panel.x + panel.width > width - 12, `a sheet and a full width timeline at ${where}`);
+    else
+      assert.ok(
+        panel.width < 330 && dock.height <= 64 && panel.x + panel.width <= width,
+        `a side panel and a one row timeline at ${where}`,
+      );
+  }
+});
+
 test('the controls keep clear of a notch and a home indicator', async () => {
   const insets = { top: 47, right: 44, bottom: 34, left: 44 };
   for (const [width, height] of [

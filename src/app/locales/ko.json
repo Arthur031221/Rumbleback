@@ -50,7 +50,7 @@
   "announce.s": "S파가 내 위치에 도착했습니다.",
   "announce.sShaking": "S파가 내 위치에 도착했습니다. 이곳의 흔들림: {level}, MMI {mmi}.",
   "announce.alert": "경보가 지금 발령됩니다. {result}.",
-  "inspect.pick": "분석가가 {wave}파 도착을 발생 {t} 후로 읽었습니다. 모델은 {m}입니다.",
+  "inspect.pick": "분석가가 판독한 {wave}파 도착 시각은 지진 발생 후 {t}입니다. 모델 예측은 지진 발생 후 {m}입니다.",
   "inspect.instrument": "강진계, 관측망 {network}",
   "inspect.pga": "최대 가속도 {v} %g",
   "inspect.pgv": "최대 속도 {v} cm/s",
