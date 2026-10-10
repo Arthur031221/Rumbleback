@@ -313,6 +313,26 @@ test('the colour key sits in the quake card on a desktop and after the pin card 
   await page.locator('.pin-card + .mmi-key.card').waitFor();
 });
 
+test('on a phone the prompt to drop a pin stays in the sheet in every language, in a time zone that is not UTC', async () => {
+  for (const [width, height] of [
+    [390, 664],
+    [375, 667],
+    [360, 640],
+  ] as const) {
+    for (const lang of ['en', 'zh-TW', 'zh-CN', 'ja', 'ko', 'es', 'fr', 'de', 'pt-BR']) {
+      await h.closeContexts();
+      const { page } = await h.open({ width, height, timezone: 'Asia/Taipei', query: `?event=us7000m9g4&lang=${lang}` });
+      await page.locator('.quake-facts span').nth(1).waitFor();
+      const gap = await page.evaluate(() => {
+        const prompt = document.querySelector('.pin-prompt')!.getBoundingClientRect();
+        const panel = document.querySelector('.panel')!.getBoundingClientRect();
+        return prompt.bottom - panel.bottom;
+      });
+      assert.ok(gap <= 0, `${lang} at ${width}x${height}: the prompt runs ${gap} px past the sheet`);
+    }
+  }
+});
+
 test('the watch button stays inside the pin card in every language, on a small phone and in a panel held sideways', async () => {
   for (const [width, height] of [
     [320, 568],

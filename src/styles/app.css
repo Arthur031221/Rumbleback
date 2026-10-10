@@ -1642,6 +1642,13 @@ dialog.sheet::backdrop {
     padding: 0;
     border-radius: var(--r-panel);
   }
+  /* The date, the viewer's own time, the depth and the felt reports run on and wrap, so the prompt to drop a pin stays in the sheet. */
+  .quake-facts {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0 14px;
+    margin: 8px 0 4px;
+  }
   .sheet-handle {
     display: grid;
     place-items: center;
@@ -1701,6 +1708,18 @@ dialog.sheet::backdrop {
   }
   .layers-strip .chip {
     flex: none;
+  }
+  /* A phone whose browser bars leave 700 pixels or fewer: the cards give up a little padding so the pin prompt still shows. */
+  @media (max-height: 700px) {
+    .card {
+      padding: 11px 14px;
+    }
+    .quake-facts {
+      margin: 6px 0 2px;
+    }
+    .pin-card .card-head {
+      margin-bottom: 2px;
+    }
   }
 }
 
