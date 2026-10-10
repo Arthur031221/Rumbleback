@@ -7,7 +7,13 @@ const dist = new URL('../../dist/', import.meta.url).pathname;
 export async function open({ width, height, theme = 'dark', query = '?event=us7000m9g4', scale = 1 }) {
   const { server, url } = await serve(dist);
   const browser = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
-  const context = await browser.newContext({ viewport: { width, height }, deviceScaleFactor: scale, colorScheme: theme, locale: 'en-US' });
+  const context = await browser.newContext({
+    viewport: { width, height },
+    deviceScaleFactor: scale,
+    colorScheme: theme,
+    locale: 'en-US',
+    timezoneId: 'UTC',
+  });
   const page = await context.newPage();
   await page.goto(url + query, { waitUntil: 'networkidle' });
   await page.locator('.quake-title:not(:empty)').waitFor();

@@ -77,6 +77,21 @@
 .boot[data-done] {
   opacity: 0;
 }
+.boot[data-failed] .boot-rings {
+  opacity: 0.3;
+}
+.boot[data-failed] .boot-rings i {
+  animation: none;
+}
+.boot-error {
+  max-width: 34ch;
+  margin: 0;
+  padding: 0 24px;
+  color: var(--muted);
+  font: 500 16px/1.45 var(--font-ui);
+  letter-spacing: 0;
+  text-align: center;
+}
 .boot-rings {
   position: relative;
   width: 104px;

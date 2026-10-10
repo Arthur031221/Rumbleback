@@ -1,5 +1,5 @@
 // Renders the README screenshots and the social card from the real page.
-//   node scripts/make-assets.mjs [shots|card]    both by default
+//   node scripts/make-assets.mjs [shots|phone|card]    all three by default
 import { writeFileSync, readFileSync } from 'node:fs';
 import { chromium } from 'playwright';
 import { open, pinCity, seek } from './lib/browser.mjs';
@@ -8,7 +8,7 @@ const assets = (name) => new URL(`../assets/${name}`, import.meta.url).pathname;
 
 const only = process.argv[2];
 
-for (const theme of only === 'card' ? [] : ['dark', 'light']) {
+for (const theme of only === 'card' || only === 'phone' ? [] : ['dark', 'light']) {
   const { page, close } = await open({ width: 1440, height: 900, theme });
   await seek(page, 3);
   await pinCity(page, 'Taipei');
@@ -19,6 +19,24 @@ for (const theme of only === 'card' ? [] : ['dark', 'light']) {
 }
 
 if (only === 'shots') process.exit(0);
+
+// The phone layout: the replay with a pin and the seismogram strip, and the quake picker on its Recent tab.
+if (only !== 'card') {
+  const { page, close } = await open({ width: 390, height: 844, scale: 2 });
+  await seek(page, 3);
+  await pinCity(page, 'Taipei');
+  await seek(page, 24);
+  await page.waitForTimeout(800);
+  await page.screenshot({ path: assets('phone-replay.png') });
+  await page.getByRole('button', { name: 'Choose a quake' }).click();
+  await page.getByRole('tab', { name: 'Recent' }).click();
+  await page.selectOption('#recent-mag', '6');
+  await page.locator('.quake-row').first().waitFor({ timeout: 30000 });
+  await page.waitForTimeout(900);
+  await page.screenshot({ path: assets('phone-picker.png') });
+  await close();
+  if (only === 'phone') process.exit(0);
+}
 
 const hero = readFileSync(assets('hero-dark.png')).toString('base64');
 const font = (pkg, file) =>

@@ -73,6 +73,12 @@ The same quake, the 2024 Hualien M7.4, seen from Taipei.
 - **Phones and keyboards.** On a phone the panel is a bottom sheet and the seismogram stays above the timeline. With a keyboard, Space plays and pauses, the arrows step the clock, and plus and minus zoom the map. The browser tests run axe over both themes, on a desktop and a phone screen, with each dialog open.
 - **Nine languages.** English, Traditional and Simplified Chinese, Japanese, Korean, Spanish, French, German and Brazilian Portuguese, including the map labels.
 
+<p align="center">
+  <img src="assets/phone-replay.png" alt="Rumbleback on a phone: the Hualien replay with a pin on Taipei, a card showing 20 seconds to the P wave and 36 to the S wave, and the real seismogram above the timeline" width="270">
+  &nbsp;&nbsp;&nbsp;
+  <img src="assets/phone-picker.png" alt="The quake picker on a phone, on the Recent tab with a minimum magnitude of 6, listing the newest quakes from the USGS catalog" width="270">
+</p>
+
 ## Try it
 
 <details open>

@@ -38,6 +38,33 @@ test('before the app script arrives the page already has its theme and a placeho
   }
 });
 
+test('when the app cannot start the page says so: no JavaScript, a script that fails, a script that is missing', async () => {
+  const visit = async (options: { javaScriptEnabled?: boolean }, route?: (r: import('playwright').Route) => Promise<void>) => {
+    const context = await h.browser.newContext({ viewport: { width: 1000, height: 700 }, ...options });
+    try {
+      const page = await context.newPage();
+      if (route) await page.route('**/assets/app.js*', route);
+      await page.goto(h.url);
+      return page;
+    } catch (e) {
+      await context.close();
+      throw e;
+    }
+  };
+  const noScript = await visit({ javaScriptEnabled: false });
+  assert.equal(await noScript.locator('#boot').isVisible(), false);
+  assert.match(await noScript.evaluate(() => document.body.innerText), /Rumbleback needs JavaScript/);
+  await noScript.context().close();
+  const broken = await visit({}, (r) => r.fulfill({ contentType: 'text/javascript', body: 'throw new Error("boom")' }));
+  await broken.locator('.boot-error').waitFor();
+  assert.match(await broken.locator('.boot-error').innerText(), /could not start/);
+  assert.equal(await broken.locator('#boot').getAttribute('aria-hidden'), null);
+  await broken.context().close();
+  const missing = await visit({}, (r) => r.abort());
+  await missing.locator('.boot-error').waitFor();
+  await missing.context().close();
+});
+
 test('opens on the 2024 Hualien quake and starts the replay', async () => {
   const { page, errors, unexpected, external } = await h.open();
   assert.equal(await page.locator('.quake-title').innerText(), '2024 Hualien, Taiwan');

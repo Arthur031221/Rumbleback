@@ -45,6 +45,13 @@
         } catch (e) {}
       })();
     </script>
+    <noscript
+      ><style>
+        #boot {
+          display: none !important;
+        }
+      </style></noscript
+    >
     <link rel="stylesheet" href="assets/app.css?v=__VERSION__" />
   </head>
   <body>
@@ -53,6 +60,26 @@
       <span class="boot-name">Rumbleback</span>
     </div>
     <noscript>Rumbleback needs JavaScript to draw the map and replay the waves.</noscript>
+    <script>
+      // If the app script cannot be fetched or cannot start, say so here instead of spinning for ever.
+      (function () {
+        function failed(e) {
+          var boot = document.getElementById('boot');
+          if (!boot || boot.hasAttribute('data-failed')) return;
+          var from = (e.target && e.target.src) || e.filename || (e.reason && e.reason.stack) || '';
+          if (String(from).indexOf('assets/app.js') < 0) return;
+          boot.setAttribute('data-failed', '');
+          boot.removeAttribute('aria-hidden');
+          var note = document.createElement('p');
+          note.className = 'boot-error';
+          note.setAttribute('role', 'alert');
+          note.textContent = 'Rumbleback could not start. Reload the page, or open it in a current browser that supports WebGL 2.';
+          boot.appendChild(note);
+        }
+        window.addEventListener('error', failed, true);
+        window.addEventListener('unhandledrejection', failed);
+      })();
+    </script>
     <script type="module" src="assets/app.js?v=__VERSION__"></script>
   </body>
 </html>
