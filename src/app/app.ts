@@ -357,7 +357,14 @@ export async function start(): Promise<void> {
     dirty = true;
   });
 
+  /** The tab, the history menu and a bookmark name the quake that is open. */
+  function syncTitle(): void {
+    const q = get().quake?.quake;
+    document.title = q ? `${quakeTitle(q)} | Rumbleback` : `Rumbleback: ${t('app.tagline')}`;
+  }
+
   subscribe((s, prev) => {
+    if (s.quake !== prev.quake) syncTitle();
     if (
       s.quake !== prev.quake ||
       s.status !== prev.status ||
@@ -425,7 +432,7 @@ export async function start(): Promise<void> {
     langSelect.setAttribute('aria-label', t('nav.language'));
     gh.setAttribute('aria-label', t('nav.github'));
     gh.title = t('nav.github');
-    document.title = `Rumbleback: ${t('app.tagline')}`;
+    syncTitle();
     $('meta[name="description"]', document.head).setAttribute('content', t('app.description'));
     picker.relocalize();
     learn.relocalize();

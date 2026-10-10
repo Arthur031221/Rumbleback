@@ -345,6 +345,17 @@ test('recent and search tabs read the USGS catalog', async () => {
   await page.locator('.quake-row', { hasText: 'Hualien City' }).waitFor();
 });
 
+test('the tab is named after the quake that is open', async () => {
+  const { page } = await h.open();
+  assert.equal(await page.title(), '2024 Hualien, Taiwan | Rumbleback');
+  await page.getByRole('button', { name: 'Choose a quake' }).click();
+  await page.locator('.quake-row', { hasText: '2022 Chishang, Taiwan' }).click();
+  await page.waitForFunction(() => document.title.startsWith('2022 Chishang'));
+  await page.selectOption('#lang', 'ja');
+  await page.waitForFunction(() => document.title.endsWith('| Rumbleback') && !document.title.startsWith('2022 Chishang'));
+  assert.match(await page.title(), /^2022 .*池上/);
+});
+
 test('Back and Forward move between the quakes that were opened', async () => {
   const { page } = await h.open();
   const choose = async (name: string) => {
