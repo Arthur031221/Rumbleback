@@ -353,6 +353,25 @@ test('a double click zooms the map and leaves the pin where it was', async () =>
   await page.waitForFunction((was) => localStorage.getItem('rumbleback.pin') !== was, pin);
 });
 
+test('the seismogram strip is in the dock on a phone too, inside the screen and clear of the sheet', async () => {
+  const { page } = await h.open({ width: 390, height: 844 });
+  await pause(page);
+  const strip = page.locator('canvas.strip');
+  await strip.waitFor();
+  const [s, dock, sheet] = await Promise.all(['canvas.strip', '.dock', '.panel'].map((sel) => page.locator(sel).boundingBox()));
+  assert.ok(s!.x >= 0 && s!.x + s!.width <= 390, JSON.stringify(s));
+  assert.ok(s!.y >= dock!.y && s!.y + s!.height <= dock!.y + dock!.height, 'the strip sits inside the dock');
+  assert.ok(sheet!.y + sheet!.height <= dock!.y + 1, 'the sheet ends where the dock starts');
+  assert.ok(dock!.y + dock!.height <= 844, 'the dock is on screen');
+  const ink = await strip.evaluate((c: HTMLCanvasElement) =>
+    c
+      .getContext('2d')!
+      .getImageData(0, 0, c.width, c.height)
+      .data.some((v, i) => i % 4 === 3 && v > 0),
+  );
+  assert.ok(ink, 'something is drawn');
+});
+
 test('the timeline carries the real seismogram of a nearby station', async () => {
   const { page } = await h.open();
   await pause(page);

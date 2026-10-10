@@ -888,7 +888,6 @@ button {
   grid-column: 3;
   grid-row: 1;
   width: 100%;
-  height: 58px;
   margin-top: 8px;
 }
 .play-btn,
@@ -1422,7 +1421,7 @@ dialog.sheet::backdrop {
     left: 8px;
     right: 8px;
     width: auto;
-    bottom: calc(var(--dock-h) + 16px);
+    bottom: calc(var(--dock-total) + 16px);
     max-height: min(42dvh, 330px);
     padding: 0;
     border-radius: var(--r-panel);
@@ -1471,7 +1470,23 @@ dialog.sheet::backdrop {
     grid-template-columns: 1fr;
   }
   .strip {
-    display: none;
+    grid-column: 1 / -1;
+    margin-top: 0;
+  }
+  .dock.has-strip {
+    grid-template-rows: auto auto auto;
+  }
+  .dock.has-strip .strip {
+    grid-row: 1;
+  }
+  .dock.has-strip .play-btn,
+  .dock.has-strip .time,
+  .dock.has-strip .sound-btn,
+  .dock.has-strip .speeds {
+    grid-row: 2;
+  }
+  .dock.has-strip .scrub-wrap {
+    grid-row: 3;
   }
   .layers-strip {
     top: 62px;

@@ -4,7 +4,11 @@ import { TravelTimes } from '../core/traveltime.ts';
 import { km, t } from './i18n.ts';
 import { get, START } from './state.ts';
 
-export const STRIP_HEIGHT = 58;
+/** The strip is shorter on a phone, where the dock shares the screen with the sheet. */
+export const stripHeight = (): number => (window.matchMedia('(max-width: 820px)').matches ? 52 : 70);
+/** Rows at the top of the strip: the caption, then the letters that name the P and S lines. */
+const CAPTION_ROW = 13;
+const LETTER_ROW = 11;
 const THUMB = 18; // width of the timeline thumb, so the strip lines up with the track above and below it
 
 const MONO = '"JetBrains Mono Variable", ui-monospace, monospace';
@@ -16,6 +20,7 @@ const SANS = '"Bricolage Grotesque Variable", system-ui, sans-serif';
  */
 export function createStrip(canvas: HTMLCanvasElement) {
   let width = 0;
+  let height = 0;
   let dpr = 1;
   let marks: { p: number; s: number; picked: number | null } | null = null;
   let source: Seismogram | null = null;
@@ -24,8 +29,10 @@ export function createStrip(canvas: HTMLCanvasElement) {
   function resize(): void {
     dpr = Math.min(window.devicePixelRatio || 1, 2);
     width = canvas.clientWidth;
+    height = stripHeight();
+    canvas.style.height = `${height}px`;
     canvas.width = Math.round(width * dpr);
-    canvas.height = Math.round(STRIP_HEIGHT * dpr);
+    canvas.height = Math.round(height * dpr);
   }
 
   /** Call after any state change. The marks and the size are only worked out again when the quake changes. */
@@ -47,7 +54,7 @@ export function createStrip(canvas: HTMLCanvasElement) {
     }
     canvas.setAttribute('role', 'img');
     canvas.setAttribute('aria-label', t('seismogram.note', { sta: seis.sta, km: km(seis.dist * KM_PER_DEGREE) }));
-    if (canvas.clientWidth !== width) resize();
+    if (canvas.clientWidth !== width || stripHeight() !== height) resize();
     tick(clockNow);
   }
 
@@ -60,7 +67,7 @@ export function createStrip(canvas: HTMLCanvasElement) {
     if (!width) resize();
     const ctx = canvas.getContext('2d')!;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.clearRect(0, 0, width, STRIP_HEIGHT);
+    ctx.clearRect(0, 0, width, height);
     const dark = document.documentElement.dataset.theme !== 'light';
     const ink = dark ? '233,240,247' : '15,26,37';
     const [pc, sc] = dark ? ['76,195,255', '255,123,66'] : ['10,111,189', '210,67,15'];
@@ -68,8 +75,10 @@ export function createStrip(canvas: HTMLCanvasElement) {
       const pct = (sec - START) / (s.length - START);
       return pct * width + (0.5 - pct) * THUMB;
     };
-    const mid = STRIP_HEIGHT / 2 + 4;
-    const amp = (STRIP_HEIGHT / 2 - 10) / 1000;
+    // The trace has the space under the two label rows. A full-scale swing fills it.
+    const top = CAPTION_ROW + LETTER_ROW;
+    const mid = top + (height - top) / 2;
+    const amp = ((height - top) / 2 - 2) / 1000;
 
     // The whole trace faintly, and the part the replay has reached in full strength.
     for (const [alpha, until] of [
@@ -101,20 +110,20 @@ export function createStrip(canvas: HTMLCanvasElement) {
       ctx.strokeStyle = `rgba(${rgb},0.9)`;
       ctx.setLineDash([3, 3]);
       ctx.beginPath();
-      ctx.moveTo(px, 12);
-      ctx.lineTo(px, STRIP_HEIGHT);
+      ctx.moveTo(px, top);
+      ctx.lineTo(px, height);
       ctx.stroke();
       ctx.setLineDash([]);
       ctx.fillStyle = `rgb(${rgb})`;
-      ctx.fillText(letter, px, 1);
+      ctx.fillText(letter, px, CAPTION_ROW);
     }
     if (marks.picked !== null && marks.picked >= START && marks.picked <= s.length) {
       const px = x(marks.picked);
       ctx.fillStyle = `rgb(${pc})`;
       ctx.beginPath();
-      ctx.moveTo(px, STRIP_HEIGHT - 1);
-      ctx.lineTo(px - 4, STRIP_HEIGHT - 8);
-      ctx.lineTo(px + 4, STRIP_HEIGHT - 8);
+      ctx.moveTo(px, height - 1);
+      ctx.lineTo(px - 4, height - 8);
+      ctx.lineTo(px + 4, height - 8);
       ctx.closePath();
       ctx.fill();
     }
@@ -123,14 +132,18 @@ export function createStrip(canvas: HTMLCanvasElement) {
     ctx.strokeStyle = `rgba(${ink},0.9)`;
     ctx.beginPath();
     ctx.moveTo(head, 0);
-    ctx.lineTo(head, STRIP_HEIGHT);
+    ctx.lineTo(head, height);
     ctx.stroke();
 
     ctx.font = `600 11.5px ${SANS}`;
     ctx.textAlign = 'right';
     ctx.textBaseline = 'top';
     ctx.fillStyle = `rgba(${ink},0.62)`;
-    ctx.fillText(t('seismogram.label', { sta: source.sta, km: km(source.dist * KM_PER_DEGREE) }), width - 4, 1);
+    const distance = km(source.dist * KM_PER_DEGREE);
+    // A long caption in a narrow strip falls back to the station and its distance.
+    let caption = t('seismogram.label', { sta: source.sta, km: distance });
+    if (ctx.measureText(caption).width > width - 8) caption = `${source.sta}, ${distance}`;
+    ctx.fillText(caption, width - 4, 1);
   }
 
   window.addEventListener('resize', () => {

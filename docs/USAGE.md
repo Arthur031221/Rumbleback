@@ -41,7 +41,7 @@ ground motion. The trace fills in as the replay reaches it. Dashed lines mark th
 station, and the triangle marks the P arrival an analyst picked. The model line and the analyst's triangle usually
 fall within a second or two of each other, with the first motion of the real trace coming in close to both.
 The size is relative and not corrected for the instrument, so read it for
-timing and shape, not for how many centimetres per second. It is hidden on phones and for quakes with no usable station.
+timing and shape, not for how many centimetres per second. It is a little shorter on a phone, and hidden for quakes with no usable station.
 
 ## Your seconds
 
