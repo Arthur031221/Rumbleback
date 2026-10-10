@@ -9,6 +9,8 @@ export const fixture = (name: string) => readFileSync(new URL(`../test/fixtures/
 export const LIVE_ID = 'us7000live';
 /** An id the catalog fixtures answer with 404, the way USGS does for an event it does not have. */
 export const MISSING_ID = 'us7000none';
+/** An id the catalog fixtures answer only after a second and a half, for a viewer who changes their mind meanwhile. */
+export const SLOW_ID = 'us7000slow';
 
 export interface Session {
   page: Page;
@@ -130,6 +132,7 @@ export async function harness(): Promise<Harness> {
           if (u.hostname === 'tiles.openfreemap.org') return route.abort();
           if (u.hostname === 'earthquake.usgs.gov' && u.pathname.endsWith('/query')) {
             if (u.searchParams.get('eventid') === MISSING_ID) return route.fulfill({ status: 404, body: 'Not Found' });
+            if (u.searchParams.get('eventid') === SLOW_ID) await new Promise((r) => setTimeout(r, 1500));
             return route.fulfill({ json: u.searchParams.has('eventid') ? feature : { type: 'FeatureCollection', features: [feature] } });
           }
           if (u.hostname === 'earthquake.usgs.gov' && u.pathname.endsWith('quakeml.xml'))

@@ -4,7 +4,7 @@ import { after, afterEach, before, test } from 'node:test';
 import { decodeQuake } from '../src/core/codec.ts';
 import { distanceDeg } from '../src/core/geo.ts';
 import { TravelTimes } from '../src/core/traveltime.ts';
-import { harness, LIVE_ID, MISSING_ID, pause, ready, seek, type Harness } from './helpers.ts';
+import { harness, LIVE_ID, MISSING_ID, pause, ready, seek, SLOW_ID, type Harness } from './helpers.ts';
 
 let h: Harness;
 before(async () => (h = await harness()));
@@ -86,6 +86,44 @@ test('the overlay draws the waves: with every other layer off, pixels appear as 
   assert.ok((await painted()) < before + 300, 'with the waves off the overlay is almost empty again');
 });
 
+test('a click that is still waiting does not bring back a pin that was removed, and two clicks apart are two choices', async () => {
+  const { page } = await h.open();
+  await pause(page);
+  await page.locator('.chip', { hasText: 'Taichung' }).click();
+  await page.locator('.pin').waitFor();
+  const stored = () => page.evaluate(() => localStorage.getItem('rumbleback.pin'));
+  const remove = () => page.locator('.pin-card .icon-btn').first().click();
+  await page.mouse.click(900, 400);
+  await remove();
+  await page.waitForTimeout(900);
+  assert.equal(await stored(), null, 'the removed pin stays removed');
+  // Two clicks far apart, one right after the other, are two choices and the later one wins.
+  await page.mouse.click(900, 400);
+  await page.mouse.click(1100, 300);
+  await page.waitForFunction(() => localStorage.getItem('rumbleback.pin') !== null);
+  const both = await stored();
+  await remove();
+  await page.mouse.click(1100, 300);
+  await page.waitForFunction(() => localStorage.getItem('rumbleback.pin') !== null);
+  assert.equal(await stored(), both);
+});
+
+test('a double tap on a phone leaves the pin where it was, and a single tap still moves it', async () => {
+  const { page } = await h.open({ width: 390, height: 844 });
+  await pause(page);
+  const stored = () => page.evaluate(() => localStorage.getItem('rumbleback.pin'));
+  await page.touchscreen.tap(200, 250);
+  await page.locator('.pin').waitFor();
+  const pin = await stored();
+  await page.touchscreen.tap(120, 200);
+  await page.waitForTimeout(40);
+  await page.touchscreen.tap(120, 200);
+  await page.waitForTimeout(900);
+  assert.equal(await stored(), pin);
+  await page.touchscreen.tap(300, 300);
+  await page.waitForFunction((was) => localStorage.getItem('rumbleback.pin') !== was, pin);
+});
+
 test('a pin on Taichung shows the same seconds as the library computes', async () => {
   const { page } = await h.open();
   await pause(page);
@@ -135,7 +173,15 @@ test('the city search works from the keyboard and tells a screen reader what it 
       }).length,
   );
   assert.equal(covered, 0);
-  await page.keyboard.press('ArrowDown');
+  if ((await options.count()) > 1) {
+    await page.keyboard.press('ArrowUp');
+    assert.equal(
+      await field.getAttribute('aria-activedescendant'),
+      await options.last().getAttribute('id'),
+      'Up from nothing lands on the last row',
+    );
+    await page.keyboard.press('ArrowDown');
+  } else await page.keyboard.press('ArrowDown');
   const first = await options.first().getAttribute('id');
   assert.equal(await field.getAttribute('aria-activedescendant'), first);
   assert.equal(await options.first().getAttribute('aria-selected'), 'true');
@@ -324,7 +370,38 @@ test('the picker tabs follow the arrow keys', async () => {
   assert.equal(await page.getByRole('tab', { name: 'Featured' }).getAttribute('tabindex'), '-1');
   await page.keyboard.press('End');
   assert.equal(await page.getByRole('tab', { name: 'Link', exact: true }).getAttribute('aria-selected'), 'true');
+  assert.equal(await page.evaluate(() => document.activeElement?.id), 'picker-tab-lookup', 'the arrow keys keep the focus on the tabs');
+  await page.keyboard.press('ArrowLeft');
+  assert.equal(await page.getByRole('tab', { name: 'Search' }).getAttribute('aria-selected'), 'true');
+  await page.keyboard.press('End');
   assert.equal(await page.getByRole('tabpanel').getAttribute('aria-labelledby'), 'picker-tab-lookup');
+});
+
+test('closing the picker while a link is being looked up opens nothing', async () => {
+  const { page } = await h.open();
+  await pause(page);
+  await page.getByRole('button', { name: 'Choose a quake' }).click();
+  await page.getByRole('tab', { name: 'Link', exact: true }).click();
+  await page.fill('#lookup-id', SLOW_ID);
+  await page.getByRole('button', { name: 'Open', exact: true }).click();
+  await page.getByText('Looking it up').waitFor();
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(2500);
+  assert.ok(page.url().includes('event=us7000m9g4'), page.url());
+  assert.ok(!page.url().includes(SLOW_ID));
+  assert.equal(await page.locator('.quake-title').innerText(), '2024 Hualien, Taiwan');
+});
+
+test('Back to the first entry of a shared link returns to its moment', async () => {
+  const { page } = await h.open({ query: '?event=us7000m9g4&t=15' });
+  assert.match(await page.locator('.time-now').innerText(), /^T\+15/);
+  await page.getByRole('button', { name: 'Choose a quake' }).click();
+  await page.locator('.quake-row', { hasText: '2022 Chishang, Taiwan' }).click();
+  await page.locator('.quake-title', { hasText: '2022 Chishang, Taiwan' }).waitFor();
+  await page.goBack();
+  await page.locator('.quake-title', { hasText: '2024 Hualien, Taiwan' }).waitFor();
+  await page.waitForFunction(() => /^T\+15/.test(document.querySelector('.time-now')!.textContent ?? ''));
+  assert.equal(await page.locator('.play-btn').getAttribute('aria-label'), 'Play', 'it opens paused at that moment');
 });
 
 test('a pasted USGS link opens that earthquake, and a wrong one says what is wrong', async () => {

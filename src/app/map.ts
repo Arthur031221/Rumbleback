@@ -9,8 +9,10 @@ const base = (path: string) => new URL(path, document.baseURI).href;
 
 setWorkerUrl(base('assets/maplibre-gl-worker.mjs'));
 
-/** How long a click on the map waits before it drops the pin, to tell it from a double click. */
-const TAP_MS = 260;
+/** How long a click on the map waits before it drops the pin, to tell it from a double click. A finger is slower than a mouse. */
+const tapDelay = (): number => (window.matchMedia('(pointer: coarse)').matches ? 400 : 300);
+/** Two clicks closer than this, in pixels, are one double click. Farther apart they are two choices, and the later one wins. */
+const SAME_SPOT = 24;
 
 export interface MapView {
   map: Map;
@@ -77,20 +79,26 @@ export function createMap(container: HTMLElement, o: MapOptions): MapView {
   });
 
   // A double click or double tap zooms, and the clicks that make it up must not move the pin. A click
-  // therefore waits a moment, and a second click, a double click or a zoom in that time cancels it.
-  let tap: number | undefined;
+  // therefore waits a moment, and a second click on the same spot, a double click or a zoom cancels it.
+  let tap: { timer: number; x: number; y: number } | undefined;
   const cancelTap = () => {
-    clearTimeout(tap);
+    if (tap) clearTimeout(tap.timer);
     tap = undefined;
   };
   map.on('click', (e) => {
-    if (tap !== undefined) return cancelTap();
-    if (map.isMoving()) return;
+    const { x, y } = e.point;
+    const again = tap !== undefined && Math.hypot(tap.x - x, tap.y - y) < SAME_SPOT;
+    cancelTap();
+    if (again || map.isMoving()) return;
     const { lat, lng } = e.lngLat;
-    tap = window.setTimeout(() => {
-      tap = undefined;
-      o.onPick(lat, ((lng + 540) % 360) - 180);
-    }, TAP_MS);
+    tap = {
+      x,
+      y,
+      timer: window.setTimeout(() => {
+        tap = undefined;
+        o.onPick(lat, ((lng + 540) % 360) - 180);
+      }, tapDelay()),
+    };
   });
   map.on('dblclick', cancelTap);
   map.on('zoomstart', cancelTap);
@@ -121,6 +129,7 @@ export function createMap(container: HTMLElement, o: MapOptions): MapView {
       map.fitBounds(bounds, { duration: animate ? 1100 : 0, maxZoom: 10 });
     },
     setPin(lat, lon) {
+      cancelTap(); // a choice made elsewhere, such as a city, beats a click still waiting
       if (!marker) {
         marker = new Marker({ element: pinElement(), draggable: true, anchor: 'bottom' }).setLngLat([lon, lat]).addTo(map);
         marker.on('dragend', () => {
@@ -132,6 +141,7 @@ export function createMap(container: HTMLElement, o: MapOptions): MapView {
       }
     },
     clearPin() {
+      cancelTap();
       marker?.remove();
       marker = null;
     },

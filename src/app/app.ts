@@ -524,7 +524,7 @@ export async function start(): Promise<void> {
    * returns to the one before it; the first quake and a retry rewrite the current entry; going back or
    * forward has already changed it.
    */
-  async function openQuake(id: string, animate: boolean, entry: 'push' | 'replace' | 'keep' = 'replace'): Promise<void> {
+  async function openQuake(id: string, animate: boolean, entry: 'push' | 'replace' | 'keep' = 'replace', at?: number): Promise<void> {
     loading?.abort();
     const again = id === currentId;
     currentId = id;
@@ -541,7 +541,7 @@ export async function start(): Promise<void> {
     else if (entry !== 'keep') history.replaceState(null, '', address);
 
     // A link's moment applies to the quake the link names, and holds the replay there.
-    const wanted = id === (link.event ?? FEATURED[0]!.id) ? link.t : undefined;
+    const wanted = at ?? (id === (link.event ?? FEATURED[0]!.id) ? link.t : undefined);
     link.t = undefined;
     let landed = START;
     let first = true;
@@ -601,8 +601,10 @@ export async function start(): Promise<void> {
 
   // Back and forward move between the quakes the viewer has opened.
   window.addEventListener('popstate', () => {
-    const id = parseLink(location.search, location.hash).event ?? FEATURED[0]!.id;
-    if (id !== currentId) void openQuake(id, true, 'keep');
+    const back = parseLink(location.search, location.hash);
+    const id = back.event ?? FEATURED[0]!.id;
+    // An entry that carries a moment (a shared link's first entry does) opens paused there.
+    if (id !== currentId) void openQuake(id, true, 'keep', back.t);
   });
 
   // Start

@@ -68,7 +68,7 @@ export function createPicker(onChoose: (id: string) => void) {
         if (to === undefined) return;
         e.preventDefault();
         tabs[to]!.focus();
-        void select(tabNames[to]!);
+        void select(tabNames[to]!, false);
       },
     }),
   );
@@ -132,6 +132,11 @@ export function createPicker(onChoose: (id: string) => void) {
   panel.append(recentBar, form, lookupForm, message, list);
   dialog.append(h('div', { class: 'sheet-head' }, title, closeBtn), tabBar, panel);
   dialog.addEventListener('click', (e) => e.target === dialog && dialog.close());
+  // A request still out when the dialog is dismissed must not open a quake behind the viewer's back.
+  dialog.addEventListener('close', () => {
+    busy?.abort();
+    generation++;
+  });
 
   const today = new Date();
   to.value = isoDay(today);
@@ -257,7 +262,8 @@ export function createPicker(onChoose: (id: string) => void) {
     }
   }
 
-  async function select(next: (typeof tabNames)[number]): Promise<void> {
+  /** `focusField` is false when the tab was chosen with the arrow keys, which must keep the focus on the tabs. */
+  async function select(next: (typeof tabNames)[number], focusField = true): Promise<void> {
     tab = next;
     render();
     busy?.abort();
@@ -284,7 +290,7 @@ export function createPicker(onChoose: (id: string) => void) {
       shown = { items: [], featured: false };
       notice = null;
       paint();
-      lookupInput.focus();
+      if (focusField) lookupInput.focus();
     } else if (results.length) {
       show(results);
     } else {

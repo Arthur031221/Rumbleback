@@ -185,7 +185,15 @@ export function createPanel(host: HTMLElement, cb: PanelCallbacks) {
     if (key === 'ArrowDown' || key === 'ArrowUp') {
       if (!current.length) return;
       e.preventDefault();
-      setActive(key === 'ArrowDown' ? (active + 1) % current.length : (active - 1 + current.length) % current.length);
+      setActive(
+        key === 'ArrowDown'
+          ? (active + 1) % current.length
+          : active < 0
+            ? current.length - 1
+            : active - 1 < 0
+              ? current.length - 1
+              : active - 1,
+      );
     } else if (key === 'Enter' && current.length) {
       e.preventDefault();
       choose(current[Math.max(active, 0)]!);

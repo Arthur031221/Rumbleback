@@ -23,6 +23,7 @@
     "@phosphor-icons/core": "^2.1.1",
     "@types/node": "^26.6.5",
     "@types/topojson-client": "^3.1.5",
+    "axe-core": "^4.14.0",
     "esbuild": "^0.28.2",
     "playwright": "^1.63.0",
     "prettier": "^3.9.9",
