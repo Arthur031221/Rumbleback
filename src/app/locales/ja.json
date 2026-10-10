@@ -15,6 +15,7 @@
   "quake.depth": "深さ {km}",
   "quake.felt": "体感報告 {n} 件",
   "quake.when": "{date} UTC",
+  "quake.local": "あなたの時刻：{date}",
   "quake.loading": "実際の観測点データを読み込み中",
   "quake.noLayers": "このレイヤーにはデータがないか、読み込めませんでした",
   "quake.error": "この地震を読み込めませんでした",

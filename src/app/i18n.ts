@@ -64,8 +64,23 @@ export function km(n: number): string {
   return t('unit.km', { n: number(n, n < 10 ? 1 : 0) });
 }
 
+const MOMENT: Intl.DateTimeFormatOptions = {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric',
+  hour: 'numeric',
+  minute: '2-digit',
+  second: '2-digit',
+};
+
 export function utcDate(ms: number): string {
-  return new Intl.DateTimeFormat(current, { dateStyle: 'medium', timeStyle: 'medium', timeZone: 'UTC' }).format(ms);
+  return new Intl.DateTimeFormat(current, { ...MOMENT, timeZone: 'UTC' }).format(ms);
+}
+
+/** The moment in the viewer's own time zone, or null when that zone is UTC and the line would repeat the first. */
+export function localDate(ms: number): string | null {
+  if (new Date(ms).getTimezoneOffset() === 0) return null;
+  return new Intl.DateTimeFormat(current, { ...MOMENT, timeZoneName: 'short' }).format(ms);
 }
 
 /** Fills elements marked data-i18n (text), data-i18n-label, data-i18n-title and data-i18n-placeholder. */

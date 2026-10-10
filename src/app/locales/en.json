@@ -15,6 +15,7 @@
   "quake.depth": "Depth {km}",
   "quake.felt": "{n} felt reports",
   "quake.when": "{date} UTC",
+  "quake.local": "Your time: {date}",
   "quake.loading": "Loading real station data",
   "quake.noLayers": "No data for this layer, or it did not load",
   "quake.error": "Could not load this quake",

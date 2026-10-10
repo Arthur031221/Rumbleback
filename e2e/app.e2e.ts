@@ -51,6 +51,18 @@ test('opens on the 2024 Hualien quake and starts the replay', async () => {
   assert.deepEqual([...new Set(external.map((r) => new URL(r.split(' ')[1]!).hostname))], ['tiles.openfreemap.org']);
 });
 
+test("the quake card also gives the time in the viewer's own time zone, unless that is UTC", async () => {
+  const taipei = await h.open({ timezone: 'Asia/Taipei', locale: 'en-US' });
+  const lines = await taipei.page.locator('.quake-facts span').allInnerTexts();
+  assert.deepEqual(lines.slice(0, 2), ['Apr 2, 2024, 11:58:12 PM UTC', 'Your time: Apr 3, 2024, 7:58:12 AM GMT+8']);
+  await h.closeContexts(); // software WebGL is slow with several maps open
+  const utc = await h.open();
+  assert.equal(await utc.page.locator('.quake-facts span').count(), 3, 'UTC viewers get the date, the depth and the felt reports');
+  await h.closeContexts();
+  const ja = await h.open({ timezone: 'Asia/Tokyo', locale: 'ja-JP' });
+  assert.match(await ja.page.locator('.quake-facts span').nth(1).innerText(), /^あなたの時刻：2024年4月3日 8:58:12 (JST|GMT\+9)$/);
+});
+
 test('the overlay draws the waves: with every other layer off, pixels appear as the replay advances', async () => {
   const { page } = await h.open();
   await pause(page);

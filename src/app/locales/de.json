@@ -15,6 +15,7 @@
   "quake.depth": "Tiefe {km}",
   "quake.felt": "{n} Wahrnehmungsberichte",
   "quake.when": "{date} UTC",
+  "quake.local": "Ihre Zeit: {date}",
   "quake.loading": "Echte Stationsdaten werden geladen",
   "quake.noLayers": "Für diese Ebene gibt es keine Daten, oder sie wurde nicht geladen",
   "quake.error": "Dieses Beben konnte nicht geladen werden",

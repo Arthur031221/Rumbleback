@@ -15,6 +15,7 @@
   "quake.depth": "Profundidade {km}",
   "quake.felt": "{n} relatos de sensação",
   "quake.when": "{date} UTC",
+  "quake.local": "Seu horário: {date}",
   "quake.loading": "Carregando dados reais das estações",
   "quake.noLayers": "Esta camada não tem dados ou não carregou",
   "quake.error": "Não foi possível carregar este terremoto",

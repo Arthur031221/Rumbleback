@@ -5,7 +5,7 @@ import { blindRadiusKm } from '../core/warning.ts';
 import { checkStats, cities, loadCities, nearestCityName, pinLabel, pinTiming, quakeTitle } from './derived.ts';
 import { $, h } from './dom.ts';
 import { icon } from './icons.ts';
-import { km, language, number, seconds, t, utcDate } from './i18n.ts';
+import { km, language, localDate, number, seconds, t, utcDate } from './i18n.ts';
 import { drawResiduals } from './residual-chart.ts';
 import { clock, get } from './state.ts';
 
@@ -206,7 +206,14 @@ export function createPanel(host: HTMLElement, cb: PanelCallbacks) {
     title.textContent = q ? quakeTitle(q) : t('quake.loading');
     const heading = q ? quakeTitle(q) : '';
     place.textContent = q && q.place && q.place !== heading ? q.place : '';
-    const factParts = q ? [t('quake.when', { date: utcDate(q.time) }), t('quake.depth', { km: km(q.depthKm) })] : [];
+    const local = q ? localDate(q.time) : null;
+    const factParts = q
+      ? [
+          t('quake.when', { date: utcDate(q.time) }),
+          ...(local ? [t('quake.local', { date: local })] : []),
+          t('quake.depth', { km: km(q.depthKm) }),
+        ]
+      : [];
     if (q?.felt) factParts.push(t('quake.felt', { n: number(q.felt) }));
     facts.replaceChildren(...factParts.map((p) => h('span', { text: p })));
     quakeCard.classList.toggle('is-loading', s.status === 'loading');

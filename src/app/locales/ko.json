@@ -15,6 +15,7 @@
   "quake.depth": "깊이 {km}",
   "quake.felt": "체감 보고 {n}건",
   "quake.when": "{date} UTC",
+  "quake.local": "내 시간: {date}",
   "quake.loading": "실제 관측소 데이터를 불러오는 중",
   "quake.noLayers": "이 레이어에 데이터가 없거나 불러오지 못했습니다",
   "quake.error": "이 지진을 불러오지 못했습니다",

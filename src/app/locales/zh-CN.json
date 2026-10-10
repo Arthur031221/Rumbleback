@@ -15,6 +15,7 @@
   "quake.depth": "深度 {km}",
   "quake.felt": "{n} 条有感报告",
   "quake.when": "{date} UTC",
+  "quake.local": "你的时间：{date}",
   "quake.loading": "正在加载真实台站数据",
   "quake.noLayers": "这个图层没有数据，或者没有加载成功",
   "quake.error": "无法加载这个地震",

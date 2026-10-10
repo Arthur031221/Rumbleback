@@ -40,6 +40,8 @@ export interface Harness {
     tileJson?: boolean;
     /** Runs in the page before any of its own scripts. */
     script?: () => void;
+    /** The browser's time zone. UTC unless said, so the times on the page do not depend on the machine. */
+    timezone?: string;
   }): Promise<Session>;
 }
 
@@ -89,12 +91,14 @@ export async function harness(): Promise<Harness> {
       geolocation,
       tileJson = false,
       script,
+      timezone = 'UTC',
     } = {}) {
       const permissions = [...(name === 'chromium' ? ['clipboard-read', 'clipboard-write'] : []), ...(geolocation ? ['geolocation'] : [])];
       const context = await browser.newContext({
         viewport: { width, height },
         locale,
         colorScheme,
+        timezoneId: timezone,
         hasTouch: width < 600,
         permissions,
         geolocation,
