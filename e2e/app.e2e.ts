@@ -682,12 +682,32 @@ test('plus and minus zoom the map', async () => {
     const box = (await page.locator('.pin').boundingBox())!;
     return [box.x, box.y] as [number, number];
   };
+  // A zoom is an animation, and the second key has to find the map at rest: zooming out from halfway through the
+  // zoom in would end somewhere else than where it began.
+  const settle = () =>
+    page.evaluate(
+      () =>
+        new Promise<void>((done) => {
+          let last = '';
+          let still = 0;
+          const check = () => {
+            const r = document.querySelector('.pin')!.getBoundingClientRect();
+            const here = `${r.x.toFixed(1)},${r.y.toFixed(1)}`;
+            still = here === last ? still + 1 : 0;
+            last = here;
+            if (still >= 10) done();
+            else requestAnimationFrame(check);
+          };
+          check();
+        }),
+    );
   const start = await at();
   await page.keyboard.press('+');
   await page.waitForFunction(([x, y]) => {
     const r = document.querySelector('.pin')!.getBoundingClientRect();
     return Math.hypot(r.x - x!, r.y - y!) > 60;
   }, start);
+  await settle();
   await page.keyboard.press('-');
   await page.waitForFunction(([x, y]) => {
     const r = document.querySelector('.pin')!.getBoundingClientRect();
