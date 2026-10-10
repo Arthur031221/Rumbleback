@@ -1366,9 +1366,10 @@ dialog.sheet::backdrop {
   .quake-title {
     font-size: 17px;
   }
+  /* The credit stays visible on a phone, tucked under the layer chips where the sheet does not cover it. */
   .maplibregl-ctrl-bottom-right {
-    bottom: calc(var(--dock-h) + 16px);
-    display: none;
+    top: 104px;
+    bottom: auto;
   }
   .search-form {
     grid-template-columns: 1fr;

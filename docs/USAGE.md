@@ -13,7 +13,7 @@
    calling USGS. *Recent* lists the last 30 days at magnitude 5 and up. *Search* takes a minimum
    magnitude, a region and a date range.
 2. The replay starts by itself, at a speed chosen so the whole thing takes about half a minute.
-   Space plays and pauses. Left and right step one second, with Shift ten seconds.
+   Space plays and pauses. Left and right step one second, with Shift ten seconds. Plus and minus zoom the map.
 3. Drag the timeline to any moment. `T+12.4 s` is seconds since the earthquake began.
 
 ## What you are looking at

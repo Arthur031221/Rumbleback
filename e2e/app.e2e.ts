@@ -217,6 +217,40 @@ test('keyboard: space plays and pauses, arrows step the clock', async () => {
   assert.match(await page.locator('.time-now').innerText(), /^T\+1\.0/);
 });
 
+test('the arrow keys still step the clock after a button has focus, and never pan the map', async () => {
+  const { page } = await h.open();
+  await pause(page);
+  await seek(page, 10);
+  // The pause button keeps the focus after a click, which used to swallow every arrow key.
+  await page.locator('.play-btn').focus();
+  await page.keyboard.press('ArrowRight');
+  assert.match(await page.locator('.time-now').innerText(), /^T\+11/);
+  // A click on the map focuses it. Arrows must step the clock and leave the map where it is.
+  await page.mouse.click(900, 400);
+  await page.locator('.pin').waitFor();
+  const before = await page.locator('.pin').boundingBox();
+  await page.keyboard.press('ArrowRight');
+  await page.keyboard.press('ArrowDown');
+  assert.match(await page.locator('.time-now').innerText(), /^T\+12/);
+  assert.deepEqual(await page.locator('.pin').boundingBox(), before);
+});
+
+test('a double click zooms the map and leaves the pin where it was', async () => {
+  const { page } = await h.open();
+  await pause(page);
+  await page.mouse.click(900, 400);
+  await page.locator('.pin').waitFor();
+  const stored = () => page.evaluate(() => localStorage.getItem('rumbleback.pin'));
+  const pin = await stored();
+  assert.ok(pin);
+  await page.mouse.dblclick(1100, 250);
+  await page.waitForTimeout(800);
+  assert.equal(await stored(), pin);
+  // A single click later still moves it.
+  await page.mouse.click(1100, 250);
+  await page.waitForFunction((was) => localStorage.getItem('rumbleback.pin') !== was, pin);
+});
+
 test('the timeline carries the real seismogram of a nearby station', async () => {
   const { page } = await h.open();
   await pause(page);
@@ -370,4 +404,17 @@ test('layout on a phone: nothing spills out of the screen and the sheet collapse
   await page.locator('.sheet-handle').click();
   assert.equal(await page.locator('.panel').getAttribute('data-collapsed'), 'true');
   assert.equal(await page.locator('.pin-card').isVisible(), false);
+});
+
+test('the map credit stays reachable on a phone: a small button that opens the text', async () => {
+  const { page } = await h.open({ width: 390, height: 844, tileJson: true });
+  const credit = page.locator('.maplibregl-ctrl-attrib');
+  await page.locator('.maplibregl-ctrl-attrib.maplibregl-compact').waitFor();
+  const button = credit.locator('summary');
+  assert.equal(await button.isVisible(), true);
+  assert.equal(await credit.locator('.maplibregl-ctrl-attrib-inner').isVisible(), false);
+  const box = (await button.boundingBox())!;
+  assert.ok(box.x >= 0 && box.x + box.width <= 390 && box.y >= 0 && box.y + box.height <= 844, JSON.stringify(box));
+  await button.click();
+  assert.match(await credit.locator('.maplibregl-ctrl-attrib-inner').innerText(), /OpenStreetMap/);
 });

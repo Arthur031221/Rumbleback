@@ -34,6 +34,8 @@ export interface Harness {
     locale?: string;
     colorScheme?: 'dark' | 'light';
     geolocation?: { latitude: number; longitude: number };
+    /** Serve the tile source's description, so the map shows its credit. The tiles themselves stay blocked. */
+    tileJson?: boolean;
   }): Promise<Session>;
 }
 
@@ -74,7 +76,7 @@ export async function harness(): Promise<Harness> {
       await browser.close();
       server.close();
     },
-    async open({ width = 1440, height = 900, query = '', locale = 'en-US', colorScheme = 'dark', geolocation } = {}) {
+    async open({ width = 1440, height = 900, query = '', locale = 'en-US', colorScheme = 'dark', geolocation, tileJson = false } = {}) {
       const permissions = [...(name === 'chromium' ? ['clipboard-read', 'clipboard-write'] : []), ...(geolocation ? ['geolocation'] : [])];
       const context = await browser.newContext({
         viewport: { width, height },
@@ -103,6 +105,10 @@ export async function harness(): Promise<Harness> {
           const request = route.request();
           const u = new URL(request.url());
           external.push(`${request.method()} ${request.url()} body=${request.postData() ?? ''} referer=${request.headers().referer ?? ''}`);
+          if (tileJson && u.hostname === 'tiles.openfreemap.org' && u.pathname === '/planet')
+            return route.fulfill({
+              json: { tilejson: '3.0.0', tiles: ['https://tiles.openfreemap.org/planet/0/{z}/{x}/{y}.pbf'], maxzoom: 14 },
+            });
           if (u.hostname === 'tiles.openfreemap.org') return route.abort();
           if (u.hostname === 'earthquake.usgs.gov' && u.pathname.endsWith('/query')) {
             return route.fulfill({ json: u.searchParams.has('eventid') ? feature : { type: 'FeatureCollection', features: [feature] } });

@@ -9,6 +9,9 @@ const base = (path: string) => new URL(path, document.baseURI).href;
 
 setWorkerUrl(base('assets/maplibre-gl-worker.mjs'));
 
+/** How long a click on the map waits before it drops the pin, to tell it from a double click. */
+const TAP_MS = 260;
+
 export interface MapView {
   map: Map;
   setLook(theme: Theme, lang: Lang): void;
@@ -38,6 +41,8 @@ export function createMap(container: HTMLElement, o: MapOptions): MapView {
     maxZoom: 13,
     attributionControl: false,
     dragRotate: false,
+    // The arrow keys step the replay clock (see app.ts), so the map must not pan on them too.
+    keyboard: false,
     pitchWithRotate: false,
     maxPitch: 0,
     fadeDuration: 0,
@@ -46,6 +51,17 @@ export function createMap(container: HTMLElement, o: MapOptions): MapView {
   });
   map.touchZoomRotate.disableRotation();
   map.addControl(new AttributionControl({ compact: true }), 'bottom-right');
+  // MapLibre opens the compact credit at the start. On a phone it would cover the map, so it starts as
+  // the small (i) button and opens when tapped. The credit arrives with the tile source, so wait for it.
+  if (window.matchMedia('(max-width: 820px)').matches) {
+    const collapse = () => {
+      const credit = container.querySelector('.maplibregl-ctrl-attrib');
+      if (!credit?.classList.contains('maplibregl-compact-show')) return;
+      credit.classList.remove('maplibregl-compact-show');
+      map.off('sourcedata', collapse);
+    };
+    map.on('sourcedata', collapse);
+  }
 
   // A tile source that cannot be reached at all fails once, without a tile. Single tile errors are
   // normal (empty tiles, a flaky connection), so those only count when they pile up.
@@ -60,7 +76,24 @@ export function createMap(container: HTMLElement, o: MapOptions): MapView {
     failedCb();
   });
 
-  map.on('click', (e) => o.onPick(e.lngLat.lat, ((e.lngLat.lng + 540) % 360) - 180));
+  // A double click or double tap zooms, and the clicks that make it up must not move the pin. A click
+  // therefore waits a moment, and a second click, a double click or a zoom in that time cancels it.
+  let tap: number | undefined;
+  const cancelTap = () => {
+    clearTimeout(tap);
+    tap = undefined;
+  };
+  map.on('click', (e) => {
+    if (tap !== undefined) return cancelTap();
+    if (map.isMoving()) return;
+    const { lat, lng } = e.lngLat;
+    tap = window.setTimeout(() => {
+      tap = undefined;
+      o.onPick(lat, ((lng + 540) % 360) - 180);
+    }, TAP_MS);
+  });
+  map.on('dblclick', cancelTap);
+  map.on('zoomstart', cancelTap);
 
   let marker: Marker | null = null;
   const pinElement = () =>

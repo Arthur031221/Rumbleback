@@ -117,10 +117,12 @@ export async function start(): Promise<void> {
   const overlayCanvas = h('canvas', { class: 'overlay', 'aria-hidden': 'true' });
   document.body.append(mapEl, topbar, layersEl, panelEl, dockEl, toast);
 
+  let toastTimer: number | undefined;
   const showToast = (text: string) => {
     toast.textContent = text;
     toast.hidden = false;
-    setTimeout(() => (toast.hidden = true), 5000);
+    clearTimeout(toastTimer);
+    toastTimer = window.setTimeout(() => (toast.hidden = true), 5000);
   };
 
   // Map and overlay
@@ -463,15 +465,19 @@ export async function start(): Promise<void> {
 
   document.addEventListener('keydown', (e) => {
     const target = e.target as HTMLElement;
+    // A button or a summary takes Space as a click, and arrows are free. Fields keep every key.
     if (
       e.metaKey ||
       e.ctrlKey ||
       e.altKey ||
-      /^(INPUT|SELECT|TEXTAREA|BUTTON|SUMMARY)$/.test(target.tagName) ||
+      /^(INPUT|SELECT|TEXTAREA)$/.test(target.tagName) ||
+      (e.key === ' ' && /^(BUTTON|SUMMARY|A)$/.test(target.tagName)) ||
       document.querySelector('dialog[open]')
     )
       return;
     const s = get();
+    if (e.key === '+' || e.key === '=') view.map.zoomIn();
+    else if (e.key === '-' || e.key === '_') view.map.zoomOut();
     if (!s.quake) return;
     if (e.key === ' ') {
       e.preventDefault();
