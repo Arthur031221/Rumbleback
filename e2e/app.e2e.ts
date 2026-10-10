@@ -458,6 +458,37 @@ test('share dialog: link without the pin by default, square card as a PNG', asyn
   await context.close();
 });
 
+test('on a phone a card goes to the system share sheet, and closing the sheet saves nothing', async () => {
+  let downloads = 0;
+  const { page } = await h.open({
+    width: 390,
+    height: 844,
+    script: () => {
+      const w = window as unknown as { __shared: string[][]; __mode: string };
+      w.__shared = [];
+      w.__mode = 'share';
+      navigator.canShare = () => true;
+      navigator.share = async (data) => {
+        if (w.__mode === 'cancel') throw new DOMException('closed', 'AbortError');
+        w.__shared.push((data?.files ?? []).map((f) => `${f.name} ${f.type} ${f.size > 1000}`));
+      };
+    },
+  });
+  page.on('download', () => downloads++);
+  await pause(page);
+  assert.equal(await page.evaluate(() => matchMedia('(pointer: coarse)').matches), true, 'the page is a touch device');
+  await page.getByRole('button', { name: 'Share this replay' }).click();
+  await page.getByRole('button', { name: 'Save square card' }).click();
+  await page.waitForFunction(() => (window as unknown as { __shared: unknown[] }).__shared.length === 1);
+  assert.deepEqual(await page.evaluate(() => (window as unknown as { __shared: string[][] }).__shared), [
+    ['rumbleback-square.png image/png true'],
+  ]);
+  await page.evaluate(() => ((window as unknown as { __mode: string }).__mode = 'cancel'));
+  await page.getByRole('button', { name: 'Save story card' }).click();
+  await page.waitForTimeout(800);
+  assert.equal(downloads, 0, 'a sheet that was used or closed leaves no download behind');
+});
+
 test('records a video clip of the replay', { timeout: 180000 }, async () => {
   const { page } = await h.open({ width: 900, height: 600 });
   await pause(page);

@@ -61,7 +61,7 @@ Drag the pin to move it. The pin is kept in your browser only.
 *Share this replay* offers a link, a square card, a story card (9:16) and a video clip of the replay.
 The link leaves your pin out unless you tick the box, and then rounds it to about a kilometre. Cards show a
 city name or "My place", never coordinates. Cards show the moment the timeline is on, so scrub to the
-frame you like first.
+frame you like first. On a phone a card opens the system share sheet, and anywhere else it downloads as a PNG.
 
 ## Deep links
 

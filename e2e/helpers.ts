@@ -38,6 +38,8 @@ export interface Harness {
     geolocation?: { latitude: number; longitude: number };
     /** Serve the tile source's description, so the map shows its credit. The tiles themselves stay blocked. */
     tileJson?: boolean;
+    /** Runs in the page before any of its own scripts. */
+    script?: () => void;
   }): Promise<Session>;
 }
 
@@ -78,7 +80,16 @@ export async function harness(): Promise<Harness> {
       await browser.close();
       server.close();
     },
-    async open({ width = 1440, height = 900, query = '', locale = 'en-US', colorScheme = 'dark', geolocation, tileJson = false } = {}) {
+    async open({
+      width = 1440,
+      height = 900,
+      query = '',
+      locale = 'en-US',
+      colorScheme = 'dark',
+      geolocation,
+      tileJson = false,
+      script,
+    } = {}) {
       const permissions = [...(name === 'chromium' ? ['clipboard-read', 'clipboard-write'] : []), ...(geolocation ? ['geolocation'] : [])];
       const context = await browser.newContext({
         viewport: { width, height },
@@ -89,6 +100,7 @@ export async function harness(): Promise<Harness> {
         geolocation,
       });
       contexts.push(context);
+      if (script) await context.addInitScript(script);
       const page = await context.newPage();
       const errors: string[] = [];
       const external: string[] = [];

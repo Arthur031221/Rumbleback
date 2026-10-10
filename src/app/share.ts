@@ -232,6 +232,21 @@ function download(blob: Blob, name: string): void {
   setTimeout(() => URL.revokeObjectURL(url), 10000);
 }
 
+/**
+ * Hands a file to the system share sheet on a touch device, where saving a download is awkward (on an iPhone
+ * it opens the image in a tab). Returns false when there is no sheet to use, and the caller downloads it.
+ */
+async function shareFile(file: File): Promise<boolean> {
+  if (!window.matchMedia('(pointer: coarse)').matches || !navigator.canShare?.({ files: [file] })) return false;
+  try {
+    await navigator.share({ files: [file], title: 'Rumbleback' });
+    return true;
+  } catch (e) {
+    // Closing the sheet is an answer. Anything else, such as a browser that wants a fresh tap, falls back.
+    return (e as Error).name === 'AbortError';
+  }
+}
+
 const canvasBlob = (c: HTMLCanvasElement) =>
   new Promise<Blob>((res, rej) => c.toBlob((b) => (b ? res(b) : rej(new Error('no image'))), 'image/png'));
 
@@ -285,7 +300,9 @@ export function createShare(src: ShareSources) {
   }
 
   async function save(kind: 'square' | 'story'): Promise<void> {
-    download(await canvasBlob(composeCard(src, kind)), `rumbleback-${kind}.png`);
+    const name = `rumbleback-${kind}.png`;
+    const blob = await canvasBlob(composeCard(src, kind));
+    if (!(await shareFile(new File([blob], name, { type: blob.type })))) download(blob, name);
   }
 
   function renderPreview(): void {
