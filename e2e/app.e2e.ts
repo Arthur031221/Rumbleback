@@ -513,6 +513,27 @@ test('a pasted USGS link opens that earthquake, and a wrong one says what is wro
   await page.locator('.quake-title', { hasText: 'Hualien' }).waitFor();
 });
 
+test('a link to a quake USGS does not have says so with no retry, and a failed load can be tried again', async () => {
+  const { page } = await h.open();
+  await page.goto(`${h.url}?event=${MISSING_ID}`);
+  const error = page.locator('.quake-error');
+  await error.waitFor();
+  assert.match(await error.innerText(), /USGS has no earthquake with that id\./);
+  assert.equal(await error.locator('.btn').isVisible(), false, 'a retry cannot find what is not there');
+  assert.equal(await page.locator('.quake-title').innerText(), '');
+  // A server error is another matter: the same link works once USGS answers again.
+  const down = () => page.route('https://earthquake.usgs.gov/**', (route) => route.fulfill({ status: 503, body: 'Service Unavailable' }));
+  await down();
+  await page.goto(`${h.url}?event=${LIVE_ID}`);
+  await error.waitFor();
+  assert.match(await error.innerText(), /Could not load this quake/);
+  await page.unroute('https://earthquake.usgs.gov/**');
+  await error.getByRole('button', { name: 'Try again' }).click();
+  await ready(page);
+  assert.equal(await error.isVisible(), false);
+  assert.match(await page.locator('.quake-title').innerText(), /Hualien/);
+});
+
 test('a deep link restores the quake, the pin, the clock, the alert and the language', async () => {
   const { page } = await h.open({ query: '?event=us7000i90q&t=15&alert=7&lang=es#pin=25.03,121.56' });
   assert.equal(await page.locator('.quake-title').innerText(), '2022 Chishang, Taiwán');

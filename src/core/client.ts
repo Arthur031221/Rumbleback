@@ -27,6 +27,14 @@ export class HttpError extends Error {
   }
 }
 
+/**
+ * True when USGS has no such earthquake. It answers 404 for an id it does not know and 400 for one that is
+ * malformed, and the detail call refuses a feature that is not an earthquake.
+ */
+export function isUnknownEvent(e: unknown): boolean {
+  return e instanceof HttpError ? e.status === 404 || e.status === 400 : e instanceof Error && /^no earthquake/.test(e.message);
+}
+
 async function json<T>(url: string, f: Fetch, signal?: AbortSignal): Promise<T> {
   // A request that stalls for half a minute fails, so a list or a replay cannot stay loading for ever.
   const res = await f(url, { signal: signal ? AbortSignal.any([signal, AbortSignal.timeout(30000)]) : AbortSignal.timeout(30000) });

@@ -19,6 +19,8 @@ export interface AppState {
   quake: QuakeData | null;
   /** 'loading' until the summary arrives; the station layers may still be coming in after 'ready'. */
   status: 'loading' | 'ready' | 'error';
+  /** Why a quake did not open: USGS has no such id (trying again will not help), or it could not be reached. */
+  errorKind: 'missing' | 'failed';
   layersLoading: boolean;
   tt: TravelTimes | null;
   view: Bounds | null;
@@ -39,6 +41,7 @@ let state: AppState = {
   theme: 'auto',
   quake: null,
   status: 'loading',
+  errorKind: 'failed',
   layersLoading: false,
   tt: null,
   view: null,

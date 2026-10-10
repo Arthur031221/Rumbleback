@@ -226,7 +226,7 @@ export function createPanel(host: HTMLElement, cb: PanelCallbacks) {
     handle.setAttribute('aria-label', t('panel.toggle'));
     $('.mag-num', mag).textContent = q ? number(q.mag, 1) : '';
     $('.mag-type', mag).textContent = q?.magType ? `M${q.magType.toLowerCase().replace(/^m/, '')}` : '';
-    title.textContent = q ? quakeTitle(q) : t('quake.loading');
+    title.textContent = q ? quakeTitle(q) : s.status === 'error' ? '' : t('quake.loading');
     const heading = q ? quakeTitle(q) : '';
     place.textContent = q && q.place && q.place !== heading ? q.place : '';
     const local = q ? localDate(q.time) : null;
@@ -240,10 +240,12 @@ export function createPanel(host: HTMLElement, cb: PanelCallbacks) {
     if (q?.felt) factParts.push(t('quake.felt', { n: number(q.felt) }));
     facts.replaceChildren(...factParts.map((p) => h('span', { text: p })));
     quakeCard.classList.toggle('is-loading', s.status === 'loading');
+    quakeCard.classList.toggle('is-failed', s.status === 'error');
     loadingLine.hidden = !(s.status === 'ready' && s.layersLoading);
     $('.bar-text', loadingLine).textContent = t('quake.loading');
     errorLine.hidden = s.status !== 'error';
-    errorText.textContent = t('quake.error');
+    errorText.textContent = t(s.errorKind === 'missing' ? 'picker.noEvent' : 'quake.error');
+    retryBtn.hidden = s.errorKind === 'missing';
     retryBtn.textContent = t('quake.retry');
 
     // Pin

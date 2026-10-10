@@ -1,4 +1,4 @@
-import { HttpError, RECENT_DAYS, RECENT_LIMIT, quakeDetail, recentQuakes, searchQuakes } from '../core/client.ts';
+import { RECENT_DAYS, RECENT_LIMIT, isUnknownEvent, quakeDetail, recentQuakes, searchQuakes } from '../core/client.ts';
 import { eventIdFrom } from '../core/link.ts';
 import { REGIONS, type Region } from '../core/regions.ts';
 import type { QuakeSummary } from '../core/quake.ts';
@@ -230,9 +230,7 @@ export function createPicker(onChoose: (id: string) => void) {
       onChoose(id);
     } catch (e) {
       if (gen !== generation || (e as Error).name === 'AbortError') return;
-      // USGS answers 404 for an id it does not know, and the detail call itself refuses what is not an earthquake.
-      const unknown = e instanceof HttpError ? e.status === 404 || e.status === 400 : /^no earthquake/.test((e as Error).message);
-      wait(unknown ? 'noEvent' : 'error');
+      wait(isUnknownEvent(e) ? 'noEvent' : 'error');
     }
   }
 

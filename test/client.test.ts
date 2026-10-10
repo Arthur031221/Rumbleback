@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
-import { HttpError, RECENT_LIMIT, loadQuake, quakeDetail, recentQuakes, searchQuakes } from '../src/core/client.ts';
+import { HttpError, RECENT_LIMIT, isUnknownEvent, loadQuake, quakeDetail, recentQuakes, searchQuakes } from '../src/core/client.ts';
 import type { QuakeData } from '../src/core/quake.ts';
 
 const read = (name: string) => readFileSync(new URL(`./fixtures/${name}`, import.meta.url), 'utf8');
@@ -130,4 +130,15 @@ test('pick distances are measured to the summary epicenter', async () => {
   const b = await loadQuake('us7000m9g4', undefined, router({ ...all, 'eventid=us7000m9g4': () => ok(JSON.stringify(moved)) }));
   const pn = (d: QuakeData) => d.picks.find((p) => p.phase === 'Pn' && p.sta === 'IU.TATO')!.dist;
   assert.ok(Math.abs(pn(a) - pn(b)) > 0.05, `${pn(a)} ${pn(b)}`);
+});
+
+test('an id USGS does not have is told apart from a USGS that cannot be reached', () => {
+  const url = 'https://earthquake.usgs.gov/fdsnws/event/1/query';
+  assert.equal(isUnknownEvent(new HttpError(404, url)), true);
+  assert.equal(isUnknownEvent(new HttpError(400, url)), true);
+  assert.equal(isUnknownEvent(new Error('no earthquake with id us7000none')), true);
+  assert.equal(isUnknownEvent(new HttpError(503, url)), false);
+  assert.equal(isUnknownEvent(new TypeError('Failed to fetch')), false);
+  assert.equal(isUnknownEvent(new DOMException('timed out', 'TimeoutError')), false);
+  assert.equal(isUnknownEvent('no earthquake'), false);
 });

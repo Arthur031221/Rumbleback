@@ -1,5 +1,5 @@
 import 'maplibre-gl/dist/maplibre-gl.css';
-import { loadQuake } from '../core/client.ts';
+import { isUnknownEvent, loadQuake } from '../core/client.ts';
 import { decodeQuake } from '../core/codec.ts';
 import { shaking } from '../core/intensity.ts';
 import { buildLink, parseLink } from '../core/link.ts';
@@ -632,7 +632,7 @@ export async function start(): Promise<void> {
     } catch (err) {
       if (ctl.signal.aborted) return;
       console.error(err);
-      set({ status: 'error' });
+      set({ status: 'error', errorKind: isUnknownEvent(err) ? 'missing' : 'failed' });
     }
   }
 

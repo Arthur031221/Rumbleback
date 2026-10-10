@@ -563,6 +563,9 @@ button {
   color: var(--s);
   font-weight: 600;
 }
+.is-failed .quake-head {
+  display: none;
+}
 .is-loading .quake-title {
   color: transparent;
   width: 70%;
